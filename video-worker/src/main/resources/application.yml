@@ -1,0 +1,94 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: video-worker
+
+  profiles:
+    active: dev
+
+  # 数据源配置（与API共享）
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/video_ai?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: root123456
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+
+  # Redis配置
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      database: 0
+
+  # Kafka配置
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: videoai-worker-group
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      max-poll-records: 10
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+# MyBatis-Plus配置
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.videoai.common.domain
+  configuration:
+    map-underscore-to-camel-case: true
+
+# MinIO配置
+minio:
+  endpoint: http://localhost:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket-name: video-ai
+
+# AI服务配置
+ai:
+  claude:
+    api-key: ${CLAUDE_API_KEY:your-api-key}
+    base-url: https://api.anthropic.com
+    model: claude-3-opus-20240229
+    max-tokens: 4096
+    # 请求超时（秒）
+    timeout: 60
+
+# Worker配置
+videoai:
+  worker:
+    # 并发处理数
+    concurrency: 5
+    # 每秒最大AI请求数
+    ai-qps-limit: 2
+    # 单任务超时（分钟）
+    task-timeout-minutes: 30
+
+  # 视频处理配置
+  video:
+    # 抽帧间隔（秒）
+    frame-interval: 2
+    # 每帧最大宽度（像素）
+    max-frame-width: 1280
+    # 每帧最大高度（像素）
+    max-frame-height: 720
+    # 临时文件目录
+    temp-dir: /tmp/videoai
+
+# 日志配置
+logging:
+  level:
+    root: info
+    com.videoai: debug
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
