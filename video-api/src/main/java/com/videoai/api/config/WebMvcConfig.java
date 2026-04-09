@@ -54,9 +54,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/actuator/**",
                         "/swagger-ui/**",
                         "/v3/api-docs/**",
-                        // 测试接口（生产环境应删除）
+                        // 认证接口（公开）
+                        "/auth/register",
+                        "/auth/login",
+                        // 测试接口（仅 dev 环境）
                         "/test/user/**",
-                        // 公开接口（如果有的话）
+                        // 公开接口
                         "/api/public/**"
                 )
                 .order(2);

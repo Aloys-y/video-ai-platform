@@ -64,8 +64,10 @@ public class DataInitializer {
 
             String apiKey = "sk_live_Dev" + generateRandomString(24);
             String apiSecret = generateRandomString(32);
+            String testPassword = "test123";
             user.setApiKey(apiKey);
             user.setApiSecret(hashSecret(apiSecret));
+            user.setPassword(BCrypt.hashpw(testPassword, BCrypt.gensalt(12)));
             user.setRole("USER");
             user.setStatus(1); // 1=正常
             user.setRateLimit(100); // 默认100 QPS
@@ -82,7 +84,10 @@ public class DataInitializer {
             System.out.println("========================================");
             System.out.println("API Key:    " + apiKey);
             System.out.println("API Secret: " + apiSecret);
-            System.out.println("Usage: curl -H 'X-API-Key: " + apiKey + "' http://localhost:8080/api/test/auth");
+            System.out.println("Email:      test@videoai.com");
+            System.out.println("Password:   " + testPassword);
+            System.out.println("Usage (API Key): curl -H 'X-API-Key: " + apiKey + "' http://localhost:8080/api/test/auth");
+            System.out.println("Usage (Login):   curl -X POST http://localhost:8080/api/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"test@videoai.com\",\"password\":\"test123\"}'");
             System.out.println("========================================");
         };
     }

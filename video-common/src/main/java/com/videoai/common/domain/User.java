@@ -38,6 +38,10 @@ public class User {
      */
     private String email;
 
+    @JsonIgnore
+    @ToString.Exclude
+    private String password;
+
     /**
      * API Key
      * 格式：前缀 + 随机字符串

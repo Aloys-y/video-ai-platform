@@ -42,4 +42,10 @@ public interface UserMapper extends BaseMapper<User> {
      */
     @Update("UPDATE user SET rate_limit = #{rateLimit}, updated_at = NOW() WHERE id = #{id}")
     int updateRateLimit(@Param("id") Long id, @Param("rateLimit") Integer rateLimit);
+
+    @Select("SELECT * FROM user WHERE email = #{email} AND status = 1")
+    User selectByEmail(@Param("email") String email);
+
+    @Select("SELECT * FROM user WHERE username = #{username}")
+    User selectByUsername(@Param("username") String username);
 }

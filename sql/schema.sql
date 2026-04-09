@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS user (
     user_id         VARCHAR(32) NOT NULL COMMENT '业务用户ID',
     username        VARCHAR(64) NOT NULL COMMENT '用户名',
     email           VARCHAR(128) COMMENT '邮箱',
+    password        VARCHAR(128) COMMENT '密码(BCrypt哈希)',
     api_key         VARCHAR(64) NOT NULL COMMENT 'API Key',
     api_secret      VARCHAR(128) COMMENT 'API Secret(加密存储)',
     role            VARCHAR(20) DEFAULT 'USER' COMMENT '角色: USER/ADMIN/VIP',

@@ -55,6 +55,9 @@ public enum ErrorCode {
     // ==================== 用户相关 23xxx ====================
     USER_NOT_FOUND(23001, "用户不存在"),
     USER_FORBIDDEN(23002, "用户被禁止"),
+    USERNAME_EXISTS(23003, "用户名已存在"),
+    EMAIL_EXISTS(23004, "邮箱已被注册"),
+    INVALID_CREDENTIALS(23005, "邮箱或密码错误"),
 
     // ==================== 第三方服务错误 3xxxx ====================
     AI_SERVICE_ERROR(30001, "AI服务异常"),
@@ -65,7 +68,9 @@ public enum ErrorCode {
 
     // ==================== 限流熔断 4xxxx ====================
     RATE_LIMIT_EXCEEDED(40001, "请求过于频繁，请稍后重试"),
-    CIRCUIT_BREAKER_OPEN(40002, "服务熔断中，请稍后重试");
+    CIRCUIT_BREAKER_OPEN(40002, "服务熔断中，请稍后重试"),
+    TOKEN_EXPIRED(40003, "登录已过期，请重新登录"),
+    TOKEN_INVALID(40004, "无效的认证凭证");
 
     /**
      * 错误码 - 唯一标识

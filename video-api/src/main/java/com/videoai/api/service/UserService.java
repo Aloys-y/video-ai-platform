@@ -37,21 +37,13 @@ public class UserService {
     private static final SecureRandom RANDOM = new SecureRandom();
 
     /**
-     * 创建用户
-     * 自动生成API Key和Secret
+     * 创建用户（注册）
+     * 自动生成API Key和Secret，并设置密码
      */
     @Transactional
-    public User createUser(String username, String email, UserRole role) {
-        // 检查用户名是否已存在
-        Long count = userMapper.selectCount(
-                new LambdaQueryWrapper<User>().eq(User::getUsername, username)
-        );
-        if (count > 0) {
-            throw new RuntimeException("用户名已存在");
-        }
-
+    public User createUser(String username, String email, UserRole role, String rawPassword) {
         // 生成API Key
-        String apiKey = generateApiKey(true); // 生产环境
+        String apiKey = generateApiKey(true);
         String apiSecret = generateApiSecret();
 
         // 创建用户
@@ -60,20 +52,32 @@ public class UserService {
         user.setUsername(username);
         user.setEmail(email);
         user.setApiKey(apiKey);
-        user.setApiSecret(hashSecret(apiSecret)); // 加密存储
+        user.setApiSecret(hashSecret(apiSecret));
         user.setRole(role.getCode());
         user.setStatus(1);
         user.setRateLimit(role.getDefaultRateLimit());
+
+        // 设置密码（BCrypt 哈希）
+        if (rawPassword != null) {
+            user.setPassword(BCrypt.hashpw(rawPassword, BCrypt.gensalt(12)));
+        }
 
         userMapper.insert(user);
 
         log.info("User created, userId: {}, apiKey: {}", user.getUserId(), maskApiKey(apiKey));
 
         // Secret 只通过返回值传递给调用方，不记录到日志
-        // 调用方负责将 secret 展示给用户并提示保存
-        user.setApiSecret(apiSecret); // 返回明文 secret，仅此一次
+        user.setApiSecret(apiSecret);
 
         return user;
+    }
+
+    /**
+     * 创建用户（无密码，API Key 模式）
+     */
+    @Transactional
+    public User createUser(String username, String email, UserRole role) {
+        return createUser(username, email, role, null);
     }
 
     /**

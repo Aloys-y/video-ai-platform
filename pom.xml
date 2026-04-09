@@ -53,6 +53,7 @@
 
         <!-- 安全相关 -->
         <jbcrypt.version>0.4</jbcrypt.version>
+        <jjwt.version>0.12.5</jjwt.version>
 
         <!-- AI相关 -->
         <okhttp.version>4.12.0</okhttp.version>
@@ -199,6 +200,25 @@
                 <groupId>org.mindrot</groupId>
                 <artifactId>jbcrypt</artifactId>
                 <version>${jbcrypt.version}</version>
+            </dependency>
+
+            <!-- JWT -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
             </dependency>
 
             <!-- ==================== HTTP客户端 ==================== -->

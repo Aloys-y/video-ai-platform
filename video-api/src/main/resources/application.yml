@@ -80,3 +80,8 @@ videoai:
     user-upload-qps: 10
     # 单用户API QPS限制
     user-api-qps: 100
+
+  # JWT配置
+  jwt:
+    secret: ${JWT_SECRET:default-dev-secret-key-must-be-at-least-32-chars}
+    expiration: 86400000
