@@ -80,9 +80,19 @@ public final class RedisKey {
     /**
      * API限流Key
      * 用途：限制接口调用频率
+     * 过期时间：1秒（滑动窗口）
      */
     public static String apiRateLimit(String apiName, Long userId) {
         return PREFIX + "limit:api:" + apiName + ":" + userId;
+    }
+
+    /**
+     * 用户全局限流Key
+     * 用途：限制用户所有接口的调用频率
+     * 过期时间：1秒（滑动窗口）
+     */
+    public static String userRateLimit(Long userId) {
+        return PREFIX + "limit:user:" + userId;
     }
 
     // ==================== 配额相关 ====================

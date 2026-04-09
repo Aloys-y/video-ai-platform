@@ -51,6 +51,9 @@
         <!-- 对象存储 -->
         <minio.version>8.5.9</minio.version>
 
+        <!-- 安全相关 -->
+        <jbcrypt.version>0.4</jbcrypt.version>
+
         <!-- AI相关 -->
         <okhttp.version>4.12.0</okhttp.version>
 
@@ -191,6 +194,13 @@
                 <version>${minio.version}</version>
             </dependency>
 
+            <!-- ==================== 安全 ==================== -->
+            <dependency>
+                <groupId>org.mindrot</groupId>
+                <artifactId>jbcrypt</artifactId>
+                <version>${jbcrypt.version}</version>
+            </dependency>
+
             <!-- ==================== HTTP客户端 ==================== -->
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
@@ -239,6 +249,38 @@
 
     <!-- 构建配置 -->
     <build>
+        <plugins>
+            <!-- 编译插件配置 - 直接配置使所有子模块继承 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.12.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>UTF-8</encoding>
+                    <!-- MapStruct和Lombok的注解处理器配置 -->
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <!-- Lombok生成代码后，MapStruct才能正确处理 -->
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
         <pluginManagement>
             <plugins>
                 <!-- Spring Boot Maven插件：支持打包可执行JAR -->
@@ -253,41 +295,6 @@
                             </goals>
                         </execution>
                     </executions>
-                </plugin>
-
-                <!-- 编译插件配置 -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.12.1</version>
-                    <configuration>
-                        <source>${java.version}</source>
-                        <target>${java.version}</target>
-                        <encoding>UTF-8</encoding>
-                        <!-- MapStruct和Lombok的注解处理器配置 -->
-                        <!-- 面试点：为什么需要配置annotationProcessorPaths？
-                             MapStruct和Lombok都需要在编译期生成代码
-                             必须指定处理器的顺序，否则会冲突
-                        -->
-                        <annotationProcessorPaths>
-                            <path>
-                                <groupId>org.mapstruct</groupId>
-                                <artifactId>mapstruct-processor</artifactId>
-                                <version>${mapstruct.version}</version>
-                            </path>
-                            <path>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok</artifactId>
-                                <version>${lombok.version}</version>
-                            </path>
-                            <!-- Lombok生成代码后，MapStruct才能正确处理 -->
-                            <path>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok-mapstruct-binding</artifactId>
-                                <version>0.2.0</version>
-                            </path>
-                        </annotationProcessorPaths>
-                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>

@@ -4,6 +4,8 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -35,6 +37,7 @@ public class InitUploadRequest implements Serializable {
      * 限制：最长255字符，防止数据库溢出
      */
     @NotBlank(message = "文件名不能为空")
+    @Size(max = 255, message = "文件名最长255字符")
     private String fileName;
 
     /**
@@ -52,6 +55,7 @@ public class InitUploadRequest implements Serializable {
      * 1. 秒传判断
      * 2. 上传完成后校验完整性
      */
+    @Pattern(regexp = "^[a-fA-F0-9]{32}$", message = "文件哈希格式错误，应为32位MD5")
     private String fileHash;
 
     /**
@@ -74,5 +78,6 @@ public class InitUploadRequest implements Serializable {
      * 自定义元数据
      * JSON格式，用户可以附加任意信息
      */
+    @Size(max = 4096, message = "元数据最长4096字符")
     private String metadata;
 }

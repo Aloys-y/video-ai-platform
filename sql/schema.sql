@@ -3,6 +3,33 @@ CREATE DATABASE IF NOT EXISTS video_ai DEFAULT CHARACTER SET utf8mb4 COLLATE utf
 
 USE video_ai;
 
+-- ==================== 用户模块 ====================
+
+-- 用户表
+CREATE TABLE IF NOT EXISTS user (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
+    user_id         VARCHAR(32) NOT NULL COMMENT '业务用户ID',
+    username        VARCHAR(64) NOT NULL COMMENT '用户名',
+    email           VARCHAR(128) COMMENT '邮箱',
+    api_key         VARCHAR(64) NOT NULL COMMENT 'API Key',
+    api_secret      VARCHAR(128) COMMENT 'API Secret(加密存储)',
+    role            VARCHAR(20) DEFAULT 'USER' COMMENT '角色: USER/ADMIN/VIP',
+    status          TINYINT DEFAULT 1 COMMENT '1:正常 0:禁用',
+    rate_limit      INT DEFAULT 100 COMMENT '用户限流QPS',
+    created_at      DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+
+    UNIQUE KEY uk_user_id (user_id),
+    UNIQUE KEY uk_api_key (api_key),
+    UNIQUE KEY uk_email (email),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
+
+-- 注意：测试用户由 DataInitializer（@Profile("dev")）在应用启动时自动创建
+-- 不在 SQL 中硬编码任何凭证，避免泄露到版本控制
+
+-- ==================== 上传模块 ====================
+
 -- 上传会话表（支持断点续传）
 CREATE TABLE IF NOT EXISTS upload_session (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
