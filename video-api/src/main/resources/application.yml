@@ -85,3 +85,12 @@ videoai:
   jwt:
     secret: ${JWT_SECRET:default-dev-secret-key-must-be-at-least-32-chars}
     expiration: 86400000
+
+# SpringDoc / Swagger配置
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: method

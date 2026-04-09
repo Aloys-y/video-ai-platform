@@ -58,6 +58,9 @@
         <!-- AI相关 -->
         <okhttp.version>4.12.0</okhttp.version>
 
+        <!-- API文档 -->
+        <springdoc.version>2.3.0</springdoc.version>
+
         <!-- 测试相关 -->
         <junit.version>5.10.2</junit.version>
         <mockito.version>5.10.0</mockito.version>
