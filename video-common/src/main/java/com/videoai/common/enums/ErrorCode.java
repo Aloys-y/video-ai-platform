@@ -37,7 +37,8 @@ public enum ErrorCode {
     UPLOAD_FILE_TYPE_NOT_SUPPORT(20005, "文件类型不支持"),
     UPLOAD_FILE_TOO_LARGE(20006, "文件大小超出限制"),
     UPLOAD_CHUNK_UPLOADING(20007, "分片正在上传中"),
-    UPLOAD_MERGE_FAILED(20008, "文件合并失败"),
+    UPLOAD_CHUNK_UPLOAD_FAILED(20008, "分片上传失败"),
+    UPLOAD_MERGE_FAILED(20009, "文件合并失败"),
 
     // ==================== 任务相关 21xxx ====================
     TASK_NOT_FOUND(21001, "任务不存在"),
