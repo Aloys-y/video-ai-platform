@@ -15,24 +15,24 @@
 
 | 类别 | 技术选型 | 版本 |
 |------|---------|------|
-| 核心框架 | Spring Boot | 3.2.x |
-| 数据库 | MySQL + MyBatis-Plus | 8.0 / 3.5.x |
-| 缓存 | Redis + Redisson | 7.0 / 3.27.x |
+| 核心框架 | Spring Boot | 3.2.4 |
+| 数据库 | MySQL + MyBatis-Plus | 8.0 / 3.5.5 |
+| 缓存 | Redis + Redisson | 7.0 / 3.27.0 |
 | 消息队列 | Kafka | 3.6.x |
-| 对象存储 | MinIO | latest |
+| 对象存储 | MinIO | 8.5.9 |
 | AI服务 | Claude API | - |
-| 前端 | Vue 3 + Vite | 3.4.x |
+| 接口文档 | SpringDoc OpenAPI (Swagger UI) | 2.3.0 |
+| 前端 | Vue 3 + Vite（规划中） | - |
 
 ## 项目结构
 
 ```
-video-ai-platform/
+DoVideoAI/
 ├── docs/                    # 架构设计文档
 ├── video-api/              # API服务（用户交互入口）
 ├── video-worker/           # Worker服务（后台任务处理）
 ├── video-common/           # 公共模块（领域模型、工具类）
 ├── video-infrastructure/   # 基础设施（MySQL、Redis、Kafka配置）
-├── frontend/               # 前端项目（Vue3）
 ├── sql/                    # 数据库脚本
 └── docker/                 # Docker配置
 ```
@@ -76,70 +76,80 @@ mvn spring-boot:run
 
 ### 5. 访问服务
 
+- Swagger UI: http://localhost:8080/swagger-ui.html
 - API服务: http://localhost:8080/api
 - MinIO控制台: http://localhost:9001 (minioadmin/minioadmin)
 - Kafka UI: http://localhost:8090
 - Druid监控: http://localhost:8080/api/druid (admin/admin)
 
-## 核心功能
+## 已实现功能
 
-### 1. 分片上传
+### 认证体系（双模式）
 
+支持两种认证方式，可按场景选用：
+
+**用户名密码认证**
 ```bash
-# 初始化上传
-POST /api/upload/init
+# 注册
+POST /api/auth/register
 {
-    "fileName": "test.mp4",
-    "fileSize": 104857600,
-    "fileHash": "md5hash...",
-    "chunkSize": 5242880
+    "username": "testuser",
+    "email": "test@example.com",
+    "password": "123456"
 }
 
-# 上传分片
-POST /api/upload/chunk
-Content-Type: multipart/form-data
-uploadId: xxx
-chunkIndex: 0
-file: (binary)
-
-# 完成上传
-POST /api/upload/complete
+# 登录
+POST /api/auth/login
 {
-    "uploadId": "xxx"
+    "username": "testuser",
+    "password": "123456"
 }
+# 返回 JWT Token
+
+# 生成 API Key
+GET /api/auth/api-key
+Authorization: Bearer <token>
 ```
 
-### 2. 任务查询
-
+**API Key 认证**
 ```bash
-# 查询任务状态
-GET /api/task/{taskId}
-
-# 查询任务列表
-GET /api/task/list?userId=1&pageNum=1&pageSize=10
+# 使用 API Key 直接调用接口
+GET /api/xxx
+X-API-Key: <your-api-key>
 ```
 
-### 3. 结果获取
+### 限流保护
 
-```bash
-# 获取分析结果
-GET /api/result/{taskId}
-```
+- **全局限流**：Guava 令牌桶，保护系统整体负载
+- **用户级限流**：Redis 原子计数器，按用户维度限流
+
+### 接口文档
+
+启动后访问 Swagger UI 查看完整的接口文档，支持在线调试：
+- http://localhost:8080/swagger-ui.html
 
 ## 架构亮点
 
-| 亮点 | 说明 |
-|------|------|
-| **分片上传+断点续传** | 支持GB级大文件，网络中断可恢复 |
-| **Kafka消息队列** | 削峰填谷，支持万级QPS |
-| **多级限流** | 网关、应用、消费三层限流保护 |
-| **成本控制** | 预估扣费、配额管理、智能抽帧 |
-| **状态机** | 任务状态流转可控，避免状态混乱 |
+| 亮点 | 说明 | 状态 |
+|------|------|------|
+| **双认证体系** | JWT Bearer Token + API Key，灵活适配不同场景 | ✅ |
+| **多级限流** | Guava 全局限流 + Redis 用户级限流 | ✅ |
+| **统一响应** | ApiResponse 统一包装，ErrorCode 结构化错误码 | ✅ |
+| **分片上传+断点续传** | 支持GB级大文件，网络中断可恢复 | 🔲 |
+| **Kafka消息队列** | 削峰填谷，支持万级QPS | 🔲 |
+| **成本控制** | 预估扣费、配额管理、智能抽帧 | 🔲 |
+| **状态机** | 任务状态流转可控，避免状态混乱 | 🔲 |
 
 ## 开发进度
 
-- [x] 项目架构设计
-- [x] 基础模块搭建
+- [x] 项目架构设计 & 多模块搭建
+- [x] 数据库设计（5张表）
+- [x] 基础设施层（MyBatis-Plus、Redis、Kafka 常量）
+- [x] 用户注册 & 登录（JWT + BCrypt）
+- [x] 双认证体系（JWT Bearer + API Key）
+- [x] 多级限流（Guava 全局 + Redis 用户级）
+- [x] SpringDoc OpenAPI (Swagger UI) 接口文档
+- [x] CORS 跨域配置
 - [ ] 上传功能实现
   - [ ] 分片上传
   - [ ] 断点续传

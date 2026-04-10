@@ -7,6 +7,7 @@ import com.videoai.common.dto.request.RegisterRequest;
 import com.videoai.common.dto.response.AuthResponse;
 import com.videoai.common.enums.ErrorCode;
 import com.videoai.common.enums.UserRole;
+import com.videoai.common.exception.BusinessException;
 import com.videoai.infra.mysql.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +52,7 @@ public class AuthService {
                 .userId(user.getUserId())
                 .username(user.getUsername())
                 .role(user.getRole())
-                .apiKey(user.getMaskedApiKey())
+                .apiKey(user.getApiKey())
                 .build();
     }
 
@@ -82,21 +83,5 @@ public class AuthService {
                 .role(user.getRole())
                 .apiKey(user.getMaskedApiKey())
                 .build();
-    }
-
-    /**
-     * 业务异常（内部使用，避免引入新文件）
-     */
-    public static class BusinessException extends RuntimeException {
-        private final ErrorCode errorCode;
-
-        public BusinessException(ErrorCode errorCode) {
-            super(errorCode.getMessage());
-            this.errorCode = errorCode;
-        }
-
-        public ErrorCode getErrorCode() {
-            return errorCode;
-        }
     }
 }
