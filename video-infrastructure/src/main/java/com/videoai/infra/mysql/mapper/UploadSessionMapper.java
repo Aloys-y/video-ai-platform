@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.videoai.common.domain.UploadSession;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 /**
@@ -20,6 +21,18 @@ import org.apache.ibatis.annotations.Update;
  */
 @Mapper
 public interface UploadSessionMapper extends BaseMapper<UploadSession> {
+
+    /**
+     * 根据业务主键查询
+     */
+    @Select("SELECT * FROM upload_session WHERE upload_id = #{uploadId}")
+    UploadSession selectByUploadId(@Param("uploadId") String uploadId);
+
+    /**
+     * 根据文件哈希查询（秒传）
+     */
+    @Select("SELECT * FROM upload_session WHERE file_hash = #{fileHash} AND status = 2 LIMIT 1")
+    UploadSession selectByFileHash(@Param("fileHash") String fileHash);
 
     /**
      * 原子性添加已上传分片
