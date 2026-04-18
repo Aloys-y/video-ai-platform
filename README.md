@@ -128,6 +128,46 @@ X-API-Key: <your-api-key>
 启动后访问 Swagger UI 查看完整的接口文档，支持在线调试：
 - http://localhost:8080/swagger-ui.html
 
+### 视频上传
+
+支持大文件分片上传，完整流程：初始化 → 分片上传 → 合并完成 → 进度查询
+
+**初始化上传**
+```bash
+POST /api/upload/init
+Authorization: Bearer <token>
+{
+    "fileName": "video.mp4",
+    "fileSize": 1073741824,
+    "fileHash": "sha256hash...",
+    "chunkSize": 5242880
+}
+# 返回 uploadId, totalChunks, chunkSize
+# 如果 fileHash 匹配已有文件，直接秒传返回 taskId
+```
+
+**上传分片**（可并发）
+```bash
+POST /api/upload/chunk
+X-Upload-Id: <uploadId>
+X-Chunk-Index: 0
+Content-Type: multipart/form-data
+file: <binary>
+```
+
+**完成上传**
+```bash
+POST /api/upload/complete
+X-Upload-Id: <uploadId>
+# 返回 taskId，MinIO 服务端合并分片
+```
+
+**查询进度**
+```bash
+GET /api/upload/status/<uploadId>
+# 返回已传分片列表、进度百分比、状态
+```
+
 ## 架构亮点
 
 | 亮点 | 说明 | 状态 |
@@ -135,7 +175,7 @@ X-API-Key: <your-api-key>
 | **双认证体系** | JWT Bearer Token + API Key，灵活适配不同场景 | ✅ |
 | **多级限流** | Guava 全局限流 + Redis 用户级限流 | ✅ |
 | **统一响应** | ApiResponse 统一包装，ErrorCode 结构化错误码 | ✅ |
-| **分片上传+断点续传** | 支持GB级大文件，网络中断可恢复 | 🔲 |
+| **分片上传+断点续传+秒传** | Redisson分布式锁双重检查，支持GB级大文件 | ✅ |
 | **Kafka消息队列** | 削峰填谷，支持万级QPS | 🔲 |
 | **成本控制** | 预估扣费、配额管理、智能抽帧 | 🔲 |
 | **状态机** | 任务状态流转可控，避免状态混乱 | 🔲 |
@@ -150,10 +190,11 @@ X-API-Key: <your-api-key>
 - [x] 多级限流（Guava 全局 + Redis 用户级）
 - [x] SpringDoc OpenAPI (Swagger UI) 接口文档
 - [x] CORS 跨域配置
-- [ ] 上传功能实现
-  - [ ] 分片上传
-  - [ ] 断点续传
-  - [ ] 秒传
+- [x] 上传功能实现
+  - [x] 分片上传（Redisson分布式锁 + 双重检查）
+  - [x] 断点续传（已传分片索引追踪）
+  - [x] 秒传（文件Hash去重）
+  - [x] MinIO Compose API 服务端合并
 - [ ] 任务处理实现
   - [ ] Kafka消息生产
   - [ ] Worker消费逻辑

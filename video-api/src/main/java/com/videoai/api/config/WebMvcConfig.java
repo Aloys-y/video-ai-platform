@@ -41,7 +41,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 1. 全局限流（最先执行）
-        registry.addInterceptor(rateLimitInterceptor)
+            registry.addInterceptor(rateLimitInterceptor)
                 .addPathPatterns("/**")
                 .order(1);
 
@@ -53,6 +53,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/druid/**",
                         "/actuator/**",
                         "/swagger-ui/**",
+                        "/swagger-ui.html",
                         "/v3/api-docs/**",
                         // 认证接口（公开）
                         "/auth/register",
