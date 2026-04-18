@@ -17,6 +17,7 @@
 
     <dependencies>
         <!-- 依赖common模块 -->
+        <!-- 父模块可以直接调用子模块的 Java 类、方法、资源。 -->
         <dependency>
             <groupId>com.videoai</groupId>
             <artifactId>video-common</artifactId>
