@@ -5,8 +5,11 @@ import com.videoai.common.domain.AnalysisTask;
 import com.videoai.common.enums.TaskStatus;
 import com.videoai.common.message.TaskMessage;
 import com.videoai.infra.kafka.topic.TopicConstant;
+import com.videoai.infra.minio.service.StorageService;
 import com.videoai.infra.mysql.mapper.AnalysisTaskMapper;
 import com.videoai.infra.redis.key.RedisKey;
+import com.videoai.worker.config.GlmConfig;
+import com.videoai.worker.service.AiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -36,6 +39,9 @@ public class TaskProcessor {
     private final AnalysisTaskMapper analysisTaskMapper;
     private final RedissonClient redissonClient;
     private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final AiService aiService;
+    private final StorageService storageService;
+    private final GlmConfig glmConfig;
 
     /**
      * 处理任务
@@ -103,35 +109,83 @@ public class TaskProcessor {
     }
 
     /**
-     * 实际处理逻辑
-     * TODO: 迭代4 - FFmpeg抽帧 + Claude AI分析
+     * 实际处理逻辑：GLM视频分析
      */
     private void doProcess(String taskId, AnalysisTask task) {
         try {
             log.info("Task processing started: {}", taskId);
             analysisTaskMapper.updateProgress(taskId, 10);
 
-            // TODO: 迭代4实现
-            // 1. 从MinIO下载视频
-            // 2. FFmpeg抽帧（2s间隔，1280x720）
-            // 3. 调用Claude API分析
-            // 4. 聚合结果
+            // 1. 生成MinIO预签名URL
+            String videoUrl = task.getVideoUrl();
+            String presignedUrl = storageService.getPresignedUrl(
+                    extractObjectPath(videoUrl),
+                    glmConfig.getPresignedUrlExpireHours());
+            log.info("Generated presigned URL for task: {}", taskId);
+            analysisTaskMapper.updateProgress(taskId, 20);
 
-            analysisTaskMapper.updateProgress(taskId, 50);
+            // 2. 调用GLM API分析视频
+            String aiResult = aiService.analyzeVideo(presignedUrl);
+            analysisTaskMapper.updateProgress(taskId, 80);
 
-            // 占位：模拟处理完成
+            // 3. 提取摘要（简单截取summary字段）
+            String summary = extractSummary(aiResult);
+
+            // 4. 完成任务
             analysisTaskMapper.completeTask(taskId,
-                    "{\"status\":\"completed\",\"note\":\"placeholder - AI integration pending\"}",
-                    "Placeholder summary - awaiting AI integration",
-                    0, 0L);
+                    aiResult,
+                    summary,
+                    0,  // frameCount - 不再抽帧
+                    0L  // tokensUsed - GLM响应不直接暴露token数
+            );
 
-            log.info("Task completed (placeholder): {}", taskId);
+            log.info("Task completed: {}", taskId);
             sendTaskEvent(taskId, "COMPLETED", null);
 
         } catch (Exception e) {
             log.error("Task doProcess error: {}", taskId, e);
             handleFailure(taskId, e.getMessage());
         }
+    }
+
+    /**
+     * 从视频URL提取MinIO对象路径
+     * videoUrl格式可能是完整URL或相对路径
+     */
+    private String extractObjectPath(String videoUrl) {
+        if (videoUrl == null) return "";
+        // 如果是完整URL（包含bucket名），提取对象路径
+        // 格式：/video-ai/uploads/xxx/file.mp4 → uploads/xxx/file.mp4
+        if (videoUrl.startsWith("/")) {
+            // 去掉开头的bucket名前缀（如果有）
+            String path = videoUrl.startsWith("/") ? videoUrl.substring(1) : videoUrl;
+            if (path.startsWith("video-ai/")) {
+                return path.substring("video-ai/".length());
+            }
+            return path;
+        }
+        // 已经是相对路径，直接返回
+        return videoUrl;
+    }
+
+    /**
+     * 从AI返回的JSON中提取summary
+     */
+    private String extractSummary(String aiResult) {
+        if (aiResult == null || aiResult.isEmpty()) return "";
+        try {
+            // 简单提取："summary": "xxx" 之间的内容
+            int idx = aiResult.indexOf("\"summary\"");
+            if (idx < 0) return aiResult.length() > 200 ? aiResult.substring(0, 200) : aiResult;
+            int start = aiResult.indexOf("\"", idx + 10) + 1;
+            int end = aiResult.indexOf("\"", start);
+            if (start > 0 && end > start) {
+                return aiResult.substring(start, end);
+            }
+        } catch (Exception e) {
+            log.warn("Failed to extract summary, using first 200 chars", e);
+        }
+        return aiResult.length() > 200 ? aiResult.substring(0, 200) : aiResult;
     }
 
     /**

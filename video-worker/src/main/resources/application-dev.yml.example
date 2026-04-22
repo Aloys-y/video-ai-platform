@@ -46,12 +46,12 @@ minio:
   secret-key: YOUR_MINIO_SECRET_KEY
   bucket-name: video-ai
 
-# AI服务配置
+# 智谱AI GLM配置
 ai:
-  claude:
-    api-key: YOUR_CLAUDE_API_KEY
-    base-url: https://api.anthropic.com
-    model: claude-3-opus-20240229
+  glm:
+    api-key: YOUR_ZHIPU_API_KEY
+    model: glm-4.6v-flash
     max-tokens: 4096
-    # 请求超时（秒）
-    timeout: 60
+    timeout: 120
+    # MinIO预签名URL过期时间（小时）
+    presigned-url-expire-hours: 2
