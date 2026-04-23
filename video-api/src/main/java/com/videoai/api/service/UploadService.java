@@ -296,14 +296,17 @@ public class UploadService {
         return task;
     }
 
-    private java.util.Map<String, Object> buildTaskMessage(AnalysisTask task) {
-        return java.util.Map.of(
-                "taskId", task.getTaskId(),
-                "uploadId", task.getUploadId(),
-                "userId", task.getUserId(),
-                "videoUrl", task.getVideoUrl(),
-                "status", task.getStatus()
-        );
+    private com.videoai.common.message.TaskMessage buildTaskMessage(AnalysisTask task) {
+        return com.videoai.common.message.TaskMessage.builder()
+                .taskId(task.getTaskId())
+                .uploadId(task.getUploadId())
+                .userId(task.getUserId())
+                .videoUrl(task.getVideoUrl())
+                .retryCount(0)
+                .timestamp(System.currentTimeMillis())
+                .priority(5)
+                .analysisType("FULL")
+                .build();
     }
 
     private void refreshProgressCache(String uploadId) {

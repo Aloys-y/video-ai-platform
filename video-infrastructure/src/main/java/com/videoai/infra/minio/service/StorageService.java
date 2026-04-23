@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 对象存储服务，封装 MinIO 操作
@@ -108,6 +109,30 @@ public class StorageService {
     public void removeObjects(List<String> objectNames) {
         for (String name : objectNames) {
             removeObject(name);
+        }
+    }
+
+    /**
+     * 生成预签名URL（临时访问链接）
+     * 用于让GLM服务器下载视频
+     *
+     * @param objectName 对象路径
+     * @param expireHours 过期时间（小时）
+     */
+    public String getPresignedUrl(String objectName, int expireHours) {
+        try {
+            String url = minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .bucket(minioConfig.getBucketName())
+                            .object(objectName)
+                            .expiry(expireHours, TimeUnit.HOURS)
+                            .method(io.minio.http.Method.GET)
+                            .build());
+            log.debug("Generated presigned URL for: {}, expires in {}h", objectName, expireHours);
+            return url;
+        } catch (Exception e) {
+            log.error("Failed to generate presigned URL: {}", objectName, e);
+            throw new RuntimeException("Presigned URL generation failed", e);
         }
     }
 }
