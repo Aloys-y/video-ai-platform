@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DoVideoAI — AI 视频分析</title>
+  <meta name="description" content="AI 驱动的视频内容分析工具">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+  <!-- Theme -->
+  <link rel="stylesheet" href="css/apex-theme.css">
+</head>
+<body>
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Navigation Bar -->
+  <nav id="navbar" class="navbar" role="navigation" aria-label="主导航"></nav>
+
+  <!-- Main Content -->
+  <main class="main-content container" tabindex="-1">
+
+    <!-- ========== Auth Page ========== -->
+    <section id="page-auth" class="page-section auth-page" aria-label="登录注册">
+      <div class="auth-panel">
+        <div class="auth-panel__logo">
+          <h1>Do<span>Video</span>AI</h1>
+          <p class="hud-label" style="margin-top:8px">AI Video Analysis Platform</p>
+        </div>
+
+        <div class="card">
+          <!-- Tabs -->
+          <div class="auth-tabs" role="tablist">
+            <button class="auth-tab active" data-tab="login" role="tab" aria-selected="true">登录</button>
+            <button class="auth-tab" data-tab="register" role="tab" aria-selected="false">注册</button>
+          </div>
+
+          <!-- Login Form -->
+          <form id="form-login" class="auth-form active" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="login-email">邮箱</label>
+              <input class="form-input" type="email" id="login-email" name="email" placeholder="your@email.com" required autocomplete="email">
+              <div class="form-error"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="login-password">密码</label>
+              <input class="form-input" type="password" id="login-password" name="password" placeholder="输入密码" required autocomplete="current-password">
+              <div class="form-error"></div>
+            </div>
+            <div class="form-error form-error--general" style="margin-bottom:16px;text-align:center"></div>
+            <button type="submit" class="btn btn--primary" style="width:100%">
+              <span class="btn__text">登录</span>
+            </button>
+          </form>
+
+          <!-- Register Form -->
+          <form id="form-register" class="auth-form" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="reg-username">用户名</label>
+              <input class="form-input" type="text" id="reg-username" name="username" placeholder="输入用户名" required autocomplete="username">
+              <div class="form-error"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="reg-email">邮箱</label>
+              <input class="form-input" type="email" id="reg-email" name="email" placeholder="your@email.com" required autocomplete="email">
+              <div class="form-error"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="reg-password">密码</label>
+              <input class="form-input" type="password" id="reg-password" name="password" placeholder="至少 6 位" required autocomplete="new-password">
+              <div class="form-error"></div>
+            </div>
+            <div class="form-error form-error--general" style="margin-bottom:16px;text-align:center"></div>
+            <button type="submit" class="btn btn--primary" style="width:100%">
+              <span class="btn__text">注册</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== Dashboard Page ========== -->
+    <section id="page-dashboard" class="page-section" aria-label="任务列表">
+      <div class="dashboard-header">
+        <h2 class="hud-title">分析任务</h2>
+        <a href="#/upload" class="btn btn--primary btn--small">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span class="btn__text">上传视频</span>
+        </a>
+      </div>
+      <hr class="divider">
+      <div id="task-list"></div>
+      <div id="pagination"></div>
+    </section>
+
+    <!-- ========== Upload Page ========== -->
+    <section id="page-upload" class="page-section" aria-label="上传视频">
+      <div class="dashboard-header">
+        <h2 class="hud-title">上传视频</h2>
+        <a href="#/dashboard" class="btn btn--ghost btn--small">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+          <span class="btn__text">返回列表</span>
+        </a>
+      </div>
+      <hr class="divider">
+
+      <!-- Upload Zone -->
+      <div id="upload-zone" class="upload-zone" role="button" tabindex="0" aria-label="点击或拖拽上传视频文件">
+        <svg class="upload-zone__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="17 8 12 3 7 8" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="12" y1="3" x2="12" y2="15" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="upload-zone__title">拖拽视频到此处</div>
+        <div class="upload-zone__hint">或点击选择文件</div>
+        <div class="upload-zone__formats">支持 MP4 / AVI / MOV / MKV / WMV / FLV &mdash; 最大 5GB</div>
+        <input type="file" id="file-input" accept=".mp4,.avi,.mov,.mkv,.wmv,.flv" style="display:none" aria-hidden="true">
+      </div>
+
+      <!-- Upload Progress -->
+      <div id="upload-progress-section" class="upload-progress hidden">
+        <div class="card">
+          <div class="upload-progress__file-info">
+            <div>
+              <div class="upload-progress__filename" id="upload-filename"></div>
+              <div class="upload-progress__size" id="upload-filesize"></div>
+            </div>
+            <div class="upload-progress__status" id="upload-status"></div>
+          </div>
+          <div class="progress progress--large">
+            <div class="progress__bar" id="upload-progress-bar" style="width:0%"></div>
+          </div>
+          <div class="progress__label">
+            <span id="upload-progress-label">0 / 0 分片 (0%)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Instant Upload Banner -->
+      <div id="upload-instant" class="hidden">
+        <div class="instant-banner">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:8px"><polyline points="20 6 9 17 4 12"/></svg>
+          秒传成功 — 文件已存在，正在开始分析
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== Task Detail Page ========== -->
+    <section id="page-task-detail" class="page-section" aria-label="任务详情">
+      <div class="dashboard-header">
+        <h2 class="hud-title">任务详情</h2>
+        <a href="#/dashboard" class="btn btn--ghost btn--small">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+          <span class="btn__text">返回列表</span>
+        </a>
+      </div>
+      <hr class="divider">
+      <div id="task-detail-content"></div>
+    </section>
+
+  </main>
+
+  <!-- Scripts (order matters) -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/upload.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/task-detail.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
