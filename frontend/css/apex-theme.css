@@ -1156,12 +1156,59 @@ h4 { font-size: 1.1rem; }
 }
 
 /* === Responsive === */
+.navbar__hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: var(--space-sm);
+  margin-left: auto;
+}
+
 @media (max-width: 768px) {
   .navbar {
     padding: 0 var(--space-md);
   }
-  .navbar__user {
+  .navbar__hamburger {
+    display: flex;
+    align-items: center;
+  }
+  .navbar__links,
+  .navbar__user,
+  .navbar__logout {
     display: none;
+  }
+  .navbar.menu-open .navbar__links,
+  .navbar.menu-open .navbar__user,
+  .navbar.menu-open .navbar__logout {
+    display: flex;
+  }
+  .navbar.menu-open {
+    flex-wrap: wrap;
+    height: auto;
+    padding-bottom: var(--space-md);
+  }
+  .navbar.menu-open .navbar__links {
+    order: 4;
+    width: 100%;
+    flex-direction: column;
+    margin-left: 0;
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--border-default);
+  }
+  .navbar.menu-open .navbar__user {
+    order: 5;
+    width: 100%;
+    margin-left: 0;
+    padding-left: 0;
+    border-left: none;
+    padding-top: var(--space-xs);
+  }
+  .navbar.menu-open .navbar__logout {
+    order: 3;
+    margin-left: auto;
   }
   .task-detail {
     grid-template-columns: 1fr;
