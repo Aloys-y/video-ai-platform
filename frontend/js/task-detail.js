@@ -116,11 +116,24 @@ const TaskDetail = {
       `;
     } else if (task.status === 'FAILED' || task.status === 'DEAD') {
       resultHtml = `
-        <div class="card result-section">
+        <div class="card result-section" style="text-align:center;padding:48px 24px">
+          <div style="font-size:48px;margin-bottom:16px;opacity:0.3">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent-red)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </div>
           <div class="badge badge--${statusClass}" style="margin-bottom:16px">${statusText}</div>
           <div class="result-section__title">错误信息</div>
-          <p style="color:var(--accent-red)">${this.escapeHtml(task.errorMessage || '未知错误')}</p>
+          <p style="color:var(--accent-red);margin-top:8px">${this.escapeHtml(task.errorMessage || '未知错误')}</p>
           ${canRetry ? `<button class="btn btn--primary btn--small mt-lg" onclick="TaskDetail.confirmRetry()">重新分析</button>` : ''}
+        </div>
+      `;
+    } else {
+      resultHtml = `
+        <div class="card result-section" style="text-align:center;padding:48px 24px">
+          <div style="font-size:48px;margin-bottom:16px;opacity:0.3">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          </div>
+          <div class="badge badge--${statusClass}" style="margin-bottom:12px">${statusText}</div>
+          <p style="color:var(--text-secondary);margin-top:8px">此任务已被取消，没有分析结果</p>
         </div>
       `;
     }
