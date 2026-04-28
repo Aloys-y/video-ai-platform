@@ -93,17 +93,30 @@ public class AiService {
 
             } catch (Exception e) {
                 lastException = e;
-                String msg = e.getMessage() != null ? e.getMessage() : "";
 
-                // 判断是否为 429（平台过载）— SDK 抛异常不返回 response
-                boolean is429 = msg.contains("429") || msg.contains("overload")
-                        || msg.contains("overloaded") || msg.contains("rate")
-                        || msg.contains("Rate") || msg.contains("限流")
-                        || msg.contains("过载");
+                // 拼接整个异常链的消息（SDK 包装多层，429 信息在 cause 中）
+                StringBuilder sb = new StringBuilder();
+                Throwable t = e;
+                while (t != null) {
+                    if (sb.length() > 0) sb.append(" | ");
+                    sb.append(t.getClass().getSimpleName());
+                    if (t.getMessage() != null) {
+                        sb.append(": ").append(t.getMessage());
+                    }
+                    t = t.getCause();
+                }
+                String msg = sb.toString();
+                log.warn("[AiService] Exception chain: {}", msg);
 
-                if (is429 && attempt < MAX_429_RETRIES) {
+                // 判断是否为 429（平台过载）
+                // SDK 内部吞掉 ZAiHttpException，重新抛 RuntimeException("Call Failed")，无 cause
+                // 因此匹配异常链关键字 + "Call Failed"（SDK 对 429/5xx 的统一包装）
+                boolean isRetryable = msg.contains("429") || msg.contains("overload")
+                        || msg.contains("overloaded") || msg.contains("Call Failed");
+
+                if (isRetryable && attempt < MAX_429_RETRIES) {
                     int delay = RETRY_DELAYS_MS[attempt];
-                    log.warn("GLM API 429 (platform overload), retrying in {}ms, attempt: {}/{}",
+                    log.warn("GLM API retryable error, retrying in {}ms, attempt: {}/{}",
                             delay, attempt + 1, MAX_429_RETRIES);
                     try {
                         Thread.sleep(delay);
