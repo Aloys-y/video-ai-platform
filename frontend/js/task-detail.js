@@ -36,17 +36,19 @@ const TaskDetail = {
       this.task = await Api.get(`/task/${this.taskId}`);
       this.render();
 
-      // 非终态 → 自动轮询
+      // 非终态 → 自动轮询（用递归 setTimeout 替代 setInterval，避免并发）
       if (!this.isFinalState(this.task.status)) {
-        this.startPolling();
+        this.scheduleNextPoll();
       }
     } catch (err) {
+      // H-06 fix: 加载失败时停止轮询
+      this.stopPolling();
       document.getElementById('task-detail-content').innerHTML = `
         <div class="empty-state">
           <div class="empty-state__title">加载失败</div>
           <div class="empty-state__desc">${err.message}</div>
           <div style="display:flex;gap:12px;justify-content:center;margin-top:16px">
-            <button class="btn btn--ghost btn--small" onclick="TaskDetail.loadTask()">重试</button>
+            <button class="btn btn--ghost btn--small" onclick="TaskDetail.retryLoad()">重试</button>
             <a href="#/dashboard" class="btn btn--ghost btn--small">返回列表</a>
           </div>
         </div>
@@ -62,13 +64,27 @@ const TaskDetail = {
   },
 
   /**
-   * 开始轮询
+   * 手动重试加载（停止轮询后由用户触发）
    */
-  startPolling() {
+  retryLoad() {
+    this.loadTask();
+  },
+
+  /**
+   * H-07 fix: 递归 setTimeout 替代 setInterval，避免并发请求重叠
+   */
+  scheduleNextPoll() {
     this.stopPolling();
-    this.pollTimer = setInterval(() => {
+    this.pollTimer = setTimeout(() => {
       this.loadTask();
     }, 3000);
+  },
+
+  /**
+   * 开始轮询（兼容旧调用）
+   */
+  startPolling() {
+    this.scheduleNextPoll();
   },
 
   /**
@@ -76,7 +92,7 @@ const TaskDetail = {
    */
   stopPolling() {
     if (this.pollTimer) {
-      clearInterval(this.pollTimer);
+      clearTimeout(this.pollTimer);
       this.pollTimer = null;
     }
   },

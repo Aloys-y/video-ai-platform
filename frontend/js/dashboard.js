@@ -3,6 +3,8 @@
  */
 
 const Dashboard = {
+  _menuListenerBound: false,
+
   state: {
     page: 1,
     size: 20,
@@ -18,10 +20,13 @@ const Dashboard = {
     this.state = { page: 1, size: 20, total: 0, tasks: [], loading: false };
     this.loadTasks();
 
-    // 点击空白关闭菜单
-    document.addEventListener('click', () => {
-      document.querySelectorAll('.task-card__menu').forEach(m => m.style.display = 'none');
-    });
+    // H-02 fix: 全局 click 监听只绑定一次
+    if (!this._menuListenerBound) {
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.task-card__menu').forEach(m => m.style.display = 'none');
+      });
+      this._menuListenerBound = true;
+    }
   },
 
   /**
@@ -84,6 +89,7 @@ const Dashboard = {
 
   /**
    * 渲染单个任务卡片
+   * H-01 fix: 使用 data-* 属性传递参数，避免 onclick 拼接用户输入
    */
   renderTaskCard(task) {
     const statusClass = task.status ? task.status.toLowerCase() : 'pending';
@@ -99,14 +105,14 @@ const Dashboard = {
         <div class="task-card__info">
           <div class="task-card__header">
             <div class="task-card__name">${this.escapeHtml(displayName)}</div>
-            <button class="task-card__menu-btn" onclick="event.stopPropagation(); Dashboard.toggleMenu('${task.taskId}')" aria-label="操作菜单">
+            <button class="task-card__menu-btn" data-action="toggle-menu" data-task-id="${task.taskId}" aria-label="操作菜单">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
             </button>
           </div>
           <div class="task-card__menu" id="menu-${task.taskId}" style="display:none" onclick="event.stopPropagation()">
-            <button class="menu-item" onclick="Dashboard.promptRename('${task.taskId}', '${this.escapeHtml(displayName)}')">重命名</button>
-            ${canRetry ? `<button class="menu-item" onclick="Dashboard.confirmRetry('${task.taskId}')">重新分析</button>` : ''}
-            ${canDelete ? `<button class="menu-item menu-item--danger" onclick="Dashboard.confirmDelete('${task.taskId}', '${this.escapeHtml(displayName)}')">删除</button>` : ''}
+            <button class="menu-item" data-action="rename" data-task-id="${task.taskId}" data-display-name="${this.escapeHtml(displayName)}">重命名</button>
+            ${canRetry ? `<button class="menu-item" data-action="retry" data-task-id="${task.taskId}">重新分析</button>` : ''}
+            ${canDelete ? `<button class="menu-item menu-item--danger" data-action="delete" data-task-id="${task.taskId}" data-display-name="${this.escapeHtml(displayName)}">删除</button>` : ''}
           </div>
           <div class="task-card__meta">
             <span class="badge badge--${statusClass}">${statusText}</span>
@@ -128,15 +134,19 @@ const Dashboard = {
   },
 
   /**
-   * 切换菜单显示
+   * H-03 fix: 带 loading 状态的异步操作
    */
-  toggleMenu(taskId) {
-    const menu = document.getElementById('menu-' + taskId);
-    if (!menu) return;
-    document.querySelectorAll('.task-card__menu').forEach(m => {
-      if (m.id !== 'menu-' + taskId) m.style.display = 'none';
-    });
-    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  async _withLoading(btn, asyncFn) {
+    if (btn.disabled) return;
+    btn.disabled = true;
+    btn.dataset.originalText = btn.textContent;
+    btn.textContent = '处理中...';
+    try {
+      await asyncFn();
+    } finally {
+      btn.disabled = false;
+      btn.textContent = btn.dataset.originalText;
+    }
   },
 
   /**
@@ -292,5 +302,29 @@ const Dashboard = {
     return div.innerHTML;
   },
 };
+
+// H-01 fix: 事件委托，通过 data-action 分发，避免 onclick 拼接用户输入
+document.addEventListener('click', (e) => {
+  const target = e.target.closest('[data-action]');
+  if (!target) return;
+
+  const action = target.dataset.action;
+  const taskId = target.dataset.taskId;
+  const displayName = target.dataset.displayName || '';
+
+  if (action === 'toggle-menu') {
+    e.stopPropagation();
+    Dashboard.toggleMenu(taskId);
+  } else if (action === 'rename') {
+    e.stopPropagation();
+    Dashboard._withLoading(target, () => Dashboard.promptRename(taskId, displayName));
+  } else if (action === 'retry') {
+    e.stopPropagation();
+    Dashboard._withLoading(target, () => Dashboard.confirmRetry(taskId));
+  } else if (action === 'delete') {
+    e.stopPropagation();
+    Dashboard._withLoading(target, () => Dashboard.confirmDelete(taskId, displayName));
+  }
+});
 
 window.Dashboard = Dashboard;
