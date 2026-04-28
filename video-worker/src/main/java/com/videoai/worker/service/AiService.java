@@ -13,6 +13,7 @@ import java.util.Arrays;
  * AI视频分析服务
  *
  * 封装GLM多模态模型调用，支持video_url输入的视频理解
+ * 包含429（平台过载）自动重试机制
  */
 @Slf4j
 @Service
@@ -21,6 +22,11 @@ public class AiService {
 
     private final ZhipuAiClient zhipuAiClient;
     private final GlmConfig glmConfig;
+
+    /** 429重试最大次数 */
+    private static final int MAX_429_RETRIES = 3;
+    /** 429重试间隔（毫秒）：10s, 30s, 60s */
+    private static final int[] RETRY_DELAYS_MS = {10_000, 30_000, 60_000};
 
     private static final String SYSTEM_PROMPT = """
             你是一个专业的视频内容分析助手。请对视频进行全面分析，返回以下JSON格式：
@@ -47,16 +53,60 @@ public class AiService {
             """;
 
     /**
-     * 分析视频内容
+     * 分析视频内容（含429自动重试）
      *
      * @param videoUrl 视频公网URL
      * @return AI返回的分析结果（JSON字符串）
      */
     public String analyzeVideo(String videoUrl) {
-        log.info("Calling GLM API for video analysis, model: {}, videoUrl: {}",
-                glmConfig.getModel(), videoUrl);
+        ChatCompletionCreateParams request = buildRequest(videoUrl);
 
-        ChatCompletionCreateParams request = ChatCompletionCreateParams.builder()
+        for (int attempt = 0; attempt <= MAX_429_RETRIES; attempt++) {
+            log.info("Calling GLM API, model: {}, attempt: {}/{}",
+                    glmConfig.getModel(), attempt + 1, MAX_429_RETRIES + 1);
+
+            ChatCompletionResponse response = zhipuAiClient.chat().createChatCompletion(request);
+
+            if (response.isSuccess() && response.getData() != null
+                    && response.getData().getChoices() != null
+                    && !response.getData().getChoices().isEmpty()) {
+
+                Object content = response.getData().getChoices().get(0).getMessage().getContent();
+                String result = content != null ? content.toString() : "";
+
+                log.info("GLM API response received, length: {}", result.length());
+                return result;
+            }
+
+            // 检查是否为429（平台过载）
+            String errorMsg = response.getMsg() != null ? response.getMsg() : "";
+            boolean is429 = errorMsg.contains("429") || errorMsg.contains("rate")
+                    || errorMsg.contains("Rate") || errorMsg.contains("overload")
+                    || errorMsg.contains("过载") || errorMsg.contains("限流");
+
+            if (is429 && attempt < MAX_429_RETRIES) {
+                int delay = RETRY_DELAYS_MS[attempt];
+                log.warn("GLM API 429 (platform overload), retrying in {}ms, attempt: {}/{}",
+                        delay, attempt + 1, MAX_429_RETRIES);
+                try {
+                    Thread.sleep(delay);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("GLM API call interrupted during 429 retry", e);
+                }
+                continue;
+            }
+
+            // 非429错误或重试耗尽
+            log.error("GLM API call failed: {}", errorMsg);
+            throw new RuntimeException("GLM API call failed: " + errorMsg);
+        }
+
+        throw new RuntimeException("GLM API call failed after " + MAX_429_RETRIES + " retries (429)");
+    }
+
+    private ChatCompletionCreateParams buildRequest(String videoUrl) {
+        return ChatCompletionCreateParams.builder()
                 .model(glmConfig.getModel())
                 .messages(Arrays.asList(
                         ChatMessage.builder()
@@ -81,22 +131,5 @@ public class AiService {
                 ))
                 .maxTokens(glmConfig.getMaxTokens())
                 .build();
-
-        ChatCompletionResponse response = zhipuAiClient.chat().createChatCompletion(request);
-
-        if (response.isSuccess() && response.getData() != null
-                && response.getData().getChoices() != null
-                && !response.getData().getChoices().isEmpty()) {
-
-            Object content = response.getData().getChoices().get(0).getMessage().getContent();
-            String result = content != null ? content.toString() : "";
-
-            log.info("GLM API response received, length: {}", result.length());
-            return result;
-        } else {
-            String errorMsg = response.getMsg() != null ? response.getMsg() : "Unknown error";
-            log.error("GLM API call failed: {}", errorMsg);
-            throw new RuntimeException("GLM API call failed: " + errorMsg);
-        }
     }
 }

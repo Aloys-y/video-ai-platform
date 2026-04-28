@@ -94,6 +94,9 @@ const TaskDetail = {
     const statusClass = (task.status || 'pending').toLowerCase();
     const statusText = this.getStatusText(task.status);
     const isFinal = this.isFinalState(task.status);
+    const displayName = task.taskName || this.extractFileName(task.videoUrl);
+    const canRetry = task.status === 'FAILED' || task.status === 'DEAD';
+    const canDelete = isFinal;
 
     let resultHtml = '';
     if (task.status === 'COMPLETED' && task.result) {
@@ -117,6 +120,7 @@ const TaskDetail = {
           <div class="badge badge--${statusClass}" style="margin-bottom:16px">${statusText}</div>
           <div class="result-section__title">错误信息</div>
           <p style="color:var(--accent-red)">${this.escapeHtml(task.errorMessage || '未知错误')}</p>
+          ${canRetry ? `<button class="btn btn--primary btn--small mt-lg" onclick="TaskDetail.confirmRetry()">重新分析</button>` : ''}
         </div>
       `;
     }
@@ -130,7 +134,7 @@ const TaskDetail = {
           </div>
           <div class="card task-sidebar__section">
             <div class="task-sidebar__label">文件</div>
-            <div class="task-sidebar__value">${this.escapeHtml(this.extractFileName(task.videoUrl))}</div>
+            <div class="task-sidebar__value">${this.escapeHtml(displayName)}</div>
           </div>
           <div class="card task-sidebar__section">
             <div class="task-sidebar__label">状态</div>
@@ -159,6 +163,24 @@ const TaskDetail = {
             <div class="task-sidebar__label">上传 ID</div>
             <div class="task-sidebar__value" style="font-size:0.8rem">${task.uploadId || '-'}</div>
           </div>
+
+          <!-- 操作按钮 -->
+          <div class="card task-sidebar__section task-sidebar__actions">
+            <button class="btn btn--ghost btn--small"
+                    onclick="TaskDetail.promptRename()">
+              重命名
+            </button>
+            ${canRetry ? `
+            <button class="btn btn--primary btn--small"
+                    onclick="TaskDetail.confirmRetry()">
+              重新分析
+            </button>` : ''}
+            ${canDelete ? `
+            <button class="btn btn--ghost btn--small" style="color:var(--accent-red);border-color:var(--accent-red)"
+                    onclick="TaskDetail.confirmDelete()">
+              删除任务
+            </button>` : ''}
+          </div>
         </div>
 
         <div class="task-result">
@@ -166,6 +188,53 @@ const TaskDetail = {
         </div>
       </div>
     `;
+  },
+
+  /**
+   * 重命名任务
+   */
+  async promptRename() {
+    const currentName = this.task.taskName || this.extractFileName(this.task.videoUrl);
+    const newName = prompt('请输入新的任务名称：', currentName);
+    if (!newName || newName.trim() === '' || newName === currentName) return;
+    try {
+      this.task = await Api.put(`/task/${this.taskId}/rename`, { taskName: newName.trim() });
+      App.toast('重命名成功', 'success');
+      this.render();
+    } catch (err) {
+      App.toast(err.message, 'error');
+    }
+  },
+
+  /**
+   * 重试任务
+   */
+  async confirmRetry() {
+    if (!confirm('确定要重新分析此任务吗？')) return;
+    try {
+      this.task = await Api.post(`/task/${this.taskId}/retry`);
+      App.toast('任务已重新提交', 'success');
+      this.render();
+      this.startPolling();
+    } catch (err) {
+      App.toast(err.message, 'error');
+    }
+  },
+
+  /**
+   * 删除任务
+   */
+  async confirmDelete() {
+    const name = this.task.taskName || this.extractFileName(this.task.videoUrl);
+    if (!confirm(`确定要删除任务「${name}」吗？此操作不可恢复。`)) return;
+    try {
+      await Api.del(`/task/${this.taskId}`);
+      App.toast('任务已删除', 'success');
+      this.stopPolling();
+      window.location.hash = '#/dashboard';
+    } catch (err) {
+      App.toast(err.message, 'error');
+    }
   },
 
   /**

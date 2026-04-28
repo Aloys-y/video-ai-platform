@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS upload_session (
 CREATE TABLE IF NOT EXISTS analysis_task (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
     task_id         VARCHAR(64) NOT NULL COMMENT '任务ID',
+    task_name       VARCHAR(255) DEFAULT NULL COMMENT '任务名称(用户自定义)',
     upload_id       VARCHAR(64) NOT NULL COMMENT '关联的上传ID',
     user_id         BIGINT NOT NULL COMMENT '用户ID',
     video_url       VARCHAR(512) NOT NULL COMMENT '视频URL',
@@ -83,6 +84,7 @@ CREATE TABLE IF NOT EXISTS analysis_task (
     created_at      DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     started_at      DATETIME COMMENT '开始处理时间',
     completed_at    DATETIME COMMENT '完成时间',
+    updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 
     UNIQUE KEY uk_task_id (task_id),
     INDEX idx_user_id (user_id),

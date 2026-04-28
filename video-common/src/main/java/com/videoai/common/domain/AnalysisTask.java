@@ -36,6 +36,11 @@ public class AnalysisTask {
     private String taskId;
 
     /**
+     * 任务名称（用户自定义）
+     */
+    private String taskName;
+
+    /**
      * 关联的上传会话ID
      */
     private String uploadId;

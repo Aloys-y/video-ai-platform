@@ -17,6 +17,11 @@ const Dashboard = {
   init() {
     this.state = { page: 1, size: 20, total: 0, tasks: [], loading: false };
     this.loadTasks();
+
+    // 点击空白关闭菜单
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.task-card__menu').forEach(m => m.style.display = 'none');
+    });
   },
 
   /**
@@ -84,13 +89,25 @@ const Dashboard = {
     const statusClass = task.status ? task.status.toLowerCase() : 'pending';
     const statusText = this.getStatusText(task.status);
     const progress = task.progress || 0;
-    const fileName = this.extractFileName(task.videoUrl);
+    const displayName = task.taskName || this.extractFileName(task.videoUrl);
     const time = task.createdAt ? this.formatTime(task.createdAt) : '';
+    const canRetry = task.status === 'FAILED' || task.status === 'DEAD';
+    const canDelete = this.isFinalState(task.status);
 
     return `
-      <div class="card task-card" onclick="window.location.hash='#/task/${task.taskId}'" role="button" tabindex="0" aria-label="查看任务 ${fileName}">
+      <div class="card task-card" onclick="window.location.hash='#/task/${task.taskId}'" role="button" tabindex="0" aria-label="查看任务 ${this.escapeHtml(displayName)}">
         <div class="task-card__info">
-          <div class="task-card__name">${this.escapeHtml(fileName)}</div>
+          <div class="task-card__header">
+            <div class="task-card__name">${this.escapeHtml(displayName)}</div>
+            <button class="task-card__menu-btn" onclick="event.stopPropagation(); Dashboard.toggleMenu('${task.taskId}')" aria-label="操作菜单">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+            </button>
+          </div>
+          <div class="task-card__menu" id="menu-${task.taskId}" style="display:none" onclick="event.stopPropagation()">
+            <button class="menu-item" onclick="Dashboard.promptRename('${task.taskId}', '${this.escapeHtml(displayName)}')">重命名</button>
+            ${canRetry ? `<button class="menu-item" onclick="Dashboard.confirmRetry('${task.taskId}')">重新分析</button>` : ''}
+            ${canDelete ? `<button class="menu-item menu-item--danger" onclick="Dashboard.confirmDelete('${task.taskId}', '${this.escapeHtml(displayName)}')">删除</button>` : ''}
+          </div>
           <div class="task-card__meta">
             <span class="badge badge--${statusClass}">${statusText}</span>
             ${task.retryCount > 0 ? `<span class="text-muted" style="margin-left:8px">重试 ${task.retryCount}/${task.maxRetry}</span>` : ''}
@@ -108,6 +125,61 @@ const Dashboard = {
         <div class="task-card__time">${time}</div>
       </div>
     `;
+  },
+
+  /**
+   * 切换菜单显示
+   */
+  toggleMenu(taskId) {
+    const menu = document.getElementById('menu-' + taskId);
+    if (!menu) return;
+    document.querySelectorAll('.task-card__menu').forEach(m => {
+      if (m.id !== 'menu-' + taskId) m.style.display = 'none';
+    });
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  },
+
+  /**
+   * 重命名任务
+   */
+  async promptRename(taskId, currentName) {
+    const newName = prompt('请输入新的任务名称：', currentName);
+    if (!newName || newName.trim() === '' || newName === currentName) return;
+    try {
+      await Api.put(`/task/${taskId}/rename`, { taskName: newName.trim() });
+      App.toast('重命名成功', 'success');
+      this.loadTasks();
+    } catch (err) {
+      App.toast(err.message, 'error');
+    }
+  },
+
+  /**
+   * 重试任务
+   */
+  async confirmRetry(taskId) {
+    if (!confirm('确定要重新分析此任务吗？')) return;
+    try {
+      await Api.post(`/task/${taskId}/retry`);
+      App.toast('任务已重新提交', 'success');
+      this.loadTasks();
+    } catch (err) {
+      App.toast(err.message, 'error');
+    }
+  },
+
+  /**
+   * 删除任务
+   */
+  async confirmDelete(taskId, name) {
+    if (!confirm(`确定要删除任务「${name}」吗？此操作不可恢复。`)) return;
+    try {
+      await Api.del(`/task/${taskId}`);
+      App.toast('任务已删除', 'success');
+      this.loadTasks();
+    } catch (err) {
+      App.toast(err.message, 'error');
+    }
   },
 
   /**
@@ -173,6 +245,10 @@ const Dashboard = {
   },
 
   // === 工具方法 ===
+
+  isFinalState(status) {
+    return ['COMPLETED', 'FAILED', 'DEAD', 'CANCELLED'].includes(status);
+  },
 
   getStatusText(status) {
     const map = {
