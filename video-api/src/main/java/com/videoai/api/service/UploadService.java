@@ -87,12 +87,10 @@ public class UploadService {
             UploadSession existing = uploadSessionMapper.selectByFileHash(request.getFileHash());
             if (existing != null && existing.getStatusEnum() == UploadStatus.MERGED) {
                 log.info("Instant upload hit, fileHash={}, existingUploadId={}", request.getFileHash(), existing.getUploadId());
-                // 创建新任务关联已有文件
-                AnalysisTask task = createAnalysisTask(userId, existing.getUploadId(), existing.getStoragePath());
+                // 秒传：不创建任务，等用户确认
                 return UploadInitResponse.builder()
                         .uploadId(existing.getUploadId())
                         .instantUpload(true)
-                        .taskId(task.getTaskId())
                         .build();
             }
         }
@@ -230,13 +228,12 @@ public class UploadService {
             // 6. 更新存储路径和状态
             uploadSessionMapper.setStoragePath(uploadId, videoPath);
 
-            // 7. 创建分析任务
-            AnalysisTask task = createAnalysisTask(session.getUserId(), uploadId, videoPath);
+            // 7. 不创建任务，等用户确认后通过 submitTask 创建
 
-            log.info("Upload completed and merged, uploadId={}, videoPath={}, taskId={}",
-                    uploadId, videoPath, task.getTaskId());
+            log.info("Upload completed and merged, uploadId={}, videoPath={}",
+                    uploadId, videoPath);
 
-            return task.getTaskId();
+            return videoPath;
         } catch (Exception e) {
             uploadSessionMapper.updateStatus(uploadId, UploadStatus.MERGE_FAILED.getCode());
             log.error("Merge failed, uploadId={}", uploadId, e);
@@ -253,6 +250,24 @@ public class UploadService {
             throw new BusinessException(ErrorCode.UPLOAD_SESSION_NOT_FOUND);
         }
         return buildProgressResponse(session);
+    }
+
+    /**
+     * 用户确认提交任务（上传完成后调用）
+     */
+    public String submitTask(String uploadId, String prompt) {
+        UploadSession session = uploadSessionMapper.selectByUploadId(uploadId);
+        if (session == null) {
+            throw new BusinessException(ErrorCode.UPLOAD_SESSION_NOT_FOUND);
+        }
+        if (session.getStoragePath() == null || session.getStoragePath().isEmpty()) {
+            throw new BusinessException(ErrorCode.UPLOAD_SESSION_NOT_FOUND, "文件尚未上传完成");
+        }
+
+        AnalysisTask task = createAnalysisTask(session.getUserId(), uploadId, session.getStoragePath(), prompt);
+        log.info("Task submitted by user, taskId={}, uploadId={}, prompt={}", task.getTaskId(), uploadId,
+                prompt != null ? prompt.length() + "chars" : "null");
+        return task.getTaskId();
     }
 
     // ==================== 私有方法 ====================
@@ -272,12 +287,13 @@ public class UploadService {
         return allowedTypes.contains(extension.toLowerCase());
     }
 
-    private AnalysisTask createAnalysisTask(Long userId, String uploadId, String storagePath) {
+    private AnalysisTask createAnalysisTask(Long userId, String uploadId, String storagePath, String prompt) {
         AnalysisTask task = new AnalysisTask();
         task.setTaskId(IdGenerator.generateTaskId());
         task.setUploadId(uploadId);
         task.setUserId(userId);
         task.setVideoUrl(storagePath);
+        task.setPrompt(prompt);
         task.setStatusEnum(TaskStatus.PENDING);
         task.setProgress(0);
         task.setRetryCount(0);
@@ -306,6 +322,7 @@ public class UploadService {
                 .timestamp(System.currentTimeMillis())
                 .priority(5)
                 .analysisType("FULL")
+                .prompt(task.getPrompt())
                 .build();
     }
 

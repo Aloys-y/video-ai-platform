@@ -36,6 +36,11 @@ public class AnalysisTask {
     private String taskId;
 
     /**
+     * 任务名称（用户自定义）
+     */
+    private String taskName;
+
+    /**
      * 关联的上传会话ID
      */
     private String uploadId;
@@ -54,6 +59,11 @@ public class AnalysisTask {
      * 视频时长（秒）
      */
     private Integer videoDuration;
+
+    /**
+     * 用户自定义分析提示词
+     */
+    private String prompt;
 
     // ==================== 状态管理 ====================
 

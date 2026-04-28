@@ -85,4 +85,37 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
             "updated_at = NOW() WHERE task_id = #{taskId}")
     int updateProgress(@Param("taskId") String taskId,
                        @Param("progress") Integer progress);
+
+    /**
+     * 重命名任务（含归属校验）
+     */
+    @Update("UPDATE analysis_task SET task_name = #{taskName}, " +
+            "updated_at = NOW() " +
+            "WHERE task_id = #{taskId} AND user_id = #{userId}")
+    int renameTask(@Param("taskId") String taskId,
+                   @Param("userId") Long userId,
+                   @Param("taskName") String taskName);
+
+    /**
+     * 重置任务为PENDING（用户手动重试）
+     * 同时清零retry_count、清除错误信息、重置进度和时间
+     */
+    @Update("UPDATE analysis_task SET status = 'PENDING', " +
+            "retry_count = 0, progress = 0, error_message = NULL, " +
+            "started_at = NULL, completed_at = NULL, updated_at = NOW() " +
+            "WHERE task_id = #{taskId} AND user_id = #{userId} " +
+            "AND status IN ('FAILED', 'DEAD')")
+    int resetForRetry(@Param("taskId") String taskId,
+                      @Param("userId") Long userId);
+
+    /**
+     * 逻辑删除任务（状态改为CANCELLED）
+     * 只允许终态任务删除
+     */
+    @Update("UPDATE analysis_task SET status = 'CANCELLED', " +
+            "updated_at = NOW() " +
+            "WHERE task_id = #{taskId} AND user_id = #{userId} " +
+            "AND status IN ('COMPLETED', 'DEAD', 'CANCELLED')")
+    int logicalDelete(@Param("taskId") String taskId,
+                      @Param("userId") Long userId);
 }

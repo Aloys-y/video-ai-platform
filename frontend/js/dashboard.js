@@ -3,6 +3,8 @@
  */
 
 const Dashboard = {
+  _menuListenerBound: false,
+
   state: {
     page: 1,
     size: 20,
@@ -11,12 +13,26 @@ const Dashboard = {
     loading: false,
   },
 
+  /** 保留上次页码，从详情页返回时不重置 */
+  _preservePage: false,
+
   /**
    * 初始化仪表盘
    */
   init() {
-    this.state = { page: 1, size: 20, total: 0, tasks: [], loading: false };
+    if (!this._preservePage) {
+      this.state = { page: 1, size: 20, total: 0, tasks: [], loading: false };
+    }
+    this._preservePage = false;
     this.loadTasks();
+
+    // H-02 fix: 全局 click 监听只绑定一次
+    if (!this._menuListenerBound) {
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.task-card__menu').forEach(m => m.style.display = 'none');
+      });
+      this._menuListenerBound = true;
+    }
   },
 
   /**
@@ -79,18 +95,31 @@ const Dashboard = {
 
   /**
    * 渲染单个任务卡片
+   * H-01 fix: 使用 data-* 属性传递参数，避免 onclick 拼接用户输入
    */
   renderTaskCard(task) {
     const statusClass = task.status ? task.status.toLowerCase() : 'pending';
     const statusText = this.getStatusText(task.status);
     const progress = task.progress || 0;
-    const fileName = this.extractFileName(task.videoUrl);
+    const displayName = task.taskName || this.extractFileName(task.videoUrl);
     const time = task.createdAt ? this.formatTime(task.createdAt) : '';
+    const canRetry = task.status === 'FAILED' || task.status === 'DEAD';
+    const canDelete = this.isFinalState(task.status);
 
     return `
-      <div class="card task-card" onclick="window.location.hash='#/task/${task.taskId}'" role="button" tabindex="0" aria-label="查看任务 ${fileName}">
+      <div class="card task-card" data-task-id="${task.taskId}" onclick="window.location.hash='#/task/${task.taskId}'" role="button" tabindex="0" aria-label="查看任务 ${this.escapeHtml(displayName)}">
         <div class="task-card__info">
-          <div class="task-card__name">${this.escapeHtml(fileName)}</div>
+          <div class="task-card__header">
+            <div class="task-card__name">${this.escapeHtml(displayName)}</div>
+            <button class="task-card__menu-btn" data-action="toggle-menu" data-task-id="${task.taskId}" aria-label="操作菜单">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+            </button>
+          </div>
+          <div class="task-card__menu" id="menu-${task.taskId}" style="display:none" onclick="event.stopPropagation()">
+            <button class="menu-item" data-action="rename" data-task-id="${task.taskId}" data-display-name="${this.escapeHtml(displayName)}">重命名</button>
+            ${canRetry ? `<button class="menu-item" data-action="retry" data-task-id="${task.taskId}">重新分析</button>` : ''}
+            ${canDelete ? `<button class="menu-item menu-item--danger" data-action="delete" data-task-id="${task.taskId}" data-display-name="${this.escapeHtml(displayName)}">删除</button>` : ''}
+          </div>
           <div class="task-card__meta">
             <span class="badge badge--${statusClass}">${statusText}</span>
             ${task.retryCount > 0 ? `<span class="text-muted" style="margin-left:8px">重试 ${task.retryCount}/${task.maxRetry}</span>` : ''}
@@ -108,6 +137,65 @@ const Dashboard = {
         <div class="task-card__time">${time}</div>
       </div>
     `;
+  },
+
+  /**
+   * H-03 fix: 带 loading 状态的异步操作
+   */
+  async _withLoading(btn, asyncFn) {
+    if (btn.disabled) return;
+    btn.disabled = true;
+    btn.dataset.originalText = btn.textContent;
+    btn.textContent = '处理中...';
+    try {
+      await asyncFn();
+    } finally {
+      btn.disabled = false;
+      btn.textContent = btn.dataset.originalText;
+    }
+  },
+
+  /**
+   * 重命名任务
+   */
+  async promptRename(taskId, currentName) {
+    const newName = prompt('请输入新的任务名称：', currentName);
+    if (!newName || newName.trim() === '' || newName === currentName) return;
+    try {
+      await Api.put(`/task/${taskId}/rename`, { taskName: newName.trim() });
+      App.toast('重命名成功', 'success');
+      this.loadTasks();
+    } catch (err) {
+      App.toast(err.message, 'error');
+    }
+  },
+
+  /**
+   * 重试任务
+   */
+  async confirmRetry(taskId) {
+    if (!confirm('确定要重新分析此任务吗？')) return;
+    try {
+      await Api.post(`/task/${taskId}/retry`);
+      App.toast('任务已重新提交', 'success');
+      this.loadTasks();
+    } catch (err) {
+      App.toast(err.message, 'error');
+    }
+  },
+
+  /**
+   * 删除任务
+   */
+  async confirmDelete(taskId, name) {
+    if (!confirm(`确定要删除任务「${name}」吗？此操作不可恢复。`)) return;
+    try {
+      await Api.del(`/task/${taskId}`);
+      App.toast('任务已删除', 'success');
+      this.loadTasks();
+    } catch (err) {
+      App.toast(err.message, 'error');
+    }
   },
 
   /**
@@ -174,6 +262,10 @@ const Dashboard = {
 
   // === 工具方法 ===
 
+  isFinalState(status) {
+    return ['COMPLETED', 'FAILED', 'DEAD', 'CANCELLED'].includes(status);
+  },
+
   getStatusText(status) {
     const map = {
       'PENDING': '等待中',
@@ -216,5 +308,38 @@ const Dashboard = {
     return div.innerHTML;
   },
 };
+
+// M-03: Task card 键盘导航 (Enter/Space)
+document.addEventListener('keydown', (e) => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('task-card')) {
+    e.preventDefault();
+    const taskId = e.target.dataset.taskId;
+    if (taskId) window.location.hash = `#/task/${taskId}`;
+  }
+});
+
+// H-01 fix: 事件委托，通过 data-action 分发，避免 onclick 拼接用户输入
+document.addEventListener('click', (e) => {
+  const target = e.target.closest('[data-action]');
+  if (!target) return;
+
+  const action = target.dataset.action;
+  const taskId = target.dataset.taskId;
+  const displayName = target.dataset.displayName || '';
+
+  if (action === 'toggle-menu') {
+    e.stopPropagation();
+    Dashboard.toggleMenu(taskId);
+  } else if (action === 'rename') {
+    e.stopPropagation();
+    Dashboard._withLoading(target, () => Dashboard.promptRename(taskId, displayName));
+  } else if (action === 'retry') {
+    e.stopPropagation();
+    Dashboard._withLoading(target, () => Dashboard.confirmRetry(taskId));
+  } else if (action === 'delete') {
+    e.stopPropagation();
+    Dashboard._withLoading(target, () => Dashboard.confirmDelete(taskId, displayName));
+  }
+});
 
 window.Dashboard = Dashboard;

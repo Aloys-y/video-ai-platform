@@ -36,17 +36,19 @@ const TaskDetail = {
       this.task = await Api.get(`/task/${this.taskId}`);
       this.render();
 
-      // 非终态 → 自动轮询
+      // 非终态 → 自动轮询（用递归 setTimeout 替代 setInterval，避免并发）
       if (!this.isFinalState(this.task.status)) {
-        this.startPolling();
+        this.scheduleNextPoll();
       }
     } catch (err) {
+      // H-06 fix: 加载失败时停止轮询
+      this.stopPolling();
       document.getElementById('task-detail-content').innerHTML = `
         <div class="empty-state">
           <div class="empty-state__title">加载失败</div>
           <div class="empty-state__desc">${err.message}</div>
           <div style="display:flex;gap:12px;justify-content:center;margin-top:16px">
-            <button class="btn btn--ghost btn--small" onclick="TaskDetail.loadTask()">重试</button>
+            <button class="btn btn--ghost btn--small" onclick="TaskDetail.retryLoad()">重试</button>
             <a href="#/dashboard" class="btn btn--ghost btn--small">返回列表</a>
           </div>
         </div>
@@ -62,13 +64,27 @@ const TaskDetail = {
   },
 
   /**
-   * 开始轮询
+   * 手动重试加载（停止轮询后由用户触发）
    */
-  startPolling() {
+  retryLoad() {
+    this.loadTask();
+  },
+
+  /**
+   * H-07 fix: 递归 setTimeout 替代 setInterval，避免并发请求重叠
+   */
+  scheduleNextPoll() {
     this.stopPolling();
-    this.pollTimer = setInterval(() => {
+    this.pollTimer = setTimeout(() => {
       this.loadTask();
     }, 3000);
+  },
+
+  /**
+   * 开始轮询（兼容旧调用）
+   */
+  startPolling() {
+    this.scheduleNextPoll();
   },
 
   /**
@@ -76,7 +92,7 @@ const TaskDetail = {
    */
   stopPolling() {
     if (this.pollTimer) {
-      clearInterval(this.pollTimer);
+      clearTimeout(this.pollTimer);
       this.pollTimer = null;
     }
   },
@@ -94,6 +110,9 @@ const TaskDetail = {
     const statusClass = (task.status || 'pending').toLowerCase();
     const statusText = this.getStatusText(task.status);
     const isFinal = this.isFinalState(task.status);
+    const displayName = task.taskName || this.extractFileName(task.videoUrl);
+    const canRetry = task.status === 'FAILED' || task.status === 'DEAD';
+    const canDelete = isFinal;
 
     let resultHtml = '';
     if (task.status === 'COMPLETED' && task.result) {
@@ -113,10 +132,24 @@ const TaskDetail = {
       `;
     } else if (task.status === 'FAILED' || task.status === 'DEAD') {
       resultHtml = `
-        <div class="card result-section">
+        <div class="card result-section" style="text-align:center;padding:48px 24px">
+          <div style="font-size:48px;margin-bottom:16px;opacity:0.3">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent-red)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </div>
           <div class="badge badge--${statusClass}" style="margin-bottom:16px">${statusText}</div>
           <div class="result-section__title">错误信息</div>
-          <p style="color:var(--accent-red)">${this.escapeHtml(task.errorMessage || '未知错误')}</p>
+          <p style="color:var(--accent-red);margin-top:8px">${this.escapeHtml(task.errorMessage || '未知错误')}</p>
+          ${canRetry ? `<button class="btn btn--primary btn--small mt-lg" onclick="TaskDetail.confirmRetry()">重新分析</button>` : ''}
+        </div>
+      `;
+    } else {
+      resultHtml = `
+        <div class="card result-section" style="text-align:center;padding:48px 24px">
+          <div style="font-size:48px;margin-bottom:16px;opacity:0.3">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          </div>
+          <div class="badge badge--${statusClass}" style="margin-bottom:12px">${statusText}</div>
+          <p style="color:var(--text-secondary);margin-top:8px">此任务已被取消，没有分析结果</p>
         </div>
       `;
     }
@@ -124,40 +157,64 @@ const TaskDetail = {
     container.innerHTML = `
       <div class="task-detail">
         <div class="task-sidebar">
-          <div class="card task-sidebar__section">
-            <div class="task-sidebar__label">任务 ID</div>
-            <div class="task-sidebar__value" style="font-size:0.8rem;word-break:break-all">${task.taskId}</div>
+          <!-- 任务概览卡片 -->
+          <div class="card task-sidebar__overview">
+            <div class="task-sidebar__overview-name">${this.escapeHtml(displayName)}</div>
+            <div class="task-sidebar__overview-status">
+              <span class="badge badge--${statusClass}">${statusText}</span>
+            </div>
+            ${!isFinal ? `
+            <div class="task-sidebar__overview-progress">
+              <div class="progress">
+                <div class="progress__bar" style="width:${task.progress || 0}%"></div>
+              </div>
+              <div class="progress__label"><span>进度</span><span>${task.progress || 0}%</span></div>
+            </div>` : ''}
           </div>
-          <div class="card task-sidebar__section">
-            <div class="task-sidebar__label">文件</div>
-            <div class="task-sidebar__value">${this.escapeHtml(this.extractFileName(task.videoUrl))}</div>
+
+          <!-- 详细信息 -->
+          <div class="card task-sidebar__info">
+            <div class="task-sidebar__row">
+              <span class="task-sidebar__label">任务 ID</span>
+              <span class="task-sidebar__value task-sidebar__value--mono">${task.taskId}</span>
+            </div>
+            <div class="task-sidebar__row">
+              <span class="task-sidebar__label">创建时间</span>
+              <span class="task-sidebar__value">${task.createdAt || '-'}</span>
+            </div>
+            ${task.startedAt ? `
+            <div class="task-sidebar__row">
+              <span class="task-sidebar__label">开始时间</span>
+              <span class="task-sidebar__value">${task.startedAt}</span>
+            </div>` : ''}
+            ${task.completedAt ? `
+            <div class="task-sidebar__row">
+              <span class="task-sidebar__label">完成时间</span>
+              <span class="task-sidebar__value">${task.completedAt}</span>
+            </div>` : ''}
+            ${task.retryCount > 0 ? `
+            <div class="task-sidebar__row">
+              <span class="task-sidebar__label">重试次数</span>
+              <span class="task-sidebar__value">${task.retryCount} / ${task.maxRetry}</span>
+            </div>` : ''}
           </div>
-          <div class="card task-sidebar__section">
-            <div class="task-sidebar__label">状态</div>
-            <div><span class="badge badge--${statusClass}">${statusText}</span></div>
-          </div>
-          <div class="card task-sidebar__section">
-            <div class="task-sidebar__label">创建时间</div>
-            <div class="task-sidebar__value">${task.createdAt || '-'}</div>
-          </div>
-          ${task.startedAt ? `
-          <div class="card task-sidebar__section">
-            <div class="task-sidebar__label">开始时间</div>
-            <div class="task-sidebar__value">${task.startedAt}</div>
-          </div>` : ''}
-          ${task.completedAt ? `
-          <div class="card task-sidebar__section">
-            <div class="task-sidebar__label">完成时间</div>
-            <div class="task-sidebar__value">${task.completedAt}</div>
-          </div>` : ''}
-          ${task.retryCount > 0 ? `
-          <div class="card task-sidebar__section">
-            <div class="task-sidebar__label">重试次数</div>
-            <div class="task-sidebar__value">${task.retryCount} / ${task.maxRetry}</div>
-          </div>` : ''}
-          <div class="card task-sidebar__section">
-            <div class="task-sidebar__label">上传 ID</div>
-            <div class="task-sidebar__value" style="font-size:0.8rem">${task.uploadId || '-'}</div>
+
+          <!-- 操作按钮 -->
+          <div class="task-sidebar__actions-wrap">
+            <button class="btn btn--ghost btn--small" style="flex:1" onclick="TaskDetail.promptRename()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              重命名
+            </button>
+            ${canRetry ? `
+            <button class="btn btn--primary btn--small" style="flex:1" onclick="TaskDetail.confirmRetry()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+              重新分析
+            </button>` : ''}
+            ${canDelete ? `
+            <button class="btn btn--ghost btn--small" style="flex:1;color:var(--accent-red);border-color:var(--accent-red)" onclick="TaskDetail.confirmDelete()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+              删除
+            </button>` : ''}
           </div>
         </div>
 
@@ -166,6 +223,54 @@ const TaskDetail = {
         </div>
       </div>
     `;
+  },
+
+  /**
+   * 重命名任务
+   */
+  async promptRename() {
+    const currentName = this.task.taskName || this.extractFileName(this.task.videoUrl);
+    const newName = prompt('请输入新的任务名称：', currentName);
+    if (!newName || newName.trim() === '' || newName === currentName) return;
+    try {
+      this.task = await Api.put(`/task/${this.taskId}/rename`, { taskName: newName.trim() });
+      App.toast('重命名成功', 'success');
+      this.render();
+    } catch (err) {
+      App.toast(err.message, 'error');
+    }
+  },
+
+  /**
+   * 重试任务
+   */
+  async confirmRetry() {
+    if (!confirm('确定要重新分析此任务吗？')) return;
+    try {
+      this.task = await Api.post(`/task/${this.taskId}/retry`);
+      App.toast('任务已重新提交', 'success');
+      this.render();
+      this.startPolling();
+    } catch (err) {
+      App.toast(err.message, 'error');
+    }
+  },
+
+  /**
+   * 删除任务
+   */
+  async confirmDelete() {
+    const name = this.task.taskName || this.extractFileName(this.task.videoUrl);
+    if (!confirm(`确定要删除任务「${name}」吗？此操作不可恢复。`)) return;
+    try {
+      await Api.del(`/task/${this.taskId}`);
+      App.toast('任务已删除', 'success');
+      this.stopPolling();
+      Dashboard._preservePage = true;
+      window.location.hash = '#/dashboard';
+    } catch (err) {
+      App.toast(err.message, 'error');
+    }
   },
 
   /**

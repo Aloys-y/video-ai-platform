@@ -469,7 +469,32 @@ h4 { font-size: 1.1rem; }
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
-/* === Divider === */
+/* === Password Toggle === */
+.form-input-wrap {
+  position: relative;
+}
+.form-input-wrap .form-input {
+  padding-right: 44px;
+}
+.form-input__toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: color var(--transition-fast);
+}
+.form-input__toggle:hover {
+  color: var(--text-secondary);
+}
 .divider {
   position: relative;
   height: 1px;
@@ -816,7 +841,7 @@ h4 { font-size: 1.1rem; }
 /* === Task Detail === */
 .task-detail {
   display: grid;
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: 300px 1fr;
   gap: var(--space-lg);
   padding-top: var(--space-md);
 }
@@ -825,6 +850,42 @@ h4 { font-size: 1.1rem; }
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+}
+
+/* 概览卡片 — 任务名 + 状态 */
+.task-sidebar__overview {
+  text-align: center;
+  padding: var(--space-xl) var(--space-lg);
+}
+.task-sidebar__overview-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-heading);
+  margin-bottom: var(--space-sm);
+  word-break: break-word;
+}
+.task-sidebar__overview-status {
+  margin-bottom: var(--space-md);
+}
+.task-sidebar__overview-progress {
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+/* 信息行 — label/value 水平排列 */
+.task-sidebar__info {
+  padding: var(--space-md) var(--space-lg);
+}
+.task-sidebar__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-default);
+}
+.task-sidebar__row:last-child {
+  border-bottom: none;
 }
 
 .task-sidebar__section {
@@ -837,13 +898,27 @@ h4 { font-size: 1.1rem; }
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-tertiary);
-  margin-bottom: var(--space-xs);
+  flex-shrink: 0;
+  margin-right: var(--space-sm);
 }
 
 .task-sidebar__value {
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   color: var(--text-primary);
+  text-align: right;
+  word-break: break-all;
+}
+.task-sidebar__value--mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* 操作按钮行 */
+.task-sidebar__actions-wrap {
+  display: flex;
+  gap: var(--space-sm);
 }
 
 .task-result {
@@ -1081,12 +1156,59 @@ h4 { font-size: 1.1rem; }
 }
 
 /* === Responsive === */
+.navbar__hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: var(--space-sm);
+  margin-left: auto;
+}
+
 @media (max-width: 768px) {
   .navbar {
     padding: 0 var(--space-md);
   }
-  .navbar__user {
+  .navbar__hamburger {
+    display: flex;
+    align-items: center;
+  }
+  .navbar__links,
+  .navbar__user,
+  .navbar__logout {
     display: none;
+  }
+  .navbar.menu-open .navbar__links,
+  .navbar.menu-open .navbar__user,
+  .navbar.menu-open .navbar__logout {
+    display: flex;
+  }
+  .navbar.menu-open {
+    flex-wrap: wrap;
+    height: auto;
+    padding-bottom: var(--space-md);
+  }
+  .navbar.menu-open .navbar__links {
+    order: 4;
+    width: 100%;
+    flex-direction: column;
+    margin-left: 0;
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--border-default);
+  }
+  .navbar.menu-open .navbar__user {
+    order: 5;
+    width: 100%;
+    margin-left: 0;
+    padding-left: 0;
+    border-left: none;
+    padding-top: var(--space-xs);
+  }
+  .navbar.menu-open .navbar__logout {
+    order: 3;
+    margin-left: auto;
   }
   .task-detail {
     grid-template-columns: 1fr;
@@ -1160,3 +1282,154 @@ h4 { font-size: 1.1rem; }
 .mt-lg { margin-top: var(--space-lg); }
 .mb-md { margin-bottom: var(--space-md); }
 .hidden { display: none !important; }
+
+/* === Task Card Menu === */
+.task-card {
+  position: relative;
+}
+
+.task-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.task-card__menu-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-md);
+  color: var(--text-tertiary);
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+.task-card__menu-btn:hover {
+  background: var(--bg-input);
+  color: var(--text-primary);
+}
+
+.task-card__menu {
+  position: absolute;
+  top: 48px;
+  right: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+  z-index: var(--z-modal);
+  min-width: 140px;
+  padding: 4px 0;
+}
+
+.menu-item {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  transition: background var(--transition-fast);
+}
+.menu-item:hover {
+  background: var(--bg-input);
+}
+.menu-item--danger {
+  color: var(--accent-red);
+}
+.menu-item--danger:hover {
+  background: rgba(239, 68, 68, 0.06);
+}
+
+/* === Task Sidebar Actions === */
+.task-sidebar__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.task-sidebar__actions .btn {
+  width: 100%;
+}
+.task-sidebar__actions .btn + .btn {
+  margin-top: 8px;
+}
+
+/* Upload Prompt */
+.upload-prompt-section {
+  margin-bottom: 16px;
+}
+.upload-prompt__label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.upload-prompt__input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  resize: vertical;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+.upload-prompt__input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.upload-prompt__input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* Upload Confirm Section */
+.upload-confirm__header {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+.upload-confirm__file {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+.upload-confirm__file span:first-child {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.upload-confirm__prompt {
+  margin-bottom: 0;
+}
+.upload-confirm__textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  resize: vertical;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+.upload-confirm__textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.upload-confirm__textarea::placeholder {
+  color: var(--text-tertiary);
+}

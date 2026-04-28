@@ -46,7 +46,13 @@
             </div>
             <div class="form-group">
               <label class="form-label" for="login-password">密码</label>
-              <input class="form-input" type="password" id="login-password" name="password" placeholder="输入密码" required autocomplete="current-password">
+              <div class="form-input-wrap">
+                <input class="form-input" type="password" id="login-password" name="password" placeholder="输入密码" required autocomplete="current-password">
+                <button type="button" class="form-input__toggle" data-target="login-password" aria-label="显示密码">
+                  <svg class="eye-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg class="eye-closed" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
               <div class="form-error"></div>
             </div>
             <div class="form-error form-error--general" style="margin-bottom:16px;text-align:center"></div>
@@ -69,7 +75,13 @@
             </div>
             <div class="form-group">
               <label class="form-label" for="reg-password">密码</label>
-              <input class="form-input" type="password" id="reg-password" name="password" placeholder="至少 6 位" required autocomplete="new-password">
+              <div class="form-input-wrap">
+                <input class="form-input" type="password" id="reg-password" name="password" placeholder="至少 6 位" required autocomplete="new-password">
+                <button type="button" class="form-input__toggle" data-target="reg-password" aria-label="显示密码">
+                  <svg class="eye-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg class="eye-closed" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
               <div class="form-error"></div>
             </div>
             <div class="form-error form-error--general" style="margin-bottom:16px;text-align:center"></div>
@@ -106,6 +118,8 @@
       </div>
       <hr class="divider">
 
+      <!-- Prompt Input (hidden, used before upload - no longer needed here) -->
+
       <!-- Upload Zone -->
       <div id="upload-zone" class="upload-zone" role="button" tabindex="0" aria-label="点击或拖拽上传视频文件">
         <svg class="upload-zone__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -115,8 +129,8 @@
         </svg>
         <div class="upload-zone__title">拖拽视频到此处</div>
         <div class="upload-zone__hint">或点击选择文件</div>
-        <div class="upload-zone__formats">支持 MP4 / AVI / MOV / MKV / WMV / FLV &mdash; 最大 5GB</div>
-        <input type="file" id="file-input" accept=".mp4,.avi,.mov,.mkv,.wmv,.flv" style="display:none" aria-hidden="true">
+        <div class="upload-zone__formats">支持 MP4 &mdash; 最大 5GB</div>
+        <input type="file" id="file-input" accept=".mp4" style="display:none" aria-hidden="true">
       </div>
 
       <!-- Upload Progress -->
@@ -142,7 +156,28 @@
       <div id="upload-instant" class="hidden">
         <div class="instant-banner">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:8px"><polyline points="20 6 9 17 4 12"/></svg>
-          秒传成功 — 文件已存在，正在开始分析
+          秒传成功 — 文件已存在
+        </div>
+      </div>
+
+      <!-- Confirm & Submit Section -->
+      <div id="upload-confirm-section" class="hidden">
+        <div class="card">
+          <div class="upload-confirm__header">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:8px;color:var(--color-success)"><polyline points="20 6 9 17 4 12"/></svg>
+            上传完成
+          </div>
+          <div class="upload-confirm__file">
+            <span id="confirm-filename"></span>
+            <span id="confirm-filesize" class="upload-progress__size"></span>
+          </div>
+          <div class="upload-confirm__prompt">
+            <label for="upload-confirm-prompt" class="form-label">分析提示词（可选）</label>
+            <textarea id="upload-confirm-prompt" class="form-input upload-confirm__textarea" rows="3" placeholder="例如：重点分析视频中的动作和场景变化，或：提取视频中的所有文字内容"></textarea>
+          </div>
+          <button type="button" id="upload-submit-btn" class="btn btn--primary" style="width:100%;margin-top:12px">
+            <span class="btn__text">开始分析</span>
+          </button>
         </div>
       </div>
     </section>

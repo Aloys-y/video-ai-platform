@@ -6,6 +6,7 @@
 
 const App = {
   currentPage: null,
+  _navigating: false,
 
   /**
    * 初始化应用
@@ -21,7 +22,9 @@ const App = {
    */
   bindRouter() {
     window.addEventListener('hashchange', () => {
-      this.navigate(window.location.hash);
+      if (!this._navigating) {
+        this.navigate(window.location.hash);
+      }
     });
   },
 
@@ -29,6 +32,16 @@ const App = {
    * 路由分发
    */
   navigate(hash) {
+    if (this._navigating) return;
+    this._navigating = true;
+    try {
+      this._doNavigate(hash);
+    } finally {
+      setTimeout(() => { this._navigating = false; }, 0);
+    }
+  },
+
+  _doNavigate(hash) {
     const path = (hash || '#/login').replace('#', '');
 
     // 认证守卫
@@ -47,6 +60,9 @@ const App = {
     // 销毁旧页面
     if (this.currentPage === 'task-detail') {
       TaskDetail.destroy();
+    }
+    if (this.currentPage === 'upload') {
+      Upload.destroy();
     }
 
     // 隐藏所有页面
@@ -89,6 +105,9 @@ const App = {
     // 聚焦主内容区域（可访问性）
     const main = document.querySelector('.main-content');
     if (main) main.focus();
+
+    // 关闭移动端菜单
+    this.closeMobileMenu();
   },
 
   /**
@@ -137,6 +156,9 @@ const App = {
         </svg>
         Do<span>Video</span>AI
       </div>
+      <button class="navbar__hamburger" aria-label="菜单" onclick="App.toggleMobileMenu()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
       <div class="navbar__links">
         <a href="#/dashboard" class="navbar__link" data-nav="/dashboard">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:middle"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
@@ -177,11 +199,32 @@ const App = {
   },
 
   /**
+   * 移动端菜单切换
+   */
+  toggleMobileMenu() {
+    const nav = document.getElementById('navbar');
+    if (nav) nav.classList.toggle('menu-open');
+  },
+
+  /**
+   * 关闭移动端菜单
+   */
+  closeMobileMenu() {
+    const nav = document.getElementById('navbar');
+    if (nav) nav.classList.remove('menu-open');
+  },
+
+  /**
    * Toast 通知
    */
   toast(message, type = 'info') {
     const container = document.getElementById('toast-container');
     if (!container) return;
+
+    // M-12: 最多同时显示 3 个 toast
+    while (container.children.length >= 3) {
+      container.firstChild.remove();
+    }
 
     const toast = document.createElement('div');
     toast.className = `toast toast--${type}`;

@@ -58,10 +58,12 @@ CREATE TABLE IF NOT EXISTS upload_session (
 CREATE TABLE IF NOT EXISTS analysis_task (
     id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
     task_id         VARCHAR(64) NOT NULL COMMENT '任务ID',
+    task_name       VARCHAR(255) DEFAULT NULL COMMENT '任务名称(用户自定义)',
     upload_id       VARCHAR(64) NOT NULL COMMENT '关联的上传ID',
     user_id         BIGINT NOT NULL COMMENT '用户ID',
     video_url       VARCHAR(512) NOT NULL COMMENT '视频URL',
     video_duration  INT COMMENT '视频时长(秒)',
+    prompt          TEXT COMMENT '用户自定义分析提示词',
 
     -- 状态管理
     status          VARCHAR(20) NOT NULL DEFAULT 'PENDING' COMMENT '任务状态',
@@ -76,13 +78,14 @@ CREATE TABLE IF NOT EXISTS analysis_task (
     frame_count     INT COMMENT '抽取帧数',
     ai_model        VARCHAR(50) COMMENT '使用的AI模型',
     tokens_used     BIGINT COMMENT '消耗的Token数',
-    result          JSON COMMENT '分析结果',
+    result          LONGTEXT COMMENT '分析结果',
     summary         TEXT COMMENT '视频摘要',
 
     -- 时间记录
     created_at      DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     started_at      DATETIME COMMENT '开始处理时间',
     completed_at    DATETIME COMMENT '完成时间',
+    updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 
     UNIQUE KEY uk_task_id (task_id),
     INDEX idx_user_id (user_id),

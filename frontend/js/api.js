@@ -72,9 +72,14 @@ const Api = {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
+    // M-09: 请求超时 30s
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), options.timeout || 30000);
+
     const config = {
       method,
       headers,
+      signal: controller.signal,
     };
 
     // JSON body
@@ -87,6 +92,7 @@ const Api = {
 
     try {
       const response = await fetch(url, config);
+      clearTimeout(timeoutId);
       const data = await response.json();
 
       if (!response.ok || !data.success) {
@@ -97,11 +103,15 @@ const Api = {
           window.location.hash = '#/login';
           throw new Error('登录已过期，请重新登录');
         }
-        throw new Error(data.message || `请求失败 (${data.code || response.status})`);
+        throw new Error(this.getErrorMessage(data.code, data.message));
       }
 
       return data.data;
     } catch (err) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError') {
+        throw new Error('请求超时，请稍后重试');
+      }
       if (err.name === 'TypeError' && err.message.includes('fetch')) {
         throw new Error('网络连接失败，请检查网络');
       }
@@ -172,3 +182,47 @@ const Api = {
 
 // 全局暴露
 window.Api = Api;
+
+/**
+ * M-11: 后端错误码 → 中文友好提示映射
+ */
+Api.ERROR_MESSAGES = {
+  10000: '系统繁忙，请稍后重试',
+  10001: '提交的信息有误，请检查后重试',
+  10002: '缺少必要信息',
+  20001: '上传会话已失效，请重新上传',
+  20002: '上传已超时，请重新上传',
+  20003: '上传分片顺序错误',
+  20004: '分片大小不正确',
+  20005: '不支持该文件格式',
+  20006: '文件大小超出限制',
+  20007: '分片正在上传中，请稍候',
+  20008: '分片上传失败，请重试',
+  20009: '文件合并失败，请重新上传',
+  21001: '任务不存在',
+  21002: '任务已存在',
+  21003: '当前任务状态不允许此操作',
+  21004: '重试次数已用完',
+  21005: '任务正在处理中',
+  22001: '配额不足，请联系管理员',
+  22002: '今日配额已用完，明天再试',
+  22003: '本月配额已用完',
+  23001: '用户不存在',
+  23002: '账号已被禁用',
+  23003: '用户名已被占用',
+  23004: '邮箱已被注册',
+  23005: '邮箱或密码错误',
+  30001: 'AI 分析服务异常，请稍后重试',
+  30002: 'AI 分析超时，请重试',
+  30003: 'AI 服务配额不足',
+  30004: '存储服务异常',
+  30005: '消息队列异常',
+  40001: '请求过于频繁，请稍后重试',
+  40002: '服务暂时不可用，请稍后',
+  40003: '登录已过期，请重新登录',
+  40004: '认证凭证无效',
+};
+
+Api.getErrorMessage = function(code, fallback) {
+  return Api.ERROR_MESSAGES[code] || fallback || '操作失败';
+};

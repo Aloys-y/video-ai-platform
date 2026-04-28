@@ -9,6 +9,7 @@ const Auth = {
   init() {
     this.bindTabs();
     this.bindForms();
+    this.bindPasswordToggles();
   },
 
   /**
@@ -119,7 +120,7 @@ const Auth = {
     // 验证
     const emailInput = document.querySelector('#form-login input[name="email"]');
     const passInput = document.querySelector('#form-login input[name="password"]');
-    const valid = this.validateField(emailInput) & this.validateField(passInput);
+    const valid = this.validateField(emailInput) && this.validateField(passInput);
     if (!valid) return;
 
     const btn = document.querySelector('#form-login .btn--primary');
@@ -134,6 +135,7 @@ const Auth = {
         role: result.role,
         apiKey: result.apiKey,
       });
+      App.toast('登录成功', 'success');
       window.location.hash = '#/dashboard';
     } catch (err) {
       this.showFormError('login', err.message);
@@ -170,6 +172,7 @@ const Auth = {
         role: result.role,
         apiKey: result.apiKey,
       });
+      App.toast('注册成功', 'success');
       window.location.hash = '#/dashboard';
     } catch (err) {
       this.showFormError('register', err.message);
@@ -188,6 +191,26 @@ const Auth = {
       errorEl.classList.add('visible');
       setTimeout(() => errorEl.classList.remove('visible'), 5000);
     }
+  },
+
+  /**
+   * 密码显示/隐藏切换
+   */
+  bindPasswordToggles() {
+    document.querySelectorAll('.form-input__toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const input = document.getElementById(btn.dataset.target);
+        if (!input) return;
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        const eyeOpen = btn.querySelector('.eye-open');
+        const eyeClosed = btn.querySelector('.eye-closed');
+        if (eyeOpen && eyeClosed) {
+          eyeOpen.style.display = isPassword ? 'none' : '';
+          eyeClosed.style.display = isPassword ? '' : 'none';
+        }
+      });
+    });
   },
 
   /**

@@ -45,11 +45,22 @@ public class UploadController {
     }
 
     /**
-     * 完成上传（合并分片）
+     * 完成上传（合并分片，不创建任务）
      */
     @PostMapping("/complete")
     public ApiResponse<String> complete(@RequestHeader("X-Upload-Id") String uploadId) {
-        String taskId = uploadService.completeUpload(uploadId);
+        String videoPath = uploadService.completeUpload(uploadId);
+        return ApiResponse.success(uploadId);
+    }
+
+    /**
+     * 提交分析任务（用户确认后调用）
+     */
+    @PostMapping("/submit")
+    public ApiResponse<String> submit(@RequestHeader("X-Upload-Id") String uploadId,
+                                       @RequestParam(value = "prompt", required = false) String prompt) {
+        User user = UserContext.getUser();
+        String taskId = uploadService.submitTask(uploadId, prompt);
         return ApiResponse.success(taskId);
     }
 

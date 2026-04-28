@@ -34,7 +34,7 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- 智谱AI SDK -->
+        <!-- 智谱AI官方SDK（支持GLM-4.6V视频理解） -->
         <dependency>
             <groupId>ai.z.openapi</groupId>
             <artifactId>zai-sdk</artifactId>
