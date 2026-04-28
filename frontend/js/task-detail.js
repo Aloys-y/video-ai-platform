@@ -128,57 +128,63 @@ const TaskDetail = {
     container.innerHTML = `
       <div class="task-detail">
         <div class="task-sidebar">
-          <div class="card task-sidebar__section">
-            <div class="task-sidebar__label">任务 ID</div>
-            <div class="task-sidebar__value" style="font-size:0.8rem;word-break:break-all">${task.taskId}</div>
+          <!-- 任务概览卡片 -->
+          <div class="card task-sidebar__overview">
+            <div class="task-sidebar__overview-name">${this.escapeHtml(displayName)}</div>
+            <div class="task-sidebar__overview-status">
+              <span class="badge badge--${statusClass}">${statusText}</span>
+            </div>
+            ${!isFinal ? `
+            <div class="task-sidebar__overview-progress">
+              <div class="progress">
+                <div class="progress__bar" style="width:${task.progress || 0}%"></div>
+              </div>
+              <div class="progress__label"><span>进度</span><span>${task.progress || 0}%</span></div>
+            </div>` : ''}
           </div>
-          <div class="card task-sidebar__section">
-            <div class="task-sidebar__label">文件</div>
-            <div class="task-sidebar__value">${this.escapeHtml(displayName)}</div>
-          </div>
-          <div class="card task-sidebar__section">
-            <div class="task-sidebar__label">状态</div>
-            <div><span class="badge badge--${statusClass}">${statusText}</span></div>
-          </div>
-          <div class="card task-sidebar__section">
-            <div class="task-sidebar__label">创建时间</div>
-            <div class="task-sidebar__value">${task.createdAt || '-'}</div>
-          </div>
-          ${task.startedAt ? `
-          <div class="card task-sidebar__section">
-            <div class="task-sidebar__label">开始时间</div>
-            <div class="task-sidebar__value">${task.startedAt}</div>
-          </div>` : ''}
-          ${task.completedAt ? `
-          <div class="card task-sidebar__section">
-            <div class="task-sidebar__label">完成时间</div>
-            <div class="task-sidebar__value">${task.completedAt}</div>
-          </div>` : ''}
-          ${task.retryCount > 0 ? `
-          <div class="card task-sidebar__section">
-            <div class="task-sidebar__label">重试次数</div>
-            <div class="task-sidebar__value">${task.retryCount} / ${task.maxRetry}</div>
-          </div>` : ''}
-          <div class="card task-sidebar__section">
-            <div class="task-sidebar__label">上传 ID</div>
-            <div class="task-sidebar__value" style="font-size:0.8rem">${task.uploadId || '-'}</div>
+
+          <!-- 详细信息 -->
+          <div class="card task-sidebar__info">
+            <div class="task-sidebar__row">
+              <span class="task-sidebar__label">任务 ID</span>
+              <span class="task-sidebar__value task-sidebar__value--mono">${task.taskId}</span>
+            </div>
+            <div class="task-sidebar__row">
+              <span class="task-sidebar__label">创建时间</span>
+              <span class="task-sidebar__value">${task.createdAt || '-'}</span>
+            </div>
+            ${task.startedAt ? `
+            <div class="task-sidebar__row">
+              <span class="task-sidebar__label">开始时间</span>
+              <span class="task-sidebar__value">${task.startedAt}</span>
+            </div>` : ''}
+            ${task.completedAt ? `
+            <div class="task-sidebar__row">
+              <span class="task-sidebar__label">完成时间</span>
+              <span class="task-sidebar__value">${task.completedAt}</span>
+            </div>` : ''}
+            ${task.retryCount > 0 ? `
+            <div class="task-sidebar__row">
+              <span class="task-sidebar__label">重试次数</span>
+              <span class="task-sidebar__value">${task.retryCount} / ${task.maxRetry}</span>
+            </div>` : ''}
           </div>
 
           <!-- 操作按钮 -->
-          <div class="card task-sidebar__section task-sidebar__actions">
-            <button class="btn btn--ghost btn--small"
-                    onclick="TaskDetail.promptRename()">
+          <div class="task-sidebar__actions-wrap">
+            <button class="btn btn--ghost btn--small" style="flex:1" onclick="TaskDetail.promptRename()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
               重命名
             </button>
             ${canRetry ? `
-            <button class="btn btn--primary btn--small"
-                    onclick="TaskDetail.confirmRetry()">
+            <button class="btn btn--primary btn--small" style="flex:1" onclick="TaskDetail.confirmRetry()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
               重新分析
             </button>` : ''}
             ${canDelete ? `
-            <button class="btn btn--ghost btn--small" style="color:var(--accent-red);border-color:var(--accent-red)"
-                    onclick="TaskDetail.confirmDelete()">
-              删除任务
+            <button class="btn btn--ghost btn--small" style="flex:1;color:var(--accent-red);border-color:var(--accent-red)" onclick="TaskDetail.confirmDelete()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+              删除
             </button>` : ''}
           </div>
         </div>

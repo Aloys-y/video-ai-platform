@@ -816,7 +816,7 @@ h4 { font-size: 1.1rem; }
 /* === Task Detail === */
 .task-detail {
   display: grid;
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: 300px 1fr;
   gap: var(--space-lg);
   padding-top: var(--space-md);
 }
@@ -825,6 +825,42 @@ h4 { font-size: 1.1rem; }
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+}
+
+/* 概览卡片 — 任务名 + 状态 */
+.task-sidebar__overview {
+  text-align: center;
+  padding: var(--space-xl) var(--space-lg);
+}
+.task-sidebar__overview-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-heading);
+  margin-bottom: var(--space-sm);
+  word-break: break-word;
+}
+.task-sidebar__overview-status {
+  margin-bottom: var(--space-md);
+}
+.task-sidebar__overview-progress {
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+/* 信息行 — label/value 水平排列 */
+.task-sidebar__info {
+  padding: var(--space-md) var(--space-lg);
+}
+.task-sidebar__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-default);
+}
+.task-sidebar__row:last-child {
+  border-bottom: none;
 }
 
 .task-sidebar__section {
@@ -837,13 +873,27 @@ h4 { font-size: 1.1rem; }
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-tertiary);
-  margin-bottom: var(--space-xs);
+  flex-shrink: 0;
+  margin-right: var(--space-sm);
 }
 
 .task-sidebar__value {
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   color: var(--text-primary);
+  text-align: right;
+  word-break: break-all;
+}
+.task-sidebar__value--mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* 操作按钮行 */
+.task-sidebar__actions-wrap {
+  display: flex;
+  gap: var(--space-sm);
 }
 
 .task-result {
