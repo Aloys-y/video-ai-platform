@@ -107,7 +107,7 @@ const Dashboard = {
     const canDelete = this.isFinalState(task.status);
 
     return `
-      <div class="card task-card" onclick="window.location.hash='#/task/${task.taskId}'" role="button" tabindex="0" aria-label="查看任务 ${this.escapeHtml(displayName)}">
+      <div class="card task-card" data-task-id="${task.taskId}" onclick="window.location.hash='#/task/${task.taskId}'" role="button" tabindex="0" aria-label="查看任务 ${this.escapeHtml(displayName)}">
         <div class="task-card__info">
           <div class="task-card__header">
             <div class="task-card__name">${this.escapeHtml(displayName)}</div>
@@ -308,6 +308,15 @@ const Dashboard = {
     return div.innerHTML;
   },
 };
+
+// M-03: Task card 键盘导航 (Enter/Space)
+document.addEventListener('keydown', (e) => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('task-card')) {
+    e.preventDefault();
+    const taskId = e.target.dataset.taskId;
+    if (taskId) window.location.hash = `#/task/${taskId}`;
+  }
+});
 
 // H-01 fix: 事件委托，通过 data-action 分发，避免 onclick 拼接用户输入
 document.addEventListener('click', (e) => {

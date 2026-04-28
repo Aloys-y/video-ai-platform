@@ -186,6 +186,11 @@ const App = {
     const container = document.getElementById('toast-container');
     if (!container) return;
 
+    // M-12: 最多同时显示 3 个 toast
+    while (container.children.length >= 3) {
+      container.firstChild.remove();
+    }
+
     const toast = document.createElement('div');
     toast.className = `toast toast--${type}`;
     toast.textContent = message;

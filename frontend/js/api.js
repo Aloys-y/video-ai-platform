@@ -72,9 +72,14 @@ const Api = {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
+    // M-09: 请求超时 30s
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), options.timeout || 30000);
+
     const config = {
       method,
       headers,
+      signal: controller.signal,
     };
 
     // JSON body
@@ -87,6 +92,7 @@ const Api = {
 
     try {
       const response = await fetch(url, config);
+      clearTimeout(timeoutId);
       const data = await response.json();
 
       if (!response.ok || !data.success) {
@@ -102,6 +108,10 @@ const Api = {
 
       return data.data;
     } catch (err) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError') {
+        throw new Error('请求超时，请稍后重试');
+      }
       if (err.name === 'TypeError' && err.message.includes('fetch')) {
         throw new Error('网络连接失败，请检查网络');
       }
