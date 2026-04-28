@@ -264,6 +264,17 @@ const Upload = {
       window.App.toast(message, type);
     }
   },
+
+  /**
+   * 销毁（离开页面时调用）
+   */
+  destroy() {
+    if (this.state.isUploading) {
+      this.state.isUploading = false;
+      this.state.file = null;
+      this.state.uploadId = null;
+    }
+  },
 };
 
 window.Upload = Upload;

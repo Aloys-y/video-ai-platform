@@ -13,11 +13,17 @@ const Dashboard = {
     loading: false,
   },
 
+  /** 保留上次页码，从详情页返回时不重置 */
+  _preservePage: false,
+
   /**
    * 初始化仪表盘
    */
   init() {
-    this.state = { page: 1, size: 20, total: 0, tasks: [], loading: false };
+    if (!this._preservePage) {
+      this.state = { page: 1, size: 20, total: 0, tasks: [], loading: false };
+    }
+    this._preservePage = false;
     this.loadTasks();
 
     // H-02 fix: 全局 click 监听只绑定一次

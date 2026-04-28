@@ -48,6 +48,9 @@ const App = {
     if (this.currentPage === 'task-detail') {
       TaskDetail.destroy();
     }
+    if (this.currentPage === 'upload') {
+      Upload.destroy();
+    }
 
     // 隐藏所有页面
     document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));

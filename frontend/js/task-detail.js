@@ -266,6 +266,7 @@ const TaskDetail = {
       await Api.del(`/task/${this.taskId}`);
       App.toast('任务已删除', 'success');
       this.stopPolling();
+      Dashboard._preservePage = true;
       window.location.hash = '#/dashboard';
     } catch (err) {
       App.toast(err.message, 'error');
