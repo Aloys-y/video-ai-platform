@@ -75,6 +75,13 @@ public class InitUploadRequest implements Serializable {
     private String contentType;
 
     /**
+     * 用户自定义分析提示词
+     * 上传时可指定AI分析时的提示语
+     */
+    @Size(max = 2000, message = "提示词最长2000字符")
+    private String prompt;
+
+    /**
      * 自定义元数据
      * JSON格式，用户可以附加任意信息
      */

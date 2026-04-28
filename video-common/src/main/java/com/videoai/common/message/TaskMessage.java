@@ -99,6 +99,11 @@ public class TaskMessage implements Serializable {
     private String analysisType;
 
     /**
+     * 用户自定义分析提示词
+     */
+    private String prompt;
+
+    /**
      * 创建消息（便捷方法）
      */
     public static TaskMessage create(String taskId, Long userId, String videoUrl) {

@@ -8,7 +8,7 @@ import com.videoai.infra.kafka.topic.TopicConstant;
 import com.videoai.infra.minio.service.StorageService;
 import com.videoai.infra.mysql.mapper.AnalysisTaskMapper;
 import com.videoai.infra.redis.key.RedisKey;
-import com.videoai.worker.config.GlmConfig;
+import com.videoai.worker.config.ZhipuConfig;
 import com.videoai.worker.service.AiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +41,7 @@ public class TaskProcessor {
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final AiService aiService;
     private final StorageService storageService;
-    private final GlmConfig glmConfig;
+    private final ZhipuConfig zhipuConfig;
 
     /**
      * 处理任务
@@ -120,12 +120,16 @@ public class TaskProcessor {
             String videoUrl = task.getVideoUrl();
             String presignedUrl = storageService.getPresignedUrl(
                     extractObjectPath(videoUrl),
-                    glmConfig.getPresignedUrlExpireHours());
-            log.info("Generated presigned URL for task: {}", taskId);
+                    zhipuConfig.getPresignedUrlExpireHours());
+            log.info("Generated presigned URL for task: {}, url: {}, originalPath: {}",
+                    taskId, presignedUrl, videoUrl);
             analysisTaskMapper.updateProgress(taskId, 20);
 
-            // 2. 调用GLM API分析视频
-            String aiResult = aiService.analyzeVideo(presignedUrl);
+            // 2. 调用GLM API分析视频（使用用户自定义prompt）
+            String userPrompt = task.getPrompt();
+            log.info("Task {} calling AI - prompt: {}", taskId,
+                    userPrompt != null ? (userPrompt.length() > 100 ? userPrompt.substring(0, 100) + "..." : userPrompt) : "null");
+            String aiResult = aiService.analyzeVideo(presignedUrl, userPrompt);
             analysisTaskMapper.updateProgress(taskId, 80);
 
             // 3. 提取摘要（简单截取summary字段）

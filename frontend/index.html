@@ -118,6 +118,8 @@
       </div>
       <hr class="divider">
 
+      <!-- Prompt Input (hidden, used before upload - no longer needed here) -->
+
       <!-- Upload Zone -->
       <div id="upload-zone" class="upload-zone" role="button" tabindex="0" aria-label="点击或拖拽上传视频文件">
         <svg class="upload-zone__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -127,8 +129,8 @@
         </svg>
         <div class="upload-zone__title">拖拽视频到此处</div>
         <div class="upload-zone__hint">或点击选择文件</div>
-        <div class="upload-zone__formats">支持 MP4 / AVI / MOV / MKV / WMV / FLV &mdash; 最大 5GB</div>
-        <input type="file" id="file-input" accept=".mp4,.avi,.mov,.mkv,.wmv,.flv" style="display:none" aria-hidden="true">
+        <div class="upload-zone__formats">支持 MP4 &mdash; 最大 5GB</div>
+        <input type="file" id="file-input" accept=".mp4" style="display:none" aria-hidden="true">
       </div>
 
       <!-- Upload Progress -->
@@ -154,7 +156,28 @@
       <div id="upload-instant" class="hidden">
         <div class="instant-banner">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:8px"><polyline points="20 6 9 17 4 12"/></svg>
-          秒传成功 — 文件已存在，正在开始分析
+          秒传成功 — 文件已存在
+        </div>
+      </div>
+
+      <!-- Confirm & Submit Section -->
+      <div id="upload-confirm-section" class="hidden">
+        <div class="card">
+          <div class="upload-confirm__header">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:8px;color:var(--color-success)"><polyline points="20 6 9 17 4 12"/></svg>
+            上传完成
+          </div>
+          <div class="upload-confirm__file">
+            <span id="confirm-filename"></span>
+            <span id="confirm-filesize" class="upload-progress__size"></span>
+          </div>
+          <div class="upload-confirm__prompt">
+            <label for="upload-confirm-prompt" class="form-label">分析提示词（可选）</label>
+            <textarea id="upload-confirm-prompt" class="form-input upload-confirm__textarea" rows="3" placeholder="例如：重点分析视频中的动作和场景变化，或：提取视频中的所有文字内容"></textarea>
+          </div>
+          <button type="button" id="upload-submit-btn" class="btn btn--primary" style="width:100%;margin-top:12px">
+            <span class="btn__text">开始分析</span>
+          </button>
         </div>
       </div>
     </section>

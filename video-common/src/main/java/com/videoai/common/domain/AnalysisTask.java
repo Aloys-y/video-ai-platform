@@ -60,6 +60,11 @@ public class AnalysisTask {
      */
     private Integer videoDuration;
 
+    /**
+     * 用户自定义分析提示词
+     */
+    private String prompt;
+
     // ==================== 状态管理 ====================
 
     /**

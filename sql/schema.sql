@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS analysis_task (
     user_id         BIGINT NOT NULL COMMENT '用户ID',
     video_url       VARCHAR(512) NOT NULL COMMENT '视频URL',
     video_duration  INT COMMENT '视频时长(秒)',
+    prompt          TEXT COMMENT '用户自定义分析提示词',
 
     -- 状态管理
     status          VARCHAR(20) NOT NULL DEFAULT 'PENDING' COMMENT '任务状态',
@@ -77,7 +78,7 @@ CREATE TABLE IF NOT EXISTS analysis_task (
     frame_count     INT COMMENT '抽取帧数',
     ai_model        VARCHAR(50) COMMENT '使用的AI模型',
     tokens_used     BIGINT COMMENT '消耗的Token数',
-    result          JSON COMMENT '分析结果',
+    result          LONGTEXT COMMENT '分析结果',
     summary         TEXT COMMENT '视频摘要',
 
     -- 时间记录

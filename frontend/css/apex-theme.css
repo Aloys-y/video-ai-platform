@@ -1357,3 +1357,79 @@ h4 { font-size: 1.1rem; }
 .task-sidebar__actions .btn + .btn {
   margin-top: 8px;
 }
+
+/* Upload Prompt */
+.upload-prompt-section {
+  margin-bottom: 16px;
+}
+.upload-prompt__label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.upload-prompt__input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  resize: vertical;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+.upload-prompt__input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.upload-prompt__input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* Upload Confirm Section */
+.upload-confirm__header {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+.upload-confirm__file {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+.upload-confirm__file span:first-child {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.upload-confirm__prompt {
+  margin-bottom: 0;
+}
+.upload-confirm__textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  resize: vertical;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+.upload-confirm__textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.upload-confirm__textarea::placeholder {
+  color: var(--text-tertiary);
+}
