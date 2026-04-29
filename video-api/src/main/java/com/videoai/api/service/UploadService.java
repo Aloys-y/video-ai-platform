@@ -85,13 +85,27 @@ public class UploadService {
         // 3. 秒传检查
         if (request.getFileHash() != null) {
             UploadSession existing = uploadSessionMapper.selectByFileHash(request.getFileHash());
-            if (existing != null && existing.getStatusEnum() == UploadStatus.MERGED) {
-                log.info("Instant upload hit, fileHash={}, existingUploadId={}", request.getFileHash(), existing.getUploadId());
-                // 秒传：不创建任务，等用户确认
-                return UploadInitResponse.builder()
-                        .uploadId(existing.getUploadId())
-                        .instantUpload(true)
-                        .build();
+            if (existing != null) {
+                if (existing.getStatusEnum() == UploadStatus.MERGED) {
+                    // 文件已完整上传过 → 秒传
+                    log.info("Instant upload hit, fileHash={}, existingUploadId={}", request.getFileHash(), existing.getUploadId());
+                    return UploadInitResponse.builder()
+                            .uploadId(existing.getUploadId())
+                            .instantUpload(true)
+                            .build();
+                }
+                if (existing.getStatusEnum() == UploadStatus.UPLOADING) {
+                    // 文件正在上传中 → 断点续传
+                    log.info("Resume upload hit, fileHash={}, existingUploadId={}, uploadedChunks={}",
+                            request.getFileHash(), existing.getUploadId(), existing.getUploadedChunkIndexList().size());
+                    return UploadInitResponse.builder()
+                            .uploadId(existing.getUploadId())
+                            .chunkSize(existing.getChunkSize())
+                            .totalChunks(existing.getTotalChunks())
+                            .uploadedChunks(existing.getUploadedChunkIndexList())
+                            .instantUpload(false)
+                            .build();
+                }
             }
         }
 
