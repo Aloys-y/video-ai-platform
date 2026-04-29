@@ -949,6 +949,83 @@ h4 { font-size: 1.1rem; }
   color: var(--text-primary);
 }
 
+/* Markdown rendered content */
+.markdown-body {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--text-primary);
+  word-wrap: break-word;
+}
+.markdown-body h1, .markdown-body h2, .markdown-body h3,
+.markdown-body h4, .markdown-body h5, .markdown-body h6 {
+  margin-top: 1.2em;
+  margin-bottom: 0.6em;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.markdown-body h1 { font-size: 1.5em; }
+.markdown-body h2 { font-size: 1.3em; }
+.markdown-body h3 { font-size: 1.15em; }
+.markdown-body p { margin: 0.6em 0; }
+.markdown-body ul, .markdown-body ol {
+  padding-left: 1.8em;
+  margin: 0.6em 0;
+}
+.markdown-body li { margin: 0.3em 0; }
+.markdown-body li > ul, .markdown-body li > ol { margin: 0.2em 0; }
+.markdown-body blockquote {
+  margin: 0.8em 0;
+  padding: 0.5em 1em;
+  border-left: 4px solid var(--accent-primary);
+  background: rgba(139, 92, 246, 0.04);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+.markdown-body blockquote p { margin: 0.3em 0; }
+.markdown-body code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.88em;
+  padding: 2px 6px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+}
+.markdown-body pre {
+  margin: 0.8em 0;
+  padding: 1em;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+}
+.markdown-body pre code {
+  padding: 0;
+  background: none;
+  font-size: 0.85em;
+}
+.markdown-body strong { font-weight: 600; }
+.markdown-body em { font-style: italic; }
+.markdown-body hr {
+  border: none;
+  border-top: 1px solid var(--border-default);
+  margin: 1.2em 0;
+}
+.markdown-body a {
+  color: var(--accent-primary);
+  text-decoration: underline;
+}
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.8em 0;
+}
+.markdown-body th, .markdown-body td {
+  padding: 8px 12px;
+  border: 1px solid var(--border-default);
+  text-align: left;
+}
+.markdown-body th {
+  background: var(--bg-secondary);
+  font-weight: 600;
+}
+
 .result-tags {
   display: flex;
   flex-wrap: wrap;

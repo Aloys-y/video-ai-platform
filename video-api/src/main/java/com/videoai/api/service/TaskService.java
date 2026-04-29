@@ -84,6 +84,7 @@ public class TaskService {
         Page<AnalysisTask> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<AnalysisTask> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(AnalysisTask::getUserId, userId)
+                .ne(AnalysisTask::getStatus, "CANCELLED")
                 .orderByDesc(AnalysisTask::getCreatedAt);
 
         return analysisTaskMapper.selectPage(page, wrapper);

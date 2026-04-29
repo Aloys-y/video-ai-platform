@@ -50,12 +50,13 @@ public class InitUploadRequest implements Serializable {
     private Long fileSize;
 
     /**
-     * 文件MD5哈希
+     * 文件哈希（支持MD5 32位或SHA-256 64位）
      * 用于：
      * 1. 秒传判断
-     * 2. 上传完成后校验完整性
+     * 2. 断点续传（匹配UPLOADING会话）
+     * 3. 上传完成后校验完整性
      */
-    @Pattern(regexp = "^[a-fA-F0-9]{32}$", message = "文件哈希格式错误，应为32位MD5")
+    @Pattern(regexp = "^[a-fA-F0-9]{32,64}$", message = "文件哈希格式错误")
     private String fileHash;
 
     /**

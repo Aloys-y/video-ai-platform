@@ -286,11 +286,12 @@ const TaskDetail = {
       }
       result = JSON.parse(cleaned);
     } catch {
-      // JSON 解析失败，直接显示原文
+      // JSON 解析失败，用 Markdown 渲染
+      const mdHtml = this.renderMarkdown(resultStr);
       return `
         <div class="card result-section">
           <div class="result-section__title">分析结果</div>
-          <div class="result-summary" style="white-space:pre-wrap">${this.escapeHtml(resultStr)}</div>
+          <div class="markdown-body">${mdHtml}</div>
         </div>
       `;
     }
@@ -424,6 +425,19 @@ const TaskDetail = {
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
+  },
+
+  /**
+   * 渲染 Markdown 文本为 HTML
+   */
+  renderMarkdown(text) {
+    if (!text) return '';
+    if (typeof marked !== 'undefined') {
+      marked.setOptions({ breaks: true, gfm: true });
+      return marked.parse(text);
+    }
+    // marked 未加载时降级为纯文本
+    return `<pre style="white-space:pre-wrap">${this.escapeHtml(text)}</pre>`;
   },
 
   /**
