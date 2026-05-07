@@ -8,8 +8,8 @@ import com.videoai.infra.kafka.topic.TopicConstant;
 import com.videoai.infra.minio.service.StorageService;
 import com.videoai.infra.mysql.mapper.AnalysisTaskMapper;
 import com.videoai.infra.redis.key.RedisKey;
-import com.videoai.worker.config.ZhipuConfig;
 import com.videoai.worker.service.AiService;
+import com.videoai.worker.service.provider.AiVideoProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -41,7 +41,7 @@ public class TaskProcessor {
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final AiService aiService;
     private final StorageService storageService;
-    private final ZhipuConfig zhipuConfig;
+    private final AiVideoProvider aiVideoProvider;
 
     /**
      * 处理任务
@@ -109,7 +109,7 @@ public class TaskProcessor {
     }
 
     /**
-     * 实际处理逻辑：GLM视频分析
+     * 实际处理逻辑：AI视频分析
      */
     private void doProcess(String taskId, AnalysisTask task) {
         try {
@@ -120,14 +120,14 @@ public class TaskProcessor {
             String videoUrl = task.getVideoUrl();
             String presignedUrl = storageService.getPresignedUrl(
                     extractObjectPath(videoUrl),
-                    zhipuConfig.getPresignedUrlExpireHours());
+                    aiVideoProvider.getPresignedUrlExpireHours());
             log.info("Generated presigned URL for task: {}, url: {}, originalPath: {}",
                     taskId, presignedUrl, videoUrl);
             analysisTaskMapper.updateProgress(taskId, 20);
 
-            // 2. 调用GLM API分析视频（使用用户自定义prompt）
+            // 2. 调用AI API分析视频（使用用户自定义prompt）
             String userPrompt = task.getPrompt();
-            log.info("Task {} calling AI - prompt: {}", taskId,
+             log.info("Task {} calling AI - prompt: {}", taskId,
                     userPrompt != null ? (userPrompt.length() > 100 ? userPrompt.substring(0, 100) + "..." : userPrompt) : "null");
             String aiResult = aiService.analyzeVideo(presignedUrl, userPrompt);
             analysisTaskMapper.updateProgress(taskId, 80);
