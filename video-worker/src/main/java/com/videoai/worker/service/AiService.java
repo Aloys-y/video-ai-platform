@@ -1,30 +1,26 @@
 package com.videoai.worker.service;
 
-import ai.z.openapi.ZhipuAiClient;
-import ai.z.openapi.service.model.*;
-import com.videoai.worker.config.ZhipuConfig;
+import com.videoai.worker.service.provider.AiProviderException;
+import com.videoai.worker.service.provider.AiVideoProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-
 /**
- * AI视频分析服务
+ * AI视频分析服务（门面）
  *
- * 使用智谱官方SDK + GLM-4.6V-Flash（免费）
- * 原生支持 video_url 视频理解
- * 支持429（限流）自动重试
+ * 通过 AiVideoProvider 接口解耦底层大模型厂商
+ * 支持 Zhipu(GLM) / DashScope(Qwen-VL) 自由切换
+ * 配置项: ai.provider = dashscope(默认) / zhipu
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AiService {
 
-    private final ZhipuAiClient zhipuAiClient;
-    private final ZhipuConfig config;
+    private final AiVideoProvider aiVideoProvider;
 
-    /** 429重试最大次数 */
+    /** 重试最大次数 */
     private static final int MAX_RETRIES = 3;
     /** 重试间隔（毫秒）：10s, 30s, 60s */
     private static final int[] RETRY_DELAYS_MS = {10_000, 30_000, 60_000};
@@ -56,7 +52,7 @@ public class AiService {
     private static final String DEFAULT_USER_PROMPT = "请分析这个视频的内容，按照系统提示的JSON格式返回结果。";
 
     /**
-     * 分析视频内容（含429自动重试）
+     * 分析视频内容（含限流自动重试）
      *
      * @param videoUrl 视频公网URL
      * @param prompt   用户自定义提示词（可为null，使用默认）
@@ -64,116 +60,49 @@ public class AiService {
      */
     public String analyzeVideo(String videoUrl, String prompt) {
         String userPrompt = (prompt != null && !prompt.isBlank()) ? prompt : DEFAULT_USER_PROMPT;
+        String fullPrompt = SYSTEM_PROMPT + "\n\n" + userPrompt;
         Exception lastException = null;
 
         for (int attempt = 0; attempt <= MAX_RETRIES; attempt++) {
             try {
-                log.info("Calling Zhipu API, model: {}, attempt: {}/{}",
-                        config.getModel(), attempt + 1, MAX_RETRIES + 1);
+                log.info("Calling {} API, attempt: {}/{}",
+                        aiVideoProvider.getName(), attempt + 1, MAX_RETRIES + 1);
 
-                String result = doCall(videoUrl, userPrompt);
-                log.info("Zhipu API response received, length: {}", result.length());
+                String result = aiVideoProvider.call(videoUrl, fullPrompt);
+                log.info("{} API response received, length: {}", aiVideoProvider.getName(), result.length());
                 return result;
 
-            } catch (RateLimitException e) {
-                lastException = e;
-                if (attempt < MAX_RETRIES) {
-                    int delay = RETRY_DELAYS_MS[attempt];
-                    log.warn("Zhipu API rate limited, retrying in {}ms, attempt: {}/{}",
-                            delay, attempt + 1, MAX_RETRIES);
-                    try {
-                        Thread.sleep(delay);
-                    } catch (InterruptedException ie) {
-                        Thread.currentThread().interrupt();
-                        throw new RuntimeException("API call interrupted during retry", ie);
+            } catch (AiProviderException e) {
+                if (e.isRetryable()) {
+                    lastException = e;
+                    if (attempt < MAX_RETRIES) {
+                        int delay = RETRY_DELAYS_MS[attempt];
+                        log.warn("{} API rate limited, retrying in {}ms, attempt: {}/{}",
+                                aiVideoProvider.getName(), delay, attempt + 1, MAX_RETRIES);
+                        try {
+                            Thread.sleep(delay);
+                        } catch (InterruptedException ie) {
+                            Thread.currentThread().interrupt();
+                            throw new RuntimeException("API call interrupted during retry", ie);
+                        }
+                        continue;
                     }
-                    continue;
+                    throw new RuntimeException(aiVideoProvider.getName()
+                            + " API call failed after " + MAX_RETRIES + " retries", e);
                 }
-                throw new RuntimeException("Zhipu API call failed after " + MAX_RETRIES + " retries", e);
-
-            } catch (ApiCallException e) {
-                throw new RuntimeException("Zhipu API call failed: " + e.getMessage(), e);
+                throw new RuntimeException(aiVideoProvider.getName()
+                        + " API call failed: " + e.getMessage(), e);
             }
         }
 
-        throw new RuntimeException("Zhipu API call failed after " + MAX_RETRIES + " retries",
-                lastException);
+        throw new RuntimeException(aiVideoProvider.getName()
+                + " API call failed after " + MAX_RETRIES + " retries", lastException);
     }
 
     /**
-     * 执行一次API调用
+     * 获取MinIO预签名URL过期时间（由当前Provider提供）
      */
-    private String doCall(String videoUrl, String userPrompt) throws RateLimitException, ApiCallException {
-        log.info("Zhipu API request - model: {}, videoUrl: {}, maxTokens: {}, promptLength: {}",
-                config.getModel(), videoUrl, config.getMaxTokens(),
-                userPrompt != null ? userPrompt.length() : 0);
-
-        ChatCompletionCreateParams request = ChatCompletionCreateParams.builder()
-                .model(config.getModel())
-                .messages(Arrays.asList(
-                        ChatMessage.builder()
-                                .role(ChatMessageRole.SYSTEM.value())
-                                .content(SYSTEM_PROMPT)
-                                .build(),
-                        ChatMessage.builder()
-                                .role(ChatMessageRole.USER.value())
-                                .content(Arrays.asList(
-                                        MessageContent.builder()
-                                                .type("video_url")
-                                                .videoUrl(VideoUrl.builder()
-                                                        .url(videoUrl)
-                                                        .build())
-                                                .build(),
-                                        MessageContent.builder()
-                                                .type("text")
-                                                .text(userPrompt)
-                                                .build()
-                                ))
-                                .build()
-                ))
-                .maxTokens(config.getMaxTokens())
-                .build();
-
-        ChatCompletionResponse response;
-        try {
-            response = zhipuAiClient.chat().createChatCompletion(request);
-        } catch (Exception e) {
-            log.error("Zhipu API call threw exception - model: {}, videoUrl: {}", config.getModel(), videoUrl, e);
-            throw new ApiCallException("SDK exception: " + e.getClass().getSimpleName() + " - " + e.getMessage());
-        }
-
-        // 完整记录响应结构
-        log.info("Zhipu API response - success: {}, code: {}, msg: {}, data: {}",
-                response.isSuccess(), response.getCode(), response.getMsg(), response.getData());
-
-        if (response.isSuccess()) {
-            ChatMessage message = (ChatMessage) response.getData().getChoices().get(0).getMessage();
-            Object content = message.getContent();
-            String result = content != null ? content.toString() : "";
-            log.info("Zhipu API response content length: {}", result.length());
-            return result;
-        }
-
-        // 判断是否是限流
-        String errorMsg = response.getMsg();
-        int code = response.getCode();
-        log.error("Zhipu API error - code: {}, msg: {}, model: {}, videoUrl: {}",
-                code, errorMsg, config.getModel(), videoUrl);
-
-        if (code == 429 || (errorMsg != null && errorMsg.contains("rate"))) {
-            throw new RateLimitException("HTTP 429: " + errorMsg);
-        }
-
-        throw new ApiCallException("code=" + code + ", msg=" + errorMsg);
-    }
-
-    /** 限流异常（可重试） */
-    private static class RateLimitException extends Exception {
-        RateLimitException(String message) { super(message); }
-    }
-
-    /** API调用异常（不可重试） */
-    private static class ApiCallException extends Exception {
-        ApiCallException(String message) { super(message); }
+    public int getPresignedUrlExpireHours() {
+        return aiVideoProvider.getPresignedUrlExpireHours();
     }
 }

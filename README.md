@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/Kafka-3.6.x-orange" alt="Kafka">
   <img src="https://img.shields.io/badge/Redis-Redisson-red" alt="Redisson">
   <img src="https://img.shields.io/badge/MinIO-8.5.9-blue" alt="MinIO">
-  <img src="https://img.shields.io/badge/AI-GLM--4.6V-blueviolet" alt="GLM-4V">
+  <img src="https://img.shields.io/badge/AI-Qwen--VL%20%2F%20GLM-blueviolet" alt="AI">
   <img src="https://img.shields.io/badge/License-MIT-yellow" alt="License">
 </p>
 
@@ -53,7 +53,7 @@ Kafka 解耦：上传完成后，Controller 仅投递一条 Kafka 消息即刻�
 
 **4. AI 视频分析**
 
-集成智谱 GLM-4.6V 多模态模型，原生支持 `video_url` 视频理解。用户可自定义 Prompt，例如**游戏复盘分析、课程内容总结等**。内置 429 限流自动重试（指数退避：10s/30s/60s）。
+集成多模态视频理解模型，通过 Provider 接口解耦底层大模型厂商，支持 **阿里云 DashScope（Qwen-VL）** 和 **智谱 GLM** 一键切换。用户可自定义 Prompt，例如**游戏复盘分析、课程内容总结等**。内置限流/超时自动重试（指数退避：10s/30s/60s）。
 
 **5. 双认证体系**
 
@@ -78,7 +78,7 @@ graph TD
     H --> J[Worker异步消费]
     J --> K{状态机校验+Redisson分布式锁}
     K --> L[生成MinIO预签名URL]
-    L --> M[调用智谱GLM-4.6V API]
+    L --> M[调用AI Provider API]
     M --> N{分析成功?}
     N -- 是 --> O[存储结果到MySQL]
     N -- 否-429限流 --> P[指数退避重试]
@@ -96,7 +96,7 @@ graph TD
 | 缓存 | Redis 7.0 + Redisson | 分布式锁 + 限流计数 |
 | 消息队列 | Kafka 3.6.x | 手动 ack + 死信队列 |
 | 对象存储 | MinIO 8.5.9 | 分片上传 + 预签名 URL |
-| AI 服务 | 智谱 GLM-4.6V | video_url 原生视频理解 |
+| AI 服务 | 阿里 Qwen-VL / 智谱 GLM | Provider 接口解耦，一键切换 |
 | 接口文档 | SpringDoc OpenAPI | Swagger UI |
 | 前端 | 纯 HTML/CSS/JS SPA | 无框架依赖 |
 | 部署 | Docker Compose | 一键启动所有中间件 |
@@ -151,7 +151,9 @@ cp video-worker/src/main/resources/application-dev.yml.example \
 | `spring.data.redis.*` | Redis 连接信息 |
 | `spring.kafka.bootstrap-servers` | Kafka 地址 |
 | `minio.*` | MinIO 地址和 Access Key / Secret Key |
-| `ai.glm.api-key` | 智谱 AI API Key，[点这里申请](https://open.bigmodel.cn/)（GLM-4V-Flash 免费） |
+| `ai.dashscope.api-key` | 阿里云 DashScope API Key，[点这里申请](https://dashscope.console.aliyun.com/) |
+| `ai.zhipu.api-key` | 智谱 AI API Key，[点这里申请](https://open.bigmodel.cn/) |
+| `ai.provider` | 底层大模型选择：`dashscope`（默认）/ `zhipu` |
 
 ### 3. 编译项目
 
@@ -190,7 +192,8 @@ cd video-worker && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 | 双认证体系 | JWT Bearer + API Key | ✅ |
 | 三级限流 | Guava 全局 → Redis 用户级 → 端点级 | ✅ |
 | 统一响应 | ApiResponse + ErrorCode 结构化错误码 | ✅ |
-| AI 429 自动重试 | 指数退避，最多 3 次重试 | ✅ |
+| AI Provider 解耦 | 接口抽象，DashScope/智谱一键切换 | ✅ |
+| AI 限流/超时自动重试 | 指数退避，最多 3 次重试，瞬态错误可重试 | ✅ |
 
 <br>
 

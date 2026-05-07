@@ -34,7 +34,7 @@ video-common  <--  video-infrastructure  <--  video-api (REST, port 8080)
 - **video-common**: Domain entities (`User`, `UploadSession`, `AnalysisTask`, `UserQuota`), DTOs, enums (`ErrorCode`, `TaskStatus` with state machine), `BusinessException`, `IdGenerator`, Kafka message types
 - **video-infrastructure**: MyBatis-Plus config/mappers, Redisson client, Kafka topic constants (`TopicConstant`), MinIO `StorageService`, Redis key definitions
 - **video-api**: Controllers (`Auth`, `Upload`, `Task`), services, `AuthInterceptor` (JWT + API Key dual auth), `RateLimitInterceptor` (3-tier: Guava global -> Redis per-user -> per-endpoint), `GlobalExceptionHandler`, SpringDoc OpenAPI config
-- **video-worker**: Kafka consumer (`TaskConsumer`, `DeadLetterConsumer`), `TaskProcessor` (state machine driven), `AiService` (Zhipu GLM-4.6V with 429 retry), `ZhipuConfig`
+- **video-worker**: Kafka consumer (`TaskConsumer`, `DeadLetterConsumer`), `TaskProcessor` (state machine driven), `AiService` (facade with retry), `AiVideoProvider` interface with `DashScopeVideoProvider` (Qwen-VL) and `ZhipuVideoProvider` (GLM) implementations
 
 ### Key Design Patterns
 
@@ -48,10 +48,11 @@ video-common  <--  video-infrastructure  <--  video-api (REST, port 8080)
 
 ### AI Integration
 
-- **SDK**: Zhipu official SDK (`ai.z.openapi:zai-sdk:0.3.3`), uses `ZhipuAiClient`
-- **Model**: GLM-4.6V, supports native `video_url` for video understanding
-- **Video format**: Only MP4 supported (GLM limitation)
-- **Retry**: 429 rate-limit auto-retry (3 retries, delays: 10s/30s/60s)
+- **Provider interface**: `AiVideoProvider` decouples AI vendor, switch via `ai.provider` config (`dashscope` default / `zhipu`)
+- **DashScope**: Alibaba SDK (`dashscope-sdk-java:2.22.15`), `MultiModalConversation` API, model `qwen3-vl-flash`
+- **Zhipu**: Official SDK (`zai-sdk:0.3.3`), `ZhipuAiClient`, model `GLM-5V-Turbo`
+- **Retry**: Rate-limit and transient errors auto-retry (3 retries, delays: 10s/30s/60s)
+- **Timeout**: Configurable via `ai.dashscope.timeout` (default 300s) and `ai.dashscope.connect-timeout` (default 30s)
 - **Prompt**: User-customizable analysis prompt, passed through upload → task → Kafka → Worker → AI
 
 ### Frontend
