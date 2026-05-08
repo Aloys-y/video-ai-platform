@@ -25,6 +25,9 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     # 时区
     time-zone: Asia/Shanghai
+    # LocalDateTime 序列化为字符串而非数组
+    serialization:
+      write-dates-as-timestamps: false
     # 忽略null字段
     default-property-inclusion: non_null
     # 下划线转驼峰

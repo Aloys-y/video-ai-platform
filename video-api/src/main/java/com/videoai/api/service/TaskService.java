@@ -79,7 +79,7 @@ public class TaskService {
      */
     public Page<AnalysisTask> listUserTasks(Long userId, int pageNum, int pageSize) {
         if (pageNum < 1) pageNum = 1;
-        if (pageSize < 1 || pageSize > 50) pageSize = 20;
+        if (pageSize < 1 || pageSize > 50) pageSize = 5;
 
         Page<AnalysisTask> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<AnalysisTask> wrapper = new LambdaQueryWrapper<>();
@@ -117,10 +117,6 @@ public class TaskService {
             AnalysisTask task = getTask(taskId);
             if (!task.getUserId().equals(userId)) {
                 throw new BusinessException(ErrorCode.USER_FORBIDDEN);
-            }
-            TaskStatus status = task.getStatusEnum();
-            if (status != null && !status.isFinalState()) {
-                throw new BusinessException(ErrorCode.TASK_PROCESSING, "任务正在处理中，无法删除");
             }
             throw new BusinessException(ErrorCode.TASK_STATUS_ERROR);
         }

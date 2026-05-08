@@ -7,7 +7,7 @@ const Dashboard = {
 
   state: {
     page: 1,
-    size: 20,
+    size: 5,
     total: 0,
     tasks: [],
     loading: false,
@@ -21,7 +21,7 @@ const Dashboard = {
    */
   init() {
     if (!this._preservePage) {
-      this.state = { page: 1, size: 20, total: 0, tasks: [], loading: false };
+      this.state = { page: 1, size: 5, total: 0, tasks: [], loading: false };
     }
     this._preservePage = false;
     this.loadTasks();
@@ -100,25 +100,26 @@ const Dashboard = {
   renderTaskCard(task) {
     const statusClass = task.status ? task.status.toLowerCase() : 'pending';
     const statusText = this.getStatusText(task.status);
-    const progress = task.progress || 0;
+    const progress = parseInt(task.progress) || 0;
     const displayName = task.taskName || this.extractFileName(task.videoUrl);
     const time = task.createdAt ? this.formatTime(task.createdAt) : '';
     const canRetry = task.status === 'FAILED' || task.status === 'DEAD';
-    const canDelete = this.isFinalState(task.status);
+    const canDelete = this.isFinalState(task.status) || this.isStuck(task);
+    const deleteLabel = this.isFinalState(task.status) ? '删除' : '强制取消';
 
     return `
       <div class="card task-card" data-task-id="${task.taskId}" onclick="window.location.hash='#/task/${task.taskId}'" role="button" tabindex="0" aria-label="查看任务 ${this.escapeHtml(displayName)}">
         <div class="task-card__info">
           <div class="task-card__header">
             <div class="task-card__name">${this.escapeHtml(displayName)}</div>
-            <button class="task-card__menu-btn" data-action="toggle-menu" data-task-id="${task.taskId}" aria-label="操作菜单">
+            <button class="task-card__menu-btn" data-action="toggle-menu" data-task-id="${task.taskId}" onclick="event.stopPropagation()" aria-label="操作菜单">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
             </button>
           </div>
           <div class="task-card__menu" id="menu-${task.taskId}" style="display:none" onclick="event.stopPropagation()">
             <button class="menu-item" data-action="rename" data-task-id="${task.taskId}" data-display-name="${this.escapeHtml(displayName)}">重命名</button>
             ${canRetry ? `<button class="menu-item" data-action="retry" data-task-id="${task.taskId}">重新分析</button>` : ''}
-            ${canDelete ? `<button class="menu-item menu-item--danger" data-action="delete" data-task-id="${task.taskId}" data-display-name="${this.escapeHtml(displayName)}">删除</button>` : ''}
+            ${canDelete ? `<button class="menu-item menu-item--danger" data-action="delete" data-task-id="${task.taskId}" data-display-name="${this.escapeHtml(displayName)}">${deleteLabel}</button>` : ''}
           </div>
           <div class="task-card__meta">
             <span class="badge badge--${statusClass}">${statusText}</span>
@@ -233,7 +234,9 @@ const Dashboard = {
     const container = document.getElementById('pagination');
     if (!container) return;
 
-    const totalPages = Math.ceil(this.state.total / this.state.size);
+    const total = Number(this.state.total) || 0;
+    const size = Number(this.state.size) || 5;
+    const totalPages = Math.ceil(total / size);
     if (totalPages <= 1) {
       container.innerHTML = '';
       return;
@@ -262,8 +265,34 @@ const Dashboard = {
 
   // === 工具方法 ===
 
+  /**
+   * 切换操作菜单显示/隐藏
+   */
+  toggleMenu(taskId) {
+    const menu = document.getElementById(`menu-${taskId}`);
+    if (!menu) return;
+    // 先关闭其他所有菜单
+    document.querySelectorAll('.task-card__menu').forEach(m => {
+      if (m.id !== `menu-${taskId}`) m.style.display = 'none';
+    });
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  },
+
   isFinalState(status) {
     return ['COMPLETED', 'FAILED', 'DEAD', 'CANCELLED'].includes(status);
+  },
+
+  /**
+   * 判断任务是否卡死：非终态任务超过 10 分钟视为卡死
+   */
+  isStuck(task) {
+    if (this.isFinalState(task.status)) return false;
+    const startTime = task.startedAt || task.createdAt;
+    if (!startTime) return true; // 无时间记录的非终态任务，也视为卡死
+    const d = new Date(startTime.replace(/-/g, '/'));
+    if (isNaN(d.getTime())) return true; // 日期解析失败，视为卡死
+    const elapsed = Date.now() - d.getTime();
+    return elapsed > 10 * 60 * 1000; // 10 分钟
   },
 
   getStatusText(status) {
@@ -286,19 +315,26 @@ const Dashboard = {
     return parts[parts.length - 1] || videoUrl;
   },
 
-  formatTime(timeStr) {
-    if (!timeStr) return '';
+  formatTime(raw) {
+    if (!raw) return '';
     try {
-      const d = new Date(timeStr.replace(/-/g, '/'));
+      let d;
+      if (Array.isArray(raw)) {
+        d = new Date(raw[0], raw[1] - 1, raw[2], raw[3] || 0, raw[4] || 0, raw[5] || 0);
+      } else {
+        d = new Date(String(raw).replace(/-/g, '/').replace('T', ' '));
+      }
+      if (isNaN(d.getTime())) return String(raw);
       const now = new Date();
       const diff = now - d;
       if (diff < 60000) return '刚刚';
       if (diff < 3600000) return `${Math.floor(diff / 60000)} 分钟前`;
       if (diff < 86400000) return `${Math.floor(diff / 3600000)} 小时前`;
       if (diff < 604800000) return `${Math.floor(diff / 86400000)} 天前`;
-      return `${d.getMonth() + 1}/${d.getDate()}`;
+      const pad = n => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
     } catch {
-      return timeStr;
+      return String(raw);
     }
   },
 
