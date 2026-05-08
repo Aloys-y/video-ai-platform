@@ -36,7 +36,7 @@ public class TaskController {
     @GetMapping("/list")
     public ApiResponse<Page<AnalysisTask>> listTasks(
             @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "size", defaultValue = "20") int size) {
+            @RequestParam(value = "size", defaultValue = "5") int size) {
         User user = UserContext.getUser();
         Page<AnalysisTask> result = taskService.listUserTasks(user.getId(), page, size);
         return ApiResponse.success(result);

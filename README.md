@@ -23,6 +23,34 @@
 
 针对视频处理场景中常见的 **"大文件上传不稳定"**、**"长耗时任务阻塞"**、**"高并发资源冲突"** 等痛点，本项目采用 **Kafka + Redisson + 分片续传** 的异步架构，实现上传与分析的完全解耦。
 
+## 界面预览
+
+<p align="center">
+  <img src="docs/pic/登陆页面.png" alt="登录页面" width="700">
+  <br>
+  <sub>登录 / 注册页面</sub>
+</p>
+
+<p align="center">
+  <img src="docs/pic/上传界面.png" alt="上传界面" width="700">
+  <br>
+  <sub>视频上传 — 分片断点续传 + 秒传</sub>
+</p>
+
+<p align="center">
+  <img src="docs/pic/列表任务.png" alt="任务列表" width="700">
+  <br>
+  <sub>任务列表 — 进度追踪 + 状态管理</sub>
+</p>
+
+<p align="center">
+  <img src="docs/pic/分析结果示例.png" alt="分析结果" width="700">
+  <br>
+  <sub>AI 分析结果 — Markdown 渲染</sub>
+</p>
+
+<br>
+
 初心是用来解决个人需求：本人和朋友喜欢玩 APEX (一款三人小队 fps 大逃杀游戏)，为了高效复盘（抓战犯），才萌生了做这个项目的想法。后续会开放给社区使用，也算是一位爱玩派派玩家的社区回馈把！
 
 Todo：

@@ -110,12 +110,12 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
 
     /**
      * 逻辑删除任务（状态改为CANCELLED）
-     * 只允许终态任务删除
+     * 允许所有状态删除（用户可取消卡死的任务）
      */
     @Update("UPDATE analysis_task SET status = 'CANCELLED', " +
             "updated_at = NOW() " +
             "WHERE task_id = #{taskId} AND user_id = #{userId} " +
-            "AND status IN ('COMPLETED', 'DEAD', 'CANCELLED')")
+            "AND status != 'CANCELLED'")
     int logicalDelete(@Param("taskId") String taskId,
                       @Param("userId") Long userId);
 }

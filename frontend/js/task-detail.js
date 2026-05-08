@@ -111,8 +111,11 @@ const TaskDetail = {
     const statusText = this.getStatusText(task.status);
     const isFinal = this.isFinalState(task.status);
     const displayName = task.taskName || this.extractFileName(task.videoUrl);
+    const progress = parseInt(task.progress) || 0;
     const canRetry = task.status === 'FAILED' || task.status === 'DEAD';
-    const canDelete = isFinal;
+    const isStuck = !isFinal && this._isStuck(task);
+    const canDelete = isFinal || isStuck;
+    const deleteLabel = isFinal ? '删除' : '强制取消';
 
     let resultHtml = '';
     if (task.status === 'COMPLETED' && task.result) {
@@ -123,10 +126,10 @@ const TaskDetail = {
           <div class="badge badge--${statusClass}" style="margin-bottom:16px">${statusText}</div>
           <div class="hud-title" style="margin-bottom:8px">分析进行中</div>
           <div class="progress progress--large" style="max-width:400px;margin:16px auto">
-            <div class="progress__bar" style="width:${task.progress || 0}%"></div>
+            <div class="progress__bar" style="width:${progress}%"></div>
           </div>
           <div class="progress__label" style="justify-content:center">
-            <span>进度</span><span>${task.progress || 0}%</span>
+            <span>进度</span><span>${progress}%</span>
           </div>
         </div>
       `;
@@ -166,9 +169,9 @@ const TaskDetail = {
             ${!isFinal ? `
             <div class="task-sidebar__overview-progress">
               <div class="progress">
-                <div class="progress__bar" style="width:${task.progress || 0}%"></div>
+                <div class="progress__bar" style="width:${progress}%"></div>
               </div>
-              <div class="progress__label"><span>进度</span><span>${task.progress || 0}%</span></div>
+              <div class="progress__label"><span>进度</span><span>${progress}%</span></div>
             </div>` : ''}
           </div>
 
@@ -180,17 +183,17 @@ const TaskDetail = {
             </div>
             <div class="task-sidebar__row">
               <span class="task-sidebar__label">创建时间</span>
-              <span class="task-sidebar__value">${task.createdAt || '-'}</span>
+              <span class="task-sidebar__value">${this.formatDate(task.createdAt)}</span>
             </div>
             ${task.startedAt ? `
             <div class="task-sidebar__row">
               <span class="task-sidebar__label">开始时间</span>
-              <span class="task-sidebar__value">${task.startedAt}</span>
+              <span class="task-sidebar__value">${this.formatDate(task.startedAt)}</span>
             </div>` : ''}
             ${task.completedAt ? `
             <div class="task-sidebar__row">
               <span class="task-sidebar__label">完成时间</span>
-              <span class="task-sidebar__value">${task.completedAt}</span>
+              <span class="task-sidebar__value">${this.formatDate(task.completedAt)}</span>
             </div>` : ''}
             ${task.retryCount > 0 ? `
             <div class="task-sidebar__row">
@@ -213,7 +216,7 @@ const TaskDetail = {
             ${canDelete ? `
             <button class="btn btn--ghost btn--small" style="flex:1;color:var(--accent-red);border-color:var(--accent-red)" onclick="TaskDetail.confirmDelete()">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
-              删除
+              ${deleteLabel}
             </button>` : ''}
           </div>
         </div>
@@ -419,6 +422,48 @@ const TaskDetail = {
     if (!videoUrl) return '未知文件';
     const parts = videoUrl.split('/');
     return parts[parts.length - 1] || videoUrl;
+  },
+
+  /**
+   * 格式化日期为 "yyyy-MM-dd HH:mm"
+   * 兼容数组 [2026,5,8,12,34,56] 和字符串 "2026-05-08T12:34:56" 两种格式
+   */
+  formatDate(raw) {
+    if (!raw) return '-';
+    try {
+      let d;
+      if (Array.isArray(raw)) {
+        // Jackson write-dates-as-timestamps=true 时返回数组，月份要 -1
+        d = new Date(raw[0], raw[1] - 1, raw[2], raw[3] || 0, raw[4] || 0, raw[5] || 0);
+      } else {
+        d = new Date(String(raw).replace(/-/g, '/').replace('T', ' '));
+      }
+      if (isNaN(d.getTime())) return String(raw);
+      const pad = n => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    } catch {
+      return String(raw);
+    }
+  },
+
+  /**
+   * 判断任务是否卡死：非终态 + 超过 10 分钟
+   */
+  _isStuck(task) {
+    const startTime = task.startedAt || task.createdAt;
+    if (!startTime) return true;
+    try {
+      let d;
+      if (Array.isArray(startTime)) {
+        d = new Date(startTime[0], startTime[1] - 1, startTime[2], startTime[3] || 0, startTime[4] || 0, startTime[5] || 0);
+      } else {
+        d = new Date(String(startTime).replace(/-/g, '/').replace('T', ' '));
+      }
+      if (isNaN(d.getTime())) return true;
+      return (Date.now() - d.getTime()) > 10 * 60 * 1000;
+    } catch {
+      return true;
+    }
   },
 
   escapeHtml(str) {
