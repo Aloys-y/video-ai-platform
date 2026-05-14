@@ -38,6 +38,12 @@
 </p>
 
 <p align="center">
+  <img src="docs/pic/分析提示词页面.png" alt="分析提示词" width="700">
+  <br>
+  <sub>确认分析 — 自定义 Prompt 提交任务</sub>
+</p>
+
+<p align="center">
   <img src="docs/pic/列表任务.png" alt="任务列表" width="700">
   <br>
   <sub>任务列表 — 进度追踪 + 状态管理</sub>
