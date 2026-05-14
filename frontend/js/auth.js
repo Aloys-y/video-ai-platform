@@ -10,6 +10,8 @@ const Auth = {
     this.bindTabs();
     this.bindForms();
     this.bindPasswordToggles();
+    this.bindGitHubLogin();
+    this.handleOAuthCallback();
   },
 
   /**
@@ -216,6 +218,45 @@ const Auth = {
   /**
    * 按钮加载状态
    */
+  /**
+   * GitHub OAuth 登录
+   */
+  bindGitHubLogin() {
+    const btn = document.getElementById('github-login-btn');
+    if (!btn) return;
+    btn.addEventListener('click', async () => {
+      this.setButtonLoading(btn, true);
+      try {
+        const result = await Api.request('GET', '/auth/oauth/github/url');
+        window.location.href = result.url;
+      } catch (err) {
+        App.toast('获取 GitHub 授权链接失败：' + err.message, 'error');
+        this.setButtonLoading(btn, false);
+      }
+    });
+  },
+
+  /**
+   * 处理 OAuth 回调 — URL hash 中 token=xxx
+   */
+  handleOAuthCallback() {
+    const hash = window.location.hash;
+    const match = hash.match(/[?&]token=([^&]+)/);
+    if (match) {
+      const token = decodeURIComponent(match[1]);
+      Api.setToken(token);
+      // 需要从 token 中解析用户信息（后端 redirect 时带上）
+      window.location.hash = '#/dashboard';
+      App.toast('GitHub 登录成功', 'success');
+    }
+    // 处理错误
+    const errMatch = hash.match(/[?&]error=([^&]+)/);
+    if (errMatch) {
+      App.toast('GitHub 登录失败：' + decodeURIComponent(errMatch[1]), 'error');
+      window.location.hash = '#/auth';
+    }
+  },
+
   setButtonLoading(btn, loading) {
     if (!btn) return;
     if (loading) {

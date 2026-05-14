@@ -89,6 +89,14 @@ videoai:
     secret: ${JWT_SECRET:default-dev-secret-key-must-be-at-least-32-chars}
     expiration: 86400000
 
+  # OAuth 配置
+  oauth:
+    github:
+      client-id: ${GITHUB_CLIENT_ID:}
+      client-secret: ${GITHUB_CLIENT_SECRET:}
+      redirect-uri: ${GITHUB_REDIRECT_URI:http://localhost:8080/api/auth/oauth/github/callback}
+      frontend-url: ${FRONTEND_URL:http://localhost:3000}
+
 # SpringDoc / Swagger配置
 springdoc:
   api-docs:

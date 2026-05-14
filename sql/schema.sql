@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS user (
     password        VARCHAR(128) COMMENT '密码(BCrypt哈希)',
     api_key         VARCHAR(64) NOT NULL COMMENT 'API Key',
     api_secret      VARCHAR(128) COMMENT 'API Secret(加密存储)',
+    oauth_provider  VARCHAR(20) NULL COMMENT 'OAuth提供商(github/gitee)',
+    oauth_provider_id VARCHAR(64) NULL COMMENT 'OAuth提供商用户ID',
     role            VARCHAR(20) DEFAULT 'USER' COMMENT '角色: USER/ADMIN/VIP',
     status          TINYINT DEFAULT 1 COMMENT '1:正常 0:禁用',
     rate_limit      INT DEFAULT 100 COMMENT '用户限流QPS',

@@ -61,6 +61,16 @@ public class User {
     private String apiSecret;
 
     /**
+     * OAuth 提供商（github / gitee / null）
+     */
+    private String oauthProvider;
+
+    /**
+     * OAuth 提供商用户 ID（GitHub user id 等）
+     */
+    private String oauthProviderId;
+
+    /**
      * 角色
      * USER: 普通用户
      * VIP: VIP用户（更高配额）

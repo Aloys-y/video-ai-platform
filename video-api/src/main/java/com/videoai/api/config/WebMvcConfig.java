@@ -58,6 +58,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         // 认证接口（公开）
                         "/auth/register",
                         "/auth/login",
+                        // OAuth 接口（公开）
+                        "/auth/oauth/**",
                         // 测试接口（仅 dev 环境）
                         "/test/user/**",
                         // 公开接口

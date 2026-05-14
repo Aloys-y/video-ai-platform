@@ -76,6 +76,13 @@ minio:
   bucket-name: video-ai
   region:
 
+# GitHub OAuth 配置
+oauth:
+  github:
+    client-id: YOUR_GITHUB_OAUTH_CLIENT_ID
+    client-secret: YOUR_GITHUB_OAUTH_CLIENT_SECRET
+    redirect-uri: http://localhost:8080/api/auth/oauth/github/callback
+
 # AI服务配置
 ai:
   claude:

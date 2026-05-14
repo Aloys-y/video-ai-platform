@@ -353,6 +353,46 @@ h4 { font-size: 1.1rem; }
   padding: 8px 18px;
 }
 
+/* GitHub OAuth 按钮 */
+.btn--github {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #24292e;
+  color: #fff;
+  border: none;
+  font-size: 0.9rem;
+}
+.btn--github:hover:not(:disabled) {
+  background: #2f363d;
+  transform: translateY(-1px);
+}
+.btn--github .btn__text {
+  color: #fff;
+}
+
+/* 认证页面分割线 */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-default);
+}
+.auth-divider__text {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
 .btn--loading .btn__text {
   visibility: hidden;
 }

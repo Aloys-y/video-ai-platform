@@ -103,7 +103,7 @@ public class UserService {
      * - live/test：区分环境，便于日志过滤
      * - 随机部分：足够长，防碰撞
      */
-    private String generateApiKey(boolean isProduction) {
+    public String generateApiKey(boolean isProduction) {
         String prefix = isProduction ? "sk_live_" : "sk_test_";
         byte[] randomBytes = new byte[24];
         RANDOM.nextBytes(randomBytes);
@@ -115,7 +115,7 @@ public class UserService {
      * 生成API Secret
      * 用于签名验证（预留功能）
      */
-    private String generateApiSecret() {
+    public String generateApiSecret() {
         byte[] randomBytes = new byte[32];
         RANDOM.nextBytes(randomBytes);
         return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
@@ -138,7 +138,7 @@ public class UserService {
      * - 可配置计算强度（cost factor）
      * - 抗彩虹表和暴力破解攻击
      */
-    private String hashSecret(String secret) {
+    public String hashSecret(String secret) {
         return BCrypt.hashpw(secret, BCrypt.gensalt(12));
     }
 
