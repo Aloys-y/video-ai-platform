@@ -99,6 +99,12 @@ public class UploadSession {
     private String storagePath;
 
     /**
+     * B2/云存储 Multipart Upload ID
+     * init 阶段由 createMultipartUpload 返回，用于 uploadPart 和 completeMultipartUpload
+     */
+    private String b2UploadId;
+
+    /**
      * 创建时间
      * 面试点：为什么用LocalDateTime而不是Date？
      * 1. LocalDateTime是Java 8新API，线程安全

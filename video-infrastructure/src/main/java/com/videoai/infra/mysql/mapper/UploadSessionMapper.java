@@ -72,6 +72,16 @@ public interface UploadSessionMapper extends BaseMapper<UploadSession> {
                        @Param("storagePath") String storagePath);
 
     /**
+     * 设置 B2 Multipart Upload ID 和存储路径（init 阶段调用）
+     */
+    @Update("UPDATE upload_session SET b2_upload_id = #{b2UploadId}, " +
+            "storage_path = #{storagePath}, updated_at = NOW() " +
+            "WHERE upload_id = #{uploadId}")
+    int setB2UploadId(@Param("uploadId") String uploadId,
+                       @Param("b2UploadId") String b2UploadId,
+                       @Param("storagePath") String storagePath);
+
+    /**
      * 批量过期过期的上传会话
      * 定时任务调用，清理超过24小时未完成的上传
      */

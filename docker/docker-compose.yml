@@ -83,11 +83,13 @@ services:
       timeout: 10s
       retries: 5
 
-  # MinIO (对象存储)
+  # MinIO (对象存储) - 仅本地开发时启用：docker compose --profile minio up -d
   minio:
     image: minio/minio:latest
     container_name: videoai-minio
     restart: unless-stopped
+    profiles:
+      - minio
     ports:
       - "9000:9000"
       - "9001:9001"

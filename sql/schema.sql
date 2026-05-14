@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS upload_session (
     uploaded_chunks JSON DEFAULT ('[]') COMMENT '已上传分片索引',
     status          TINYINT DEFAULT 0 COMMENT '0:上传中 1:已完成 2:已合并 3:已过期 4:合并失败',
     storage_path    VARCHAR(512) COMMENT '合并后的存储路径',
+    b2_upload_id    VARCHAR(256) NULL COMMENT 'B2/云存储 Multipart Upload ID',
     created_at      DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     expired_at      DATETIME COMMENT '过期时间',

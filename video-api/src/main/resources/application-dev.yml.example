@@ -74,6 +74,7 @@ minio:
   access-key: YOUR_MINIO_ACCESS_KEY
   secret-key: YOUR_MINIO_SECRET_KEY
   bucket-name: video-ai
+  region:
 
 # AI服务配置
 ai:

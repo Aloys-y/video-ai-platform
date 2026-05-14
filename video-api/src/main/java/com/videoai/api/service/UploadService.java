@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -128,7 +127,16 @@ public class UploadService {
 
         uploadSessionMapper.insert(session);
 
-        log.info("Upload session created, uploadId={}, totalChunks={}, chunkSize={}", uploadId, totalChunks, chunkSize);
+        // 5. 提前生成视频路径，创建云存储 Multipart Upload
+        String videoPath = IdGenerator.generateVideoPath(uploadId, extension);
+        String b2UploadId = storageService.createMultipartUpload(videoPath);
+        uploadSessionMapper.setB2UploadId(uploadId, b2UploadId, videoPath);
+
+        session.setStoragePath(videoPath);
+        session.setB2UploadId(b2UploadId);
+
+        log.info("Upload session created, uploadId={}, totalChunks={}, chunkSize={}, b2UploadId={}",
+                uploadId, totalChunks, chunkSize, b2UploadId);
 
         return UploadInitResponse.builder()
                 .uploadId(uploadId)
@@ -174,9 +182,12 @@ public class UploadService {
                 return buildProgressResponse(session);
             }
 
-            // 5. 上传到 MinIO
-            String chunkPath = IdGenerator.generateChunkPath(uploadId, chunkIndex);
-            storageService.putObject(chunkPath, file.getInputStream(), file.getSize(), file.getContentType());
+            // 5. 上传 Part 到云存储（Multipart Upload）
+            String videoPath = session.getStoragePath();
+            String b2UploadId = session.getB2UploadId();
+            int partNumber = chunkIndex + 1; // S3 Parts 编号从 1 开始
+            storageService.uploadPart(videoPath, b2UploadId, partNumber,
+                    file.getInputStream(), file.getSize());
 
             // 6. MySQL 原子追加已传分片索引
             uploadSessionMapper.appendUploadedChunk(uploadId, chunkIndex);
@@ -226,23 +237,16 @@ public class UploadService {
         uploadSessionMapper.updateStatus(uploadId, UploadStatus.COMPLETED.getCode());
 
         try {
-            // 4. MinIO 合并分片
-            String extension = FileUtil.extName(session.getFileName());
-            String videoPath = IdGenerator.generateVideoPath(uploadId, extension);
+            // 4. 云存储完成 Multipart Upload（服务端合并 Parts）
+            String videoPath = session.getStoragePath();
+            String b2UploadId = session.getB2UploadId();
 
-            List<String> chunkPaths = new ArrayList<>();
-            for (int i = 0; i < session.getTotalChunks(); i++) {
-                chunkPaths.add(IdGenerator.generateChunkPath(uploadId, i));
-            }
-            storageService.composeObject(videoPath, chunkPaths);
+            storageService.completeMultipartUpload(videoPath, b2UploadId, session.getTotalChunks());
 
-            // 5. 清理分片文件
-            storageService.removeObjects(chunkPaths);
+            // 5. 更新状态为 MERGED（storagePath 和 b2UploadId 已在 init 时设置）
+            uploadSessionMapper.updateStatus(uploadId, UploadStatus.MERGED.getCode());
 
-            // 6. 更新存储路径和状态
-            uploadSessionMapper.setStoragePath(uploadId, videoPath);
-
-            // 7. 不创建任务，等用户确认后通过 submitTask 创建
+            // 6. 不创建任务，等用户确认后通过 submitTask 创建
 
             log.info("Upload completed and merged, uploadId={}, videoPath={}",
                     uploadId, videoPath);

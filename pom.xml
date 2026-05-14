@@ -48,8 +48,8 @@
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <guava.version>33.0.0-jre</guava.version>
 
-        <!-- 对象存储 -->
-        <minio.version>8.5.9</minio.version>
+        <!-- 对象存储 (AWS S3 SDK, 兼容 MinIO/Backblaze B2) -->
+        <awssdk.version>2.25.36</awssdk.version>
 
         <!-- 安全相关 -->
         <jbcrypt.version>0.4</jbcrypt.version>
@@ -192,10 +192,11 @@
             </dependency>
 
             <!-- ==================== 对象存储 ==================== -->
+            <!-- AWS S3 SDK v2 (兼容 MinIO / Backblaze B2) -->
             <dependency>
-                <groupId>io.minio</groupId>
-                <artifactId>minio</artifactId>
-                <version>${minio.version}</version>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>s3</artifactId>
+                <version>${awssdk.version}</version>
             </dependency>
 
             <!-- ==================== 安全 ==================== -->

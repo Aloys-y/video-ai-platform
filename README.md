@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/Spring%20Boot-3.2.4-brightgreen" alt="Spring Boot">
   <img src="https://img.shields.io/badge/Kafka-3.6.x-orange" alt="Kafka">
   <img src="https://img.shields.io/badge/Redis-Redisson-red" alt="Redisson">
-  <img src="https://img.shields.io/badge/MinIO-8.5.9-blue" alt="MinIO">
+  <img src="https://img.shields.io/badge/AWS%20S3-Backblaze%20B2-blue" alt="S3">
   <img src="https://img.shields.io/badge/AI-Qwen--VL%20%2F%20GLM-blueviolet" alt="AI">
   <img src="https://img.shields.io/badge/License-MIT-yellow" alt="License">
 </p>
@@ -63,7 +63,7 @@ Todo：
 
 **1. 稳定上传体验**
 
-分片断点续传：支持 GB 级大文件上传，采用 Redis 维护分片状态 + MinIO Compose API 服务端合并。弱网断连后可从断点续传，无需重新上传。
+分片断点续传：支持 GB 级大文件上传，采用 Redis 维护分片状态 + S3 Multipart Upload API 服务端合并。支持 MinIO / Backblaze B2 一键切换。弱网断连后可从断点续传，无需重新上传。
 
 秒传去重：基于文件 MD5 指纹识别，已上传过的文件直接跳过，节省带宽和存储。
 
@@ -95,9 +95,9 @@ JWT Bearer Token + API Key 双模式认证，灵活适配 Web 端和 API 调用�
 graph TD
     A[用户上传视频] --> B{Redis令牌桶限流}
     B -- 超过阈值 --> C[拒绝请求]
-    B -- 获取令牌 --> D[分片并发上传至MinIO]
+    B -- 获取令牌 --> D[分片并发上传至S3/B2]
     D --> E[Redis记录分片状态 断点续传]
-    E --> F[MinIO Compose合并完成]
+    E --> F[S3 Multipart Upload 服务端合并]
 
     F --> G[用户确认并输入Prompt]
     G --> H[创建任务 投递Kafka消息]
@@ -105,7 +105,7 @@ graph TD
 
     H --> J[Worker异步消费]
     J --> K{状态机校验+Redisson分布式锁}
-    K --> L[生成MinIO预签名URL]
+    K --> L[生成S3预签名URL]
     L --> M[调用AI Provider API]
     M --> N{分析成功?}
     N -- 是 --> O[存储结果到MySQL]
@@ -123,7 +123,7 @@ graph TD
 | 数据库 | MySQL 8.0 + MyBatis-Plus | Druid 连接池 |
 | 缓存 | Redis 7.0 + Redisson | 分布式锁 + 限流计数 |
 | 消息队列 | Kafka 3.6.x | 手动 ack + 死信队列 |
-| 对象存储 | MinIO 8.5.9 | 分片上传 + 预签名 URL |
+| 对象存储 | AWS S3 SDK / Backblaze B2 | S3 Multipart Upload + 预签名 URL，兼容 MinIO |
 | AI 服务 | 阿里 Qwen-VL / 智谱 GLM | Provider 接口解耦，一键切换 |
 | 接口文档 | SpringDoc OpenAPI | Swagger UI |
 | 前端 | 纯 HTML/CSS/JS SPA | 无框架依赖 |
@@ -138,7 +138,7 @@ VideoAIPlatform/
 ├── video-api/              # API 服务（REST 入口，port 8080）
 ├── video-worker/           # Worker 服务（异步任务处理，port 8081）
 ├── video-common/           # 公共模块（领域模型、DTO、枚举、消息类型）
-├── video-infrastructure/   # 基础设施（MySQL、Redis、Kafka、MinIO）
+├── video-infrastructure/   # 基础设施（MySQL、Redis、Kafka、AWS S3）
 ├── frontend/               # 前端 SPA（HTML/CSS/JS）
 ├── docs/                   # 架构设计文档 + 面试考点
 ├── sql/                    # 数据库建表脚本
@@ -155,7 +155,7 @@ VideoAIPlatform/
 cd docker && docker-compose up -d
 ```
 
-一键启动 MySQL(13306)、Redis(16379)、Kafka(19092)、MinIO(9000/9001)。
+一键启动 MySQL(13306)、Redis(16379)、Kafka(19092)。如需本地 MinIO(9000/9001)：`docker compose --profile minio up -d`。
 
 ### 2. 配置文件
 
@@ -178,7 +178,7 @@ cp video-worker/src/main/resources/application-dev.yml.example \
 | `spring.datasource.*` | MySQL 连接信息（地址、用户名、密码） |
 | `spring.data.redis.*` | Redis 连接信息 |
 | `spring.kafka.bootstrap-servers` | Kafka 地址 |
-| `minio.*` | MinIO 地址和 Access Key / Secret Key |
+| `minio.*` | 对象存储配置（MinIO / Backblaze B2 地址和凭证）|
 | `ai.dashscope.api-key` | 阿里云 DashScope API Key，[点这里申请](https://dashscope.console.aliyun.com/) |
 | `ai.zhipu.api-key` | 智谱 AI API Key，[点这里申请](https://open.bigmodel.cn/) |
 | `ai.provider` | 底层大模型选择：`dashscope`（默认）/ `zhipu` |
@@ -205,7 +205,7 @@ cd video-worker && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 | :--- | :--- |
 | 前端页面 | 打开 `frontend/index.html` |
 | Swagger UI | http://localhost:8080/swagger-ui.html |
-| MinIO 控制台 | http://localhost:9001 |
+| MinIO 控制台 | http://localhost:9001（仅本地 MinIO 时可用）|
 
 <br>
 
@@ -213,7 +213,7 @@ cd video-worker && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 | 亮点 | 说明 | 状态 |
 | :--- | :--- | :--- |
-| 分片上传 + 断点续传 + 秒传 | Redisson 分布式锁双重检查，20MB 分片 3 并发 | ✅ |
+| 分片上传 + 断点续传 + 秒传 | S3 Multipart Upload，Redisson 分布式锁双重检查，20MB 分片 3 并发 | ✅ |
 | 两阶段任务创建 | 上传与任务解耦，用户确认 + 自定义 Prompt 后才创建任务 | ✅ |
 | Kafka 异步解耦 | 削峰填谷，手动 ack，死信队列兜底 | ✅ |
 | 状态机驱动 | TaskStatus 控制任务流转，天然幂等 | ✅ |
@@ -231,7 +231,7 @@ cd video-worker && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 (⊙o⊙)
 
-[ 这个项目最初是为了把视频分析这个场景完整做一遍——从上传、存储、消息队列到 AI 调用，把每个环节的坑都踩一遍。过程中确实踩了不少：Kafka ack 丢消息、智谱 SDK 吞异常、MinIO 预签名签名不匹配……这些问题光看文档是遇不到的。 ]
+[ 这个项目最初是为了把视频分析这个场景完整做一遍——从上传、存储、消息队列到 AI 调用，把每个环节的坑都踩一遍。过程中确实踩了不少：Kafka ack 丢消息、智谱 SDK 吞异常、S3 预签名签名不匹配……这些问题光看文档是遇不到的。 ]
 
 [ 此项目是 MVP 版本，总的来看只是组合调用第三方大模型 API 的项目。亮点是要挖掘业务需求一点点去增加的，而非看到优点去倒推需求。所以，与其在乎项目是否烂大街，不如提升对项目需求的思考，技术的应用 ]
 

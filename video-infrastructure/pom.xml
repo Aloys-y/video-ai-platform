@@ -60,10 +60,10 @@
             <artifactId>spring-kafka</artifactId>
         </dependency>
 
-        <!-- MinIO（对象存储） -->
+        <!-- AWS S3 SDK（对象存储，兼容 MinIO / Backblaze B2） -->
         <dependency>
-            <groupId>io.minio</groupId>
-            <artifactId>minio</artifactId>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
         </dependency>
 
         <!-- OkHttp（AI服务HTTP客户端） -->

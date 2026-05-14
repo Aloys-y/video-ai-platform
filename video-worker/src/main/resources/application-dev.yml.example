@@ -45,6 +45,7 @@ minio:
   access-key: YOUR_MINIO_ACCESS_KEY
   secret-key: YOUR_MINIO_SECRET_KEY
   bucket-name: video-ai
+  region:
 
 # 智谱AI GLM配置
 ai:
