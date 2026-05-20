@@ -31,7 +31,12 @@ public interface UploadSessionMapper extends BaseMapper<UploadSession> {
     /**
      * 根据文件哈希查询（秒传）
      */
-    @Select("SELECT * FROM upload_session WHERE file_hash = #{fileHash} AND status = 2 AND b2_upload_id IS NOT NULL LIMIT 1")
+    @Select("SELECT * FROM upload_session " +
+            "WHERE file_hash = #{fileHash} " +
+            "AND status IN (0, 2) " +
+            "AND b2_upload_id IS NOT NULL " +
+            "ORDER BY CASE status WHEN 0 THEN 0 WHEN 2 THEN 1 ELSE 2 END, updated_at DESC " +
+            "LIMIT 1")
     UploadSession selectByFileHash(@Param("fileHash") String fileHash);
 
     /**

@@ -61,5 +61,6 @@ docker/.env
 # 面试相关 & 文档
 docs/
 !docs/pic/
+notes/
 简历*.md
 面试*.md
