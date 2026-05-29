@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service;
  * 通过 AiVideoProvider 接口解耦底层大模型厂商
  * 支持 Zhipu(GLM) / DashScope(Qwen-VL) 自由切换
  * 配置项: ai.provider = dashscope(默认) / zhipu
+ *
+ * 设计要点：不在此层做重试。单次调用失败直接抛异常，
+ * 由 TaskProcessor.handleFailure() 统一走 Kafka 重投，
+ * 避免 Thread.sleep 阻塞消费线程。
  */
 @Slf4j
 @Service
@@ -19,11 +23,6 @@ import org.springframework.stereotype.Service;
 public class AiService {
 
     private final AiVideoProvider aiVideoProvider;
-
-    /** 重试最大次数 */
-    private static final int MAX_RETRIES = 3;
-    /** 重试间隔（毫秒）：10s, 30s, 60s */
-    private static final int[] RETRY_DELAYS_MS = {10_000, 30_000, 60_000};
 
     private static final String SYSTEM_PROMPT = """
             你是一位 Apex 英雄顶级分析师，兼具顶尖路人王者的实战嗅觉与职业教练的战术视野。请以"逐帧复盘"的颗粒度对视频进行点评，严格按照以下 Markdown 格式输出：
@@ -64,51 +63,28 @@ public class AiService {
     private static final String DEFAULT_USER_PROMPT = "请分析这段 Apex 游戏视频。";
 
     /**
-     * 分析视频内容（含限流自动重试）
+     * 分析视频内容（单次调用，不在此层重试）
+     *
+     * 重试统一由 TaskProcessor.handleFailure() 走 Kafka 重投，
+     * 避免 Thread.sleep 阻塞消费者线程。
      *
      * @param videoUrl 视频公网URL
      * @param prompt   用户自定义提示词（可为null，使用默认）
-     * @return AI返回的分析结果（JSON字符串）
+     * @return AI返回的分析结果
      */
     public String analyzeVideo(String videoUrl, String prompt) {
         String userPrompt = (prompt != null && !prompt.isBlank()) ? prompt : DEFAULT_USER_PROMPT;
         String fullPrompt = SYSTEM_PROMPT + "\n\n" + userPrompt;
-        Exception lastException = null;
 
-        for (int attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-            try {
-                log.info("Calling {} API, attempt: {}/{}",
-                        aiVideoProvider.getName(), attempt + 1, MAX_RETRIES + 1);
-
-                String result = aiVideoProvider.call(videoUrl, fullPrompt);
-                log.info("{} API response received, length: {}", aiVideoProvider.getName(), result.length());
-                return result;
-
-            } catch (AiProviderException e) {
-                if (e.isRetryable()) {
-                    lastException = e;
-                    if (attempt < MAX_RETRIES) {
-                        int delay = RETRY_DELAYS_MS[attempt];
-                        log.warn("{} API rate limited, retrying in {}ms, attempt: {}/{}",
-                                aiVideoProvider.getName(), delay, attempt + 1, MAX_RETRIES);
-                        try {
-                            Thread.sleep(delay);
-                        } catch (InterruptedException ie) {
-                            Thread.currentThread().interrupt();
-                            throw new RuntimeException("API call interrupted during retry", ie);
-                        }
-                        continue;
-                    }
-                    throw new RuntimeException(aiVideoProvider.getName()
-                            + " API call failed after " + MAX_RETRIES + " retries", e);
-                }
-                throw new RuntimeException(aiVideoProvider.getName()
-                        + " API call failed: " + e.getMessage(), e);
-            }
+        log.info("Calling {} API", aiVideoProvider.getName());
+        try {
+            String result = aiVideoProvider.call(videoUrl, fullPrompt);
+            log.info("{} API response received, length: {}", aiVideoProvider.getName(), result.length());
+            return result;
+        } catch (AiProviderException e) {
+            throw new RuntimeException(aiVideoProvider.getName()
+                    + " API call failed (retryable=" + e.isRetryable() + "): " + e.getMessage(), e);
         }
-
-        throw new RuntimeException(aiVideoProvider.getName()
-                + " API call failed after " + MAX_RETRIES + " retries", lastException);
     }
 
     /**

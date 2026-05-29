@@ -177,6 +177,8 @@ WHERE task_id = #{taskId} AND status IN ('QUEUED', 'RETRYING')
 
 代码：`TaskProcessor.java:114-153`
 
+> **设计决策（2026-05-29）**：`AiService` 不在此层做重试。AI API 调用失败（含 429 限流）直接抛异常，由 `TaskProcessor.handleFailure()` 统一走 Kafka 重投。原因：`Thread.sleep` 阻塞消费者线程（concurrency=5 的稀缺资源），Kafka 重投天然提供退避延迟且不占用线程。
+
 ---
 
 ## 5) 任务状态机
