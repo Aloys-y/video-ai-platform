@@ -1,6 +1,7 @@
 package com.videoai.api.service;
 
 import cn.hutool.core.io.FileUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.videoai.common.domain.AnalysisTask;
 import com.videoai.common.domain.UploadSession;
 import com.videoai.common.dto.request.InitUploadRequest;
@@ -272,6 +273,7 @@ public class UploadService {
 
     /**
      * 用户确认提交任务（上传完成后调用）
+     * 幂等控制：同一上传会话已有非终态任务时直接返回已有taskId
      */
     public String submitTask(String uploadId, String prompt) {
         UploadSession session = uploadSessionMapper.selectByUploadId(uploadId);
@@ -282,10 +284,51 @@ public class UploadService {
             throw new BusinessException(ErrorCode.UPLOAD_SESSION_NOT_FOUND, "文件尚未上传完成");
         }
 
-        AnalysisTask task = createAnalysisTask(session.getUserId(), uploadId, session.getStoragePath(), prompt);
-        log.info("Task submitted by user, taskId={}, uploadId={}, prompt={}", task.getTaskId(), uploadId,
-                prompt != null ? prompt.length() + "chars" : "null");
-        return task.getTaskId();
+        // 分布式锁防并发提交（锁粒度：uploadId，锁范围：check + insert）
+        String lockKey = RedisKey.submitLock(uploadId);
+        RLock lock = redissonClient.getLock(lockKey);
+        try {
+            boolean locked = lock.tryLock(5, 30, TimeUnit.SECONDS);
+            if (!locked) {
+                throw new BusinessException(ErrorCode.TASK_PROCESSING);
+            }
+
+            // 幂等检查：同一上传已有非终态任务则直接返回
+            AnalysisTask existingTask = findNonFinalTaskByUploadId(uploadId);
+            if (existingTask != null) {
+                log.info("Task already exists for uploadId={}, taskId={}, status={}",
+                        uploadId, existingTask.getTaskId(), existingTask.getStatus());
+                return existingTask.getTaskId();
+            }
+
+            AnalysisTask task = createAnalysisTask(session.getUserId(), uploadId, session.getStoragePath(), prompt);
+            log.info("Task submitted by user, taskId={}, uploadId={}, prompt={}", task.getTaskId(), uploadId,
+                    prompt != null ? prompt.length() + "chars" : "null");
+            return task.getTaskId();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "提交被中断，请重试");
+        } finally {
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
+        }
+    }
+
+    /**
+     * 查询某上传会话的非终态任务（PENDING/QUEUED/PROCESSING/FAILED/RETRYING）
+     * 用于幂等控制：已有在处理中的任务时不再创建新的
+     */
+    private AnalysisTask findNonFinalTaskByUploadId(String uploadId) {
+        LambdaQueryWrapper<AnalysisTask> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(AnalysisTask::getUploadId, uploadId)
+               .notIn(AnalysisTask::getStatus,
+                       TaskStatus.COMPLETED.getCode(),
+                       TaskStatus.CANCELLED.getCode(),
+                       TaskStatus.DEAD.getCode())
+               .orderByDesc(AnalysisTask::getCreatedAt)
+               .last("LIMIT 1");
+        return analysisTaskMapper.selectOne(wrapper);
     }
 
     // ==================== 私有方法 ====================
