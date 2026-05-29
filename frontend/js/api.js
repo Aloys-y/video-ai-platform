@@ -4,8 +4,9 @@
  * 封装 fetch，自动注入 JWT、处理错误、解析响应
  */
 
-// 本地开发直连后端 8080，Nginx 部署时改为 '/api'
-const API_BASE = window.location.port === '3000'
+// 本地开发（静态服务端口如 3000/5173）直连后端 8080；Nginx 反向代理部署时走 '/api'
+const isLocalHost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const API_BASE = isLocalHost && window.location.port !== '8080'
   ? 'http://localhost:8080/api'
   : '/api';
 

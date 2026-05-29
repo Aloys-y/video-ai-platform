@@ -89,13 +89,23 @@ videoai:
     secret: ${JWT_SECRET:default-dev-secret-key-must-be-at-least-32-chars}
     expiration: 86400000
 
+  # CORS 配置
+  cors:
+    allowed-origins:
+      - http://localhost:3000
+      - http://127.0.0.1:3000
+      - http://localhost:5173
+      - http://127.0.0.1:5173
+      - http://localhost:8080
+      - http://127.0.0.1:8080
+
   # OAuth 配置
   oauth:
     github:
       client-id: ${GITHUB_CLIENT_ID:}
       client-secret: ${GITHUB_CLIENT_SECRET:}
       redirect-uri: ${GITHUB_REDIRECT_URI:http://localhost:8080/api/auth/oauth/github/callback}
-      frontend-url: ${FRONTEND_URL:http://localhost:3000}
+      frontend-url: ${FRONTEND_URL:http://localhost:5173}
 
 # SpringDoc / Swagger配置
 springdoc:

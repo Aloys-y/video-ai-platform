@@ -83,11 +83,11 @@ Kafka 解耦：上传完成后，Controller 仅投递一条 Kafka 消息即刻�
 
 三级限流：Guava 令牌桶（全局）→ Redis 原子计数器（用户级）→ 端点级精细控制。
 
-分布式锁：Redisson + WatchDog 机制，防止同一分片被并发上传、同一任务被并发处理。
+分布式锁：Redisson + WatchDog 机制，防止同一分片被并发上传、同一上传被重复提交。
 
 **4. AI 视频分析**
 
-集成多模态视频理解模型，通过 Provider 接口解耦底层大模型厂商，支持 **阿里云 DashScope（Qwen-VL）** 和 **智谱 GLM** 一键切换。用户可自定义 Prompt，例如**游戏复盘分析、课程内容总结等**。内置限流/超时自动重试（指数退避：10s/30s/60s）。
+集成多模态视频理解模型，通过 Provider 接口解耦底层大模型厂商，支持 **阿里云 DashScope（Qwen-VL）** 和 **智谱 GLM** 一键切换。用户可自定义 Prompt，例如**游戏复盘分析、课程内容总结等**。AI 调用失败后通过 Kafka 重投自动重试（非阻塞，最多 3 次），避免消费者线程被 Thread.sleep 阻塞。
 
 **5. 双认证体系**
 
@@ -110,12 +110,12 @@ graph TD
     H --> I[接口立即返回]
 
     H --> J[Worker异步消费]
-    J --> K{状态机校验+Redisson分布式锁}
+    J --> K{状态机校验（UPDATE WHERE status）}
     K --> L[生成S3预签名URL]
-    L --> M[调用AI Provider API]
+    L --> M[调用AI Provider API（单次调用）]
     M --> N{分析成功?}
     N -- 是 --> O[存储结果到MySQL]
-    N -- 否-429限流 --> P[指数退避重试]
+    N -- 否 --> P[Kafka重投 RETRYING]
     N -- 否-重试耗尽 --> Q[投递死信队列]
 ```
 
@@ -205,11 +205,25 @@ cd video-api && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 cd video-worker && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-### 5. 访问
+### 5. 启动前端（可选，但推荐）
+
+前端是纯静态 SPA，建议在 `frontend/` 目录启动本地静态服务：
+
+```bash
+# 方式一（推荐，Node 环境）
+npx --yes serve frontend -l 5173
+
+# 方式二（Python 环境）
+python -m http.server 5173 --directory frontend
+```
+
+启动后访问：`http://localhost:5173`
+
+### 6. 访问
 
 | 服务 | 地址 |
 | :--- | :--- |
-| 前端页面 | 打开 `frontend/index.html` |
+| 前端页面 | http://localhost:5173（或直接打开 `frontend/index.html`） |
 | Swagger UI | http://localhost:8080/swagger-ui.html |
 | MinIO 控制台 | http://localhost:9001（仅本地 MinIO 时可用）|
 
@@ -227,7 +241,7 @@ cd video-worker && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 | 三级限流 | Guava 全局 → Redis 用户级 → 端点级 | ✅ |
 | 统一响应 | ApiResponse + ErrorCode 结构化错误码 | ✅ |
 | AI Provider 解耦 | 接口抽象，DashScope/智谱一键切换 | ✅ |
-| AI 限流/超时自动重试 | 指数退避，最多 3 次重试，瞬态错误可重试 | ✅ |
+| AI 调用失败自动重试 | Kafka 重投（非阻塞），最多 3 次，状态机保证幂等 | ✅ |
 
 <br>
 
