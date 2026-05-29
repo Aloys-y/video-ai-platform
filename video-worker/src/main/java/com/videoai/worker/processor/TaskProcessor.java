@@ -7,18 +7,14 @@ import com.videoai.common.message.TaskMessage;
 import com.videoai.infra.kafka.topic.TopicConstant;
 import com.videoai.infra.minio.service.StorageService;
 import com.videoai.infra.mysql.mapper.AnalysisTaskMapper;
-import com.videoai.infra.redis.key.RedisKey;
 import com.videoai.worker.service.AiService;
 import com.videoai.worker.service.provider.AiVideoProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 任务处理器
@@ -26,10 +22,9 @@ import java.util.concurrent.TimeUnit;
  * 核心流程：消费Kafka消息 → 状态机驱动 → 处理任务 → 完成/失败/重试
  *
  * 设计要点：
- * 1. 分布式锁：同一任务只允许一个Worker处理
- * 2. 状态机校验：每次状态变更都校验前置状态
- * 3. 重试机制：失败后重新入队，超过最大次数进入死信
- * 4. 幂等消费：通过状态校验实现天然幂等
+ * 1. 状态机校验：每次状态变更都校验前置状态（UPDATE WHERE status = ?），天然幂等
+ * 2. 重试机制：失败后重新入队，超过最大次数进入死信
+ * 3. 幂等消费：并发冲突时仅一个 Worker 的 UPDATE 命中，其余 rows=0 直接返回
  */
 @Slf4j
 @Component
@@ -37,7 +32,6 @@ import java.util.concurrent.TimeUnit;
 public class TaskProcessor {
 
     private final AnalysisTaskMapper analysisTaskMapper;
-    private final RedissonClient redissonClient;
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final AiService aiService;
     private final StorageService storageService;
@@ -63,48 +57,31 @@ public class TaskProcessor {
             return;
         }
 
-        // 3. 分布式锁防并发
-        String lockKey = RedisKey.taskProcessLock(taskId);
-        RLock lock = redissonClient.getLock(lockKey);
+        // 3. PENDING → QUEUED（状态机天然幂等：并发时仅一个Worker的UPDATE命中）
+        TaskStatus currentStatus = task.getStatusEnum();
+        if (currentStatus == TaskStatus.PENDING) {
+            int rows = analysisTaskMapper.updateStatusWithCheck(
+                    taskId, TaskStatus.PENDING.getCode(), TaskStatus.QUEUED.getCode());
+            if (rows == 0) {
+                log.info("PENDING→QUEUED transition failed (concurrent): {}", taskId);
+                return;
+            }
+            currentStatus = TaskStatus.QUEUED;
+        }
+
+        // 4. QUEUED/RETRYING → PROCESSING
+        int started = analysisTaskMapper.startProcessing(taskId);
+        if (started == 0) {
+            log.info("Start processing failed (invalid state): {}", taskId);
+            return;
+        }
+
+        // 5. 执行处理
         try {
-            boolean locked = lock.tryLock(5, 600, TimeUnit.SECONDS);
-            if (!locked) {
-                log.warn("Task lock failed (another worker processing?): {}", taskId);
-                return;
-            }
-
-            // 4. PENDING → QUEUED
-            TaskStatus currentStatus = task.getStatusEnum();
-            if (currentStatus == TaskStatus.PENDING) {
-                int rows = analysisTaskMapper.updateStatusWithCheck(
-                        taskId, TaskStatus.PENDING.getCode(), TaskStatus.QUEUED.getCode());
-                if (rows == 0) {
-                    log.info("PENDING→QUEUED transition failed (concurrent): {}", taskId);
-                    return;
-                }
-                currentStatus = TaskStatus.QUEUED;
-            }
-
-            // 5. QUEUED/RETRYING → PROCESSING
-            int started = analysisTaskMapper.startProcessing(taskId);
-            if (started == 0) {
-                log.info("Start processing failed (invalid state): {}", taskId);
-                return;
-            }
-
-            // 6. 执行处理
             doProcess(taskId, task);
-
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            handleFailure(taskId, "Processing interrupted");
         } catch (Exception e) {
             log.error("Task processing error: {}", taskId, e);
             handleFailure(taskId, e.getMessage());
-        } finally {
-            if (lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            }
         }
     }
 

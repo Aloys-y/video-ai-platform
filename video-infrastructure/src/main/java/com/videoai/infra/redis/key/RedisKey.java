@@ -117,12 +117,12 @@ public final class RedisKey {
     // ==================== 分布式锁 ====================
 
     /**
-     * 任务处理锁
-     * 用途：防止同一任务被多个Worker同时处理
-     * 过期时间：10分钟（比最长处理时间稍长）
+     * 提交任务锁（防重复提交）
+     * 用途：同一上传会话并发提交时，仅创建一个任务
+     * 过期时间：30秒
      */
-    public static String taskProcessLock(String taskId) {
-        return PREFIX + "lock:task:" + taskId;
+    public static String submitLock(String uploadId) {
+        return PREFIX + "submit:lock:" + uploadId;
     }
 
     // ==================== 统计相关 ====================

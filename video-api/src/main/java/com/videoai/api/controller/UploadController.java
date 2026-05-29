@@ -54,7 +54,7 @@ public class UploadController {
     }
 
     /**
-     * 提交分析任务（用户确认后调用）
+     * 提交分析任务（用户确认后调用，幂等：同一上传重复提交返回已有taskId）
      */
     @PostMapping("/submit")
     public ApiResponse<String> submit(@RequestHeader("X-Upload-Id") String uploadId,
