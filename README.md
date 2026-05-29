@@ -205,11 +205,25 @@ cd video-api && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 cd video-worker && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-### 5. 访问
+### 5. 启动前端（可选，但推荐）
+
+前端是纯静态 SPA，建议在 `frontend/` 目录启动本地静态服务：
+
+```bash
+# 方式一（推荐，Node 环境）
+npx --yes serve frontend -l 5173
+
+# 方式二（Python 环境）
+python -m http.server 5173 --directory frontend
+```
+
+启动后访问：`http://localhost:5173`
+
+### 6. 访问
 
 | 服务 | 地址 |
 | :--- | :--- |
-| 前端页面 | 打开 `frontend/index.html` |
+| 前端页面 | http://localhost:5173（或直接打开 `frontend/index.html`） |
 | Swagger UI | http://localhost:8080/swagger-ui.html |
 | MinIO 控制台 | http://localhost:9001（仅本地 MinIO 时可用）|
 
