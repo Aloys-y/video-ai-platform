@@ -7,14 +7,18 @@ import com.videoai.common.message.TaskMessage;
 import com.videoai.infra.kafka.topic.TopicConstant;
 import com.videoai.infra.minio.service.StorageService;
 import com.videoai.infra.mysql.mapper.AnalysisTaskMapper;
+import com.videoai.infra.redis.key.RedisKey;
 import com.videoai.worker.service.AiService;
 import com.videoai.worker.service.provider.AiVideoProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 任务处理器
@@ -36,6 +40,8 @@ public class TaskProcessor {
     private final AiService aiService;
     private final StorageService storageService;
     private final AiVideoProvider aiVideoProvider;
+    private final StringRedisTemplate redisTemplate;
+    private final ObjectMapper objectMapper;
 
     /**
      * 处理任务
@@ -121,6 +127,7 @@ public class TaskProcessor {
             );
 
             log.info("Task completed: {}", taskId);
+            cacheTask(taskId);
             sendTaskEvent(taskId, "COMPLETED", null);
 
         } catch (Exception e) {
@@ -181,6 +188,7 @@ public class TaskProcessor {
         }
 
         analysisTaskMapper.failTask(taskId, errorMessage);
+        cacheTask(taskId);
 
         AnalysisTask task = queryByTaskId(taskId);
         if (task == null) return;
@@ -188,6 +196,7 @@ public class TaskProcessor {
         if (task.canRetry()) {
             log.info("Retrying task: {}, currentRetry: {}", taskId, task.getRetryCount());
             analysisTaskMapper.incrementRetry(taskId);
+            cacheTask(taskId);
 
             // 重新发送到Kafka
             TaskMessage retryMsg = TaskMessage.builder()
@@ -204,6 +213,7 @@ public class TaskProcessor {
         } else {
             log.warn("Task retry exhausted → DEAD: {}", taskId);
             analysisTaskMapper.markAsDead(taskId, errorMessage);
+            cacheTask(taskId);
 
             // 投递死信队列
             kafkaTemplate.send(TopicConstant.DEAD_LETTER_TOPIC, taskId,
@@ -219,6 +229,21 @@ public class TaskProcessor {
         LambdaQueryWrapper<AnalysisTask> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(AnalysisTask::getTaskId, taskId);
         return analysisTaskMapper.selectOne(wrapper);
+    }
+
+    /**
+     * 状态变更后直接写 Redis，前端轮询 100% 命中，零 MySQL 穿透
+     */
+    private void cacheTask(String taskId) {
+        try {
+            AnalysisTask task = queryByTaskId(taskId);
+            if (task == null) return;
+            long ttl = task.isFinalState() ? 3600 : 30;
+            String json = objectMapper.writeValueAsString(task);
+            redisTemplate.opsForValue().set(RedisKey.taskDetail(taskId), json, ttl, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            log.warn("Task cache write failed: {}", taskId, e);
+        }
     }
 
     private void sendTaskEvent(String taskId, String event, String detail) {
