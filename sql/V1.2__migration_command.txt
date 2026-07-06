@@ -1,0 +1,5 @@
+docker exec -i videoai-mysql mysql -uroot -p'VideoAI@2026!MySQL' video_ai << 'SQL'
+ALTER TABLE user ADD COLUMN oauth_provider VARCHAR(20) NULL COMMENT 'OAuth提供商(github/gitee)' AFTER api_secret;
+ALTER TABLE user ADD COLUMN oauth_provider_id VARCHAR(64) NULL COMMENT 'OAuth提供商用户ID' AFTER oauth_provider;
+CREATE INDEX idx_oauth ON user (oauth_provider, oauth_provider_id);
+SQL

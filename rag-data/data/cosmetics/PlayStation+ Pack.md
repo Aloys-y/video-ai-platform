@@ -1,0 +1,26 @@
+---
+title: "PlayStation+ Pack"
+topic: cosmetics
+categories: ["Cosmetics", "Pages with broken file links"]
+source: https://apexlegends.fandom.com/wiki/PlayStation%2B_Pack
+---
+
+# PlayStation+ Pack
+
+ThePlayStation+ Packsare an exclusive crate ofcosmeticsplayers can receive when subscribed to thePlayStation Plusservice.
+## Currently Available
+ThePS+ Pack 19is available duringSeason 18and includes:
+Legend Skins
+- Voided Persona WraithVoided PersonaWraith
+- Voided Persona RampartVoided PersonaRampart
+Banner Frames
+- Eye of The TigerWraith
+- Eye of The TigerRampart
+Weapon Skins
+- Net Lethal VK-47 FlatlineNet LethalVK-47 Flatline
+- Net Lethal Devotion LMGNet LethalDevotion LMG
+## No Longer Available
+- PS+ Pack- PS+ Pack 2- PS+ Pack 3- PS+ Pack 4- PS+ Pack 5- PS+ Pack 6- PS+ Pack 7- PS+ Pack 8- PS+ Pack 9- PS+ Pack 10- PS+ Pack 11- PS+ Pack 12- PS+ Pack 13- PS+ Pack 14- PS+ Pack 15- PS+ Pack 16- PS+ Pack 17- PS+ Pack 18The firstPS+ Packwas available during thePreseasonand included:Legend Skins- Deep BlueBloodhound- Deep BlueGibraltarBanner Frames- Deep BlueBloodhound- Deep BlueGibraltarWeapon Skins- Deep BlueRE-45 Auto- Deep BlueVK-47 FlatlineThePS+ Pack 2was available duringSeason 1and included:Legend Skins- Neon DreamLifeline- Neon DreamMirageBanner Frames- Square DanceLifeline- Square DanceMirageWeapon Skins- JigsawR-99 SMG- JigsawEVA-8 AutoThePS+ Pack 3was available duringSeason 2and included:Legend Skins- BloodshotWraith- BloodshotCausticBanner Frames- Nerve AttackerWraith- Nerve AttackerCausticWeapon Skins- Caged RageHemlok Burst AR- Caged RagePeacekeeperThePS+ Pack 4was available duringSeason 3and included:Legend Skins- Hidden TracksPathfinder- Hidden TracksBangaloreBanner Frames- SnowdayPathfinder- SnowdayBangaloreWeapon Skins- Ice CloudsM600 Spitfire- Ice CloudsTriple TakeThePS+ Pack 5was available duringSeason 4and included:Legend Skins- Exo-WeaveOctane- Exo-WeaveWattsonBanner Frames- LinkedOctane- LinkedWattsonWeapon Skins- Daisy ChainHAVOC Rifle- Daisy ChainP2020ThePS+ Pack 6was available duringSeason 5and included:Legend Skins- Arctic PlateGibraltar- Arctic PlateCryptoBanner Frames- ShieldedGibraltar- ShieldedCryptoWeapon Skins- Rune AwakeningR-301 Carbine- Rune AwakeningMastiff ShotgunThePS+ Pack 7was available duringSeason 6and included:Legend Skins- Tide PoolLifeline- Tide PoolRevenantBanner Frames- Deadly FortuneLifeline- Deadly FortuneRevenantWeapon Skins- Ornate ForestDevotion LMG- Ornate ForestWingmanThePS+ Pack 8was available duringSeason 7and included:Legend Skins- Ocean GrooveMirage- Ocean GrooveLobaBanner Frames- Midnight RideMirage- Midnight RideLobaWeapon Skins- Squared UpProwler Burst PDW- Squared UpG7 ScoutThePS+ Pack 9was available duringSeason 8and included:Legend Skins- Chilled OutWraith- Chilled OutCausticBanner Frames- Crystal CoreWraith- Crystal CoreCausticWeapon Skins- Diamond CutterR-99 SMG- Diamond CutterLongbow DMRThePS+ Pack 10was available duringSeason 9and included:Legend Skins- RockabillyBloodhound- War PatchRampartBanner Frames- Frag OutBloodhound- Frag OutRampartWeapon Skins- Camo CommandoHemlok Burst AR- Special ForcesVolt SMGThePS+ Pack 11was available duringSeason 10and included:Legend Skins- Porcelain PoweredPathfinder- Porcelain PoweredHorizonBanner Frames- Good FortunePathfinder- Good FortuneHorizonWeapon Skins- Spring SerenityAlternator SMG- Spring SerenityTriple TakeThePS+ Pack 12was available duringSeason 11and included:Legend Skins- SplashdownBangalore- SplashdownOctaneBanner Frames- Cosmic FractureBangalore- Cosmic FractureOctaneWeapon Skins- Shock and AweSentinel- Shock and AweEVA-8 AutoThePS+ Pack 13was available duringSeason 12and included:Legend Skins- Callous CartographerFuse- Callous CartographerValkyrieBanner Frames- Spoiled RichesFuse- Spoiled RichesValkyrieWeapon Skins- Golden TouchM600 Spitfire- Golden TouchBocek Compound BowThePS+ Pack 14was available duringSeason 13and included:Legend Skins- Caution PointCrypto- Target SignalSeerBanner Frames- Pop CultureCrypto- Pop CultureSeerWeapon Skins- Heavy Hitter30-30 Repeater- Heavy SignatureRampage LMGThePS+ Pack 15was available duringSeason 14and included:Legend Skins- Bot-anistPathfinder- Fractal PowerCausticBanner Frames- Pulp FrictionPathfinder- Pulp FrictionCausticWeapon Skins- Stained Glass CannonMastiff Shotgun- Paint by BulletsRE-45 AutoThePS+ Pack 16was available duringSeason 15and included:Legend Skins- Retro WaveLoba- Retro PopValkyrieBanner Frames- Groove 730LobaandValkyrieWeapon Skins- Confetti ShotBocek Compound Bow- Party CannonL-STAR EMGThePS+ Pack 17was available duringSeason 16and included:Legend Skins- Galactic NavigatorMirage- Galactic NavigatorWraithBanner Frames- Dimensional RiftMirage- Dimensional RiftWraithWeapon Skins- Type O-bliteratorC.A.R. SMG- Lined in GoldDevotion LMGThePS+ Pack 18was available duringSeason 17and included:Legend Skins- Ocean GrooveAsh- Ocean GrooveLifelineBanner Frames- Midnight RideAsh- Midnight RideLifelineWeapon Skins- Squared UpP2020- Squared UpWingman
+## Notes
+## External Links
+- PlayStation Store Apex Legends Packs

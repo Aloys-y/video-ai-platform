@@ -14,7 +14,8 @@ import lombok.Getter;
  *
  * 状态机设计：
  * PENDING -> QUEUED -> PROCESSING -> COMPLETED
- *                 \-> FAILED -> RETRYING -> PROCESSING
+ *                             \-> RETRYING -> QUEUED/PROCESSING
+ *                             \-> FAILED/DEAD
  */
 @Getter
 @AllArgsConstructor
@@ -50,7 +51,7 @@ public enum TaskStatus {
     /**
      * 重试中 - 从失败恢复
      */
-    RETRYING("RETRYING", "重试中", 5),
+    RETRYING("RETRYING", "等待重试", 5),
 
     /**
      * 已取消 - 用户主动取消
@@ -98,9 +99,10 @@ public enum TaskStatus {
         return switch (this) {
             case PENDING -> target == QUEUED || target == CANCELLED;
             case QUEUED -> target == PROCESSING || target == CANCELLED;
-            case PROCESSING -> target == COMPLETED || target == FAILED || target == CANCELLED;
-            case FAILED -> target == RETRYING || target == DEAD;
-            case RETRYING -> target == PROCESSING || target == FAILED || target == DEAD;
+            case PROCESSING -> target == COMPLETED || target == FAILED || target == RETRYING
+                    || target == DEAD || target == CANCELLED;
+            case FAILED -> target == RETRYING || target == DEAD || target == PENDING;
+            case RETRYING -> target == QUEUED || target == PROCESSING || target == DEAD || target == CANCELLED;
             case COMPLETED, CANCELLED, DEAD -> false; // 终态不可转换
         };
     }

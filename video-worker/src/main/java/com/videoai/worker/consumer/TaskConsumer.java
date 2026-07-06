@@ -37,17 +37,16 @@ public class TaskConsumer {
     )
     public void consume(TaskMessage message, Acknowledgment ack) {
         String taskId = message.getTaskId();
-        log.info("Received task message: taskId={}, retryCount={}, userId={}",
-                taskId, message.getRetryCount(), message.getUserId());
+        log.info("Received task message: taskId={}, businessRetryNo={}, userId={}",
+                taskId, message.getBusinessRetryNo(), message.getUserId());
 
         try {
-            taskProcessor.process(message);
+            boolean shouldAck = taskProcessor.process(message);
+            if (shouldAck) {
+                ack.acknowledge();
+            }
         } catch (Exception e) {
             log.error("Task consumer error: taskId={}", taskId, e);
-            // 不抛异常，让重试机制在 TaskProcessor 内部处理
-        } finally {
-            // 手动提交 offset
-            ack.acknowledge();
         }
     }
 }

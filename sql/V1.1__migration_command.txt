@@ -1,0 +1,4 @@
+docker exec -i videoai-mysql mysql -uroot -p'VideoAI@2026!MySQL' video_ai << 'SQL'
+ALTER TABLE upload_session ADD COLUMN b2_upload_id VARCHAR(256) NULL COMMENT 'B2 Multipart Upload ID' AFTER storage_path;
+UPDATE upload_session SET status = 3 WHERE status = 0 AND b2_upload_id IS NULL;
+SQL

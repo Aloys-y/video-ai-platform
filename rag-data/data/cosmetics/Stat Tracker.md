@@ -1,0 +1,491 @@
+---
+title: "Stat Tracker"
+topic: cosmetics
+categories: ["Cosmetics", "Pages with broken file links"]
+source: https://apexlegends.fandom.com/wiki/Stat_Tracker
+---
+
+# Stat Tracker
+
+Stat Trackersare cosmetic counters tracking miscellaneous statistics for your legends. Each legend may equip three on their banners.
+Stat Trackers can be acquired fromApex Packs, usingCrafting Metals, fromBattle Passes, fromEventsand occasionally from theStore.
+## List of trackers
+### Every Legend
+- Kills
+- Winning Kills
+- Kills as Kill Leader
+- Damage Done
+- Headshots
+- Finishers
+- Revives
+- Games Played
+- Wins with Full Squad Alive
+- Times Placed Top 3
+- Pistol Kills
+- Shotgun Kills
+- SMG Kills
+- AR Kills
+- LMG Kills
+- Sniper Kills
+- Care Package Weapon Kills
+- Neutral Airdrops Looted
+- Arena Kills
+- Arena Wins
+- Arena Damage Done
+- Scout of Action
+- Jackson's Bow-Out
+- Smoke Show
+- Scout of Action
+- Jackson's Bow-Out
+- Smoke Show
+Seasonal
+- Season 1 Kills
+- Season 1 Wins
+- Season 1 Damage Done
+- Season 2 Wins
+- Season 3 Wins
+- Season 4 Wins
+- Season 5 Kills
+- Season 5 Wins
+- Season 6 Kills
+- Season 6 Wins
+- Season 7 Kills
+- Season 7 Wins
+- Season 8 Kills
+- Season 8 Wins
+- Season 9 Kills
+- Season 9 Wins
+- Season 10 Kills
+- Season 10 Wins
+- Season 11 Kills
+- Season 11 Wins
+- Season 12 Kills
+- Season 12 Wins
+- Season 13 Kills
+- Season 13 Wins
+- Season 14 Kills
+- Season 14 Wins
+- Season 15 Kills
+- Season 15 Wins
+- Season 16 Kills
+- Season 16 Wins
+- Season 17 Kills
+- Season 17 Wins
+- Season 18 Wins
+- Season 18 Kills
+- Season 19 Kills
+- Season 19 Wins
+### Legend Specific
+Ash
+- Marked for Death: Enemies Marked
+- Arc Snare: Enemies Tethered
+- Phase Breach: Enemies Phased
+- Kills as Ash
+- Arc Snare: Enemies Tethered
+- Damage Done as Ash
+- Kills as Ash
+- Wins as Ash
+- Damage Done as Ash
+- Kills as Ash
+- Wins as Ash
+- Damage Done as Ash
+- Kills as Ash
+- Wins as Ash
+- Damage Done as Ash
+Ballistic
+- Sling: Kills
+- Whistler: Enemies Overheated
+- Tempest: Damage
+Bangalore
+- Double Time: Distance
+- Smoke Grenade: Enemies Hit
+- Rolling Thunder: Damage
+- Kills as Bangalore
+- Wins as Bangalore
+- Damage Done as Bangalore
+- Kills as Bangalore
+- Wins as Bangalore
+- Damage Done as Bangalore
+Bloodhound
+- Eye: Enemies Scanned
+- Eye: Traps Scanned
+- Beast of the Hunt: Kills
+- Kills as Bloodhound
+- Wins as Bloodhound
+- Damage Done as Bloodhound
+- Kills as Bloodhound
+- Eye: Enemies Scanned
+- Damage Done as Bloodhound
+- Kills as Bloodhound
+- Wins as Bloodhound
+- Damage Done as Bloodhound
+Catalyst
+- Barricade: Doors Barricaded
+- Piercing Spikes: Damage
+- Dark Veil: Enemies Crossed
+Caustic
+- Gas Trap: Times Activated
+- NOX: Gas Damage Dealt
+- NOX: Gassed Enemies Killed
+- Kills as Caustic
+- Wins as Caustic
+- Damage Done as Caustic
+- Kills as Caustic
+- NOX: Gas Damage Dealt
+- Damage Done as Caustic
+- Kills as Caustic
+- Wins as Caustic
+- Damage Done as Caustic
+- Kills as Caustic
+- Wins as Caustic
+- Damage Done as Caustic
+Conduit
+Crypto
+- Neurolink: Enemies Scanned
+- Drone EMP: Shield Damage
+- Drone EMP: Devices Hit
+- Kills as Crypto
+- Wins as Crypto
+- Damage Done as Crypto
+- Kills as Crypto
+- Drone EMP: Shield Damage
+- Damage Done as Crypto
+- Kills as Crypto
+- Wins as Crypto
+- Damage Done as Crypto
+Fuse
+- Grenades: Distance Thrown
+- Knuckle Cluster: Total Hits
+- Motherlode: Enemies Captured
+- Kills as Fuse
+- Wins as Fuse
+- Damage Done as Fuse
+- Kills as Fuse
+- Knuckle Cluster: Total Hits
+- Damage Done as Fuse
+- Kills as Fuse
+- Wins as Fuse
+- Damage Done as Fuse
+Gibraltar
+- Gun Shield: Damage Blocked
+- Dome: Damage Blocked
+- Bombardment: Kills
+- Kills as Gibraltar
+- Wins as Gibraltar
+- Damage Done as Gibraltar
+- Arena Kills as Gibraltar
+- Arena Wins as Gibraltar
+- Arena Damage Done as Gibraltar
+- Kills as Gibraltar
+- Wins as Gibraltar
+- Damage Done as Gibraltar
+- Kills as Gibraltar
+- Wins as Gibraltar
+- Damage Done as Gibraltar
+Horizon
+- Spacewalk: Hard Impacts Avoided
+- Gravity Lift: Teammates Lifted
+- Black Hole: Damage Done to Victims
+- Kills as Horizon
+- Wins as Horizon
+- Damage Done as Horizon
+- Kills as Horizon
+- Wins as Horizon
+- Damage Done as Horizon
+- Kills as Horizon
+- Gravity Lift: Teammates Lifted
+- Damage Done as Horizon
+- Kills as Horizon
+- Wins as Horizon
+- Damage Done as Horizon
+- Kills as Horizon
+- Wins as Horizon
+- Damage Done as Horizon
+Lifeline
+- Revive Shield: Damage Blocked
+- D.O.C. Drone: Healing
+- Droppod: Items for Squadmates
+- Kills as Lifeline
+- Wins as Lifeline
+- Damage Done as Lifeline
+- Kills as Lifeline
+- Wins as Lifeline
+- Damage Done as Lifeline
+- Kills as Lifeline
+- D.O.C. Drone: Healing
+- Damage Done as Lifeline
+- Kills as Lifeline
+- Wins as Lifeline
+- Damage Done as Lifeline
+- Kills as Lifeline
+- Wins as Lifeline
+- Damage Done as Lifeline
+Loba
+- Loot Pinged Through Walls
+- Meters Teleported
+- Loot Taken by Allies
+- Kills as Loba
+- Wins as Loba
+- Damage Done as Loba
+- Kills as Loba
+- Wins as Loba
+- Damage Done as Loba
+- Kills as Loba
+- Wins as Loba
+- Damage Done as Loba
+Mad Maggie
+- Warlord's Ire: Highlight Time
+- Riot Drill: Drill Distance
+- Wrecking Ball: Boosted Travel Distance
+- Kills as Mad Maggie
+- Wins as Mad Maggie
+- Damage Done as Mad Maggie
+- Kills as Mad Maggie
+- Wins as Mad Maggie
+- Damage Done as Mad Maggie
+- Kills as Mad Maggie
+- Wins as Mad Maggie
+- Damage Done as Mad Maggie
+Mirage
+- Encore: Executions Escaped
+- Decoys Created
+- Bamboozles
+- Kills as Mirage
+- Wins as Mirage
+- Damage Done as Mirage
+- Wins as Mirage
+- Kills as Mirage
+- Wins as Mirage
+- Damage Done as Mirage
+- Kills as Mirage
+- Wins as Mirage
+- Damage Done as Mirage
+- Apex Kills
+- Bamboozles
+- Apex Damage
+Newcastle
+- Retrieve the Wounded: Revive Distance
+- Mobile Shield: Damage Blocked
+- Castle Wall: Allies Rescued
+Octane
+- Passive Health Regenerated
+- Stim Distance Traveled
+- Jump Pad Allies Launched
+- Kills as Octane
+- Wins as Octane
+- Damage Done as Octane
+- Apex Kills
+- Stim: Distance Traveled
+- Apex Damage
+- Kills as Octane
+- Wins as Octane
+- Damage Done as Octane
+- Kills as Octane
+- Wins as Octane
+- Damage Done as Octane
+Pathfinder
+- Grapple: Travel Distance
+- Zipline: Times used by Squad
+- Survey: Beacons Scanned
+- Kills as Pathfinder
+- Wins as Pathfinder
+- Damage Done as Pathfinder
+- Kills as Pathfinder
+- Wins as Pathfinder
+- Damage Done as Pathfinder
+- Kills as Pathfinder
+- Wins as Pathfinder
+- Damage Done as Pathfinder
+- Kills as Pathfinder
+- Grapple: Travel Distance
+- Damage Done as Pathfinder
+- Kills as Pathfinder
+- Wins as Pathfinder
+- Damage Done as Pathfinder
+- Apex Kills as Pathfinder
+- Apex Wins as Pathfinder
+- Apex Damage Done as Pathfinder
+- Kills as Pathfinder
+- Wins as Pathfinder
+- Damage Done as Pathfinder
+- Kills as Pathfinder
+- Wins as Pathfinder
+- Damage Done as Pathfinder
+Rampart
+- Wall: Bullets Amped
+- Wall: Damage Blocked
+- Turret: Bullets Fired
+- Kills as Rampart
+- Wins as Rampart
+- Damage Done as Rampart
+- Apex Kills as Rampart
+- Apex Wins as Rampart
+- Apex Damage Done as Rampart
+- Kills as Rampart
+- Wins as Rampart
+- Damage Done as Rampart
+- Kills as Rampart
+- Wins as Rampart
+- Damage Done as Rampart
+Revenant
+- Silence: Enemies Silenced
+- Silence: Silenced Knockdowns
+- Death Totem: Activations
+- Kills as Revenant
+- Wins as Revenant
+- Damage Done as Revenant
+- Kills as Revenant
+- Silence: Enemies Silenced
+- Damage Done as Revenant
+- Apex Kills
+- Silence: Enemies Silenced
+- Apex Damage
+- Kills as Revenant
+- Wins as Revenant
+- Damage Done as Revenant
+Seer
+- Heart Seeker: Heartbeats Heard
+- Focus of Attention: Enemies Hit
+- Exhibit: Enemies Tracked
+- Kills as Seer
+- Wins as Seer
+- Damage Done as Seer
+- Kills as Seer
+- Focus of Attention: Enemies Hit
+- Damage Done as Seer
+- Kills as Seer
+- Wins as Seer
+- Damage Done as Seer
+Valkyrie
+- VTOL Jets: Distance Travelled
+- Missile Swarm: Enemies Hit
+- Skyward Dive: Allies Repositioned
+- Kills as Valkyrie
+- Wins as Valkyrie
+- Damage Done as Valkyrie
+- Kills as Valkyrie
+- Wins as Valkyrie
+- Damage Done as Valkyrie
+- Kills as Valkyrie
+- Missile Swarm: Enemies Hit
+- Damage Done as Valkyrie
+- Kills as Valkyrie
+- Wins as Valkyrie
+- Damage Done as Valkyrie
+- Kills as Valkyrie
+- Wins as Valkyrie
+- Damage Done as Valkyrie
+Vantage
+- Spotter's Lens: Enemies Pinged
+- Echo Relocation: Distance Launched
+- Sniper's Mark: Marked Damage
+- Kills as Vantage
+- Wins as Vantage
+- Damage Done as Vantage
+Wattson
+- Breaches Detected
+- Friendly Shields Charged
+- Enemy Ordnance Intercepted
+- Kills as Wattson
+- Wins as Wattson
+- Damage Done as Wattson
+- Kills as Wattson
+- Wins as Wattson
+- Damage Done as Wattson
+- Apex Kills
+- Breaches Detected
+- Apex Damage
+- Kills as Wattson
+- Wins as Wattson
+- Damage Done as Wattson
+Wraith
+- Voices: Warnings Heard
+- Into the Void: Time
+- Rifts: Squadmates Phased
+- Kills as Wraith
+- Wins as Wraith
+- Damage Done as Wraith
+- Kills as Wraith
+- Into the Void: Time
+- Damage Done as Wraith
+- Kills as Wraith
+- Wins as Wraith
+- Damage Done as Wraith
+## Gallery
+Stat Tracker set backgrounds
+- Grand Soirée-Pathfinder(SRVN MRVN)
+- System Override-Revenant(Original)
+- The Old Ways-Bloodhound(Young Blood)
+- Lost Treasures-Loba(Original)
+- Lost Treasures-Lifeline(Pirate Queen)
+- Aftermarket-Rampart(Premium Finish)
+- Fight or Fright (2020)-Gibraltar(Monster Mashed)
+- Holo-Day Bash (2020)-Mirage(The Wisecracker)
+- Fight Night-Pathfinder(Memoir Noir)
+- Fight Night-Wattson(Haute Drop)
+- Anniversary-Bangalore(Concept Design)
+- Anniversary-Wraith(Concept Design)
+- Chaos Theory-Fuse(Original)
+- Chaos Theory-Crypto(Nomad Overseer)
+- Apex Legends Global Series Championships 2021 - Mirage (Original with Too Much Witt)Apex Legends Global Series Championships 2021-Mirage(OriginalwithToo Much Witt)
+- War Games-Caustic(Deputy of Death)
+- Genesis-Horizon(Galactic Guardian)
+- Genesis-Valkyrie(Omatsury Fury)
+- Thrillseekers-Gibraltar(Ring Leader)
+- Season 10-Valkyrie(Aerial Evolution)
+- Season 10-Horizon(Biotic Luminary)
+- Evolution-Lifeline(Alabaster Titan)
+- Evolution-Seer(Light Show)
+- Monsters Within-Bloodhound(Hunter Within)
+- Monsters Within-Caustic(Synthesis Chamber)
+- Monsters Within-Revenant(Necro Nightmare)
+- Monsters Within-Seer(Out For Blood)
+- Monsters Within-Loba(Victorian Vixen)
+- Storm Pointteasers -Bangalore(Young)
+- Season 11-Mirage(Desert Mirage)
+- Season 11-Gibraltar(Glorious Combatant)
+- Raiders-Wattson(Deep Current)
+- Raiders-Pathfinder(Deep Sixed)
+- Dark Depths-Ash(Denizen of the Deep)
+- Dark Depths-Fuse(Broseidon)
+- Dark Depths-Horizon(Overfloater)
+- Dark Depths-Lifeline(My Wave)
+- Season 12-Seer(Aces High)
+- Season 12-Loba(Breaking The Law)
+- Warriors-Mirage(High Contrast)
+- Warriors-Mad Maggie(Nitro Backfire)
+- Unshackled-Crypto(Machine Language)
+- Unshackled-Pathfinder(Bad Bot)
+- Unshackled-Valkyrie(Slingshot)
+- Unshackled-Wraith(Quantum Collision)
+- Season 13-Fuse(Sir Fitzroy)
+- Season 13-Bloodhound(Feral's Future)
+- Awakening-Pathfinder(Path of Glory)
+- Awakening-Ash(Existential Threat)
+- Gaiden-Mirage(Marked Man)
+- Gaiden-Octane(Sea Legs)
+- Gaiden-Revenant(Revelations)
+- Gaiden-Wattson(Lightning Spirit)
+- Season 14-Wraith(Veteran Voyager)
+- Season 14-Caustic(Field Research)
+- Beast of Prey-Vantage(Stalker)
+- Beast of Prey-Horizon(Brood Mother)
+- Season 15 - Ash (Imperial Assailant)Season 15-Ash(Imperial Assailant)
+- Season 15 - Revenant (Mail Order Monster)Season 15-Revenant(Mail Order Monster)
+- Spellbound - Lifeline (Alchemist)Spellbound-Lifeline(Alchemist)
+- Spellbound - Gibraltar (Runes)Spellbound-Gibraltar(Runes)
+- Celestial Sunrise - Octane (Lucky Rabbit)Celestial Sunrise-Octane(Lucky Rabbit)
+- Celestial Sunrise - Ash (Opalescent Serpent)Celestial Sunrise-Ash(Opalescent Serpent)
+- Season 16 - Crypto (Technocraft)Season 16-Crypto(Technocraft)
+- Season 16 - Valkyrie (Heartbeat Harmonizer)Season 16-Valkyrie(Heartbeat Harmonizer)
+- Sun Squad - Mad Maggie (Tropical Punch)Sun Squad-Mad Maggie(Tropical Punch)
+- Sun Squad - Caustic (Marine Toxicologist)Sun Squad-Caustic(Marine Toxicologist)
+- Golden Week (2023) - Lifeline (Shinobi Surgeon)Golden Week (2023)-Lifeline(Shinobi Surgeon)
+- Golden Week (2023) - Pathfinder (MechaMRVN)Golden Week (2023)-Pathfinder(MechaMRVN)
+- Golden Week (2023) - Valkyrie (Sky Sentinel)Golden Week (2023)-Valkyrie(Sky Sentinel)
+- Season 17 - Wattson (System Shock)Season 17-Wattson(System Shock)
+- Season 17 - Horizon (Singularity Specialist)Season 17-Horizon(Singularity Specialist)
+- Season 18 - Mad Maggie (Outlawed Tech)Season 18-Mad Maggie(Outlawed Tech)
+- Season 18 - Pathfinder (Pathogen)Season 18-Pathfinder(Pathogen)
+- Season 19 - Rampart (Sly Sovereign)Season 19-Rampart(Sly Sovereign)
+- Season 19 - Octane (Godly Speed)Season 19-Octane(Godly Speed)

@@ -65,7 +65,7 @@ public class InitUploadRequest implements Serializable {
      * 限制：最小1MB，最大50MB
      */
     @Min(value = 1024 * 1024, message = "分片大小不能小于1MB")
-    @Max(value = 50 * 1024 * 1024, message = "分片大小不能超过50MB")
+    @Max(value = 1024L * 1024 * 1024, message = "分片大小不能超过1GB")
     private Long chunkSize = 5 * 1024 * 1024L;
 
     /**

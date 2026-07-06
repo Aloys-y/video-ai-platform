@@ -6,17 +6,16 @@ import com.videoai.common.domain.AnalysisTask;
 import com.videoai.common.enums.ErrorCode;
 import com.videoai.common.enums.TaskStatus;
 import com.videoai.common.exception.BusinessException;
-import com.videoai.common.message.TaskMessage;
-import com.videoai.infra.kafka.topic.TopicConstant;
 import com.videoai.infra.mysql.mapper.AnalysisTaskMapper;
 import com.videoai.infra.redis.key.RedisKey;
+import com.videoai.infra.service.TaskOutboxService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.TimeUnit;
 
@@ -37,7 +36,7 @@ public class TaskService {
     private final AnalysisTaskMapper analysisTaskMapper;
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final TaskOutboxService taskOutboxService;
 
     /**
      * 查询任务详情
@@ -128,6 +127,7 @@ public class TaskService {
     /**
      * 重试任务（仅FAILED/DEAD状态）
      */
+    @Transactional
     public AnalysisTask retryTask(String taskId, Long userId) {
         int rows = analysisTaskMapper.resetForRetry(taskId, userId);
         if (rows == 0) {
@@ -142,17 +142,11 @@ public class TaskService {
             throw new BusinessException(ErrorCode.TASK_STATUS_ERROR);
         }
 
-        // 重新发送Kafka消息
-        AnalysisTask task = getTask(taskId);
-        try {
-            TaskMessage message = TaskMessage.create(taskId, userId, task.getVideoUrl());
-            kafkaTemplate.send(TopicConstant.TASK_TOPIC, taskId, message);
-            log.info("Task retry message sent: taskId={}", taskId);
-        } catch (Exception e) {
-            log.warn("Kafka send failed for retry, taskId={}", taskId, e);
-        }
-
         evictTaskCache(taskId);
+        taskOutboxService.deleteByTaskId(taskId);
+        AnalysisTask task = getTask(taskId);
+        taskOutboxService.createExecuteOutbox(task, 0, java.time.LocalDateTime.now());
+        log.info("Task retry reset and outbox recreated: taskId={}", taskId);
         return task;
     }
 

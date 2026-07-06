@@ -60,6 +60,14 @@ public enum ErrorCode {
     EMAIL_EXISTS(23004, "邮箱已被注册"),
     INVALID_CREDENTIALS(23005, "邮箱或密码错误"),
 
+    // ==================== 知识/RAG 相关 24xxx ====================
+    KNOWLEDGE_BASE_NOT_FOUND(24001, "知识库不存在"),
+    KNOWLEDGE_CARD_NOT_FOUND(24002, "知识卡片不存在"),
+    KNOWLEDGE_INDEX_JOB_NOT_FOUND(24003, "知识索引任务不存在"),
+    KNOWLEDGE_VERSION_INVALID(24004, "知识库版本不合法"),
+    KNOWLEDGE_CARD_CODE_EXISTS(24005, "知识卡片编码已存在"),
+    KNOWLEDGE_RAG_CONTEXT_NOT_FOUND(24006, "任务RAG上下文不存在"),
+
     // ==================== 第三方服务错误 3xxxx ====================
     AI_SERVICE_ERROR(30001, "AI服务异常"),
     AI_SERVICE_TIMEOUT(30002, "AI服务超时"),

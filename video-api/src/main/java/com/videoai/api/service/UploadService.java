@@ -12,11 +12,11 @@ import com.videoai.common.enums.TaskStatus;
 import com.videoai.common.enums.UploadStatus;
 import com.videoai.common.exception.BusinessException;
 import com.videoai.common.utils.IdGenerator;
-import com.videoai.infra.kafka.topic.TopicConstant;
 import com.videoai.infra.minio.service.StorageService;
 import com.videoai.infra.mysql.mapper.AnalysisTaskMapper;
 import com.videoai.infra.mysql.mapper.UploadSessionMapper;
 import com.videoai.infra.redis.key.RedisKey;
+import com.videoai.infra.service.TaskOutboxService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.annotation.PostConstruct;
@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,7 +46,7 @@ public class UploadService {
     private final StorageService storageService;
     private final StringRedisTemplate redisTemplate;
     private final RedissonClient redissonClient;
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final TaskOutboxService taskOutboxService;
 
     @Value("${videoai.upload.chunk-size:5242880}")
     private long defaultChunkSize;
@@ -60,6 +59,9 @@ public class UploadService {
 
     @Value("${videoai.upload.max-file-size:5368709120}")
     private long maxFileSize;
+
+    @Value("${videoai.upload.max-chunk-size:1073741824}")
+    private long maxChunkSize;
 
     @PostConstruct
     public void init() {
@@ -80,6 +82,14 @@ public class UploadService {
         // 2. 校验文件大小
         if (request.getFileSize() > maxFileSize) {
             throw new BusinessException(ErrorCode.UPLOAD_FILE_TOO_LARGE);
+        }
+
+        long requestedChunkSize = request.getChunkSize() != null ? request.getChunkSize() : defaultChunkSize;
+        if (requestedChunkSize < 1024 * 1024 || requestedChunkSize > maxChunkSize) {
+            throw new BusinessException(
+                    ErrorCode.UPLOAD_CHUNK_SIZE_ERROR,
+                    String.format("分片大小需在 1MB ~ %dMB 之间", maxChunkSize / 1024 / 1024)
+            );
         }
 
         // 3. 秒传检查
@@ -111,7 +121,7 @@ public class UploadService {
 
         // 4. 创建上传会话
         String uploadId = IdGenerator.generateUploadId();
-        int chunkSize = request.getChunkSize() != null ? request.getChunkSize().intValue() : (int) defaultChunkSize;
+        int chunkSize = (int) requestedChunkSize;
         int totalChunks = (int) Math.ceil((double) request.getFileSize() / chunkSize);
 
         UploadSession session = new UploadSession();
@@ -275,6 +285,7 @@ public class UploadService {
      * 用户确认提交任务（上传完成后调用）
      * 幂等控制：同一上传会话已有非终态任务时直接返回已有taskId
      */
+    @Transactional
     public String submitTask(String uploadId, String prompt) {
         UploadSession session = uploadSessionMapper.selectByUploadId(uploadId);
         if (session == null) {
@@ -361,30 +372,10 @@ public class UploadService {
         task.setMaxRetry(3);
 
         analysisTaskMapper.insert(task);
-
-        // 异步发送 Kafka 消息通知 Worker，不阻塞主流程
-        try {
-            kafkaTemplate.send(TopicConstant.TASK_TOPIC, task.getTaskId(), buildTaskMessage(task));
-        } catch (Exception e) {
-            log.warn("Kafka send failed, taskId={}. Task will be picked up later.", task.getTaskId(), e);
-        }
+        taskOutboxService.createExecuteOutbox(task, 0, java.time.LocalDateTime.now());
 
         log.info("Analysis task created, taskId={}, uploadId={}", task.getTaskId(), uploadId);
         return task;
-    }
-
-    private com.videoai.common.message.TaskMessage buildTaskMessage(AnalysisTask task) {
-        return com.videoai.common.message.TaskMessage.builder()
-                .taskId(task.getTaskId())
-                .uploadId(task.getUploadId())
-                .userId(task.getUserId())
-                .videoUrl(task.getVideoUrl())
-                .retryCount(0)
-                .timestamp(System.currentTimeMillis())
-                .priority(5)
-                .analysisType("FULL")
-                .prompt(task.getPrompt())
-                .build();
     }
 
     private void refreshProgressCache(String uploadId) {
