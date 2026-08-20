@@ -17,6 +17,7 @@
     <modules>
         <module>video-common</module>
         <module>video-infrastructure</module>
+        <module>video-rag</module>
         <module>video-api</module>
         <module>video-worker</module>
     </modules>
@@ -96,6 +97,11 @@
             <dependency>
                 <groupId>com.videoai</groupId>
                 <artifactId>video-infrastructure</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.videoai</groupId>
+                <artifactId>video-rag</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -239,6 +245,25 @@
                 <version>${spring-boot.version}</version>
             </dependency>
 
+            <!-- Milvus Java SDK (gRPC) -->
+            <dependency>
+                <groupId>io.milvus</groupId>
+                <artifactId>milvus-sdk-java</artifactId>
+                <version>2.4.5</version>
+            </dependency>
+
+            <!-- 统一 protobuf 版本: milvus-sdk 需要 3.24+, Kafka/gRPC 自带较低版本, 统一到 3.25 -->
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>3.25.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java-util</artifactId>
+                <version>3.25.3</version>
+            </dependency>
+
             <!-- ==================== 测试 ==================== -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -283,6 +308,7 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                     <encoding>UTF-8</encoding>
+                    <parameters>true</parameters>
                     <!-- MapStruct和Lombok的注解处理器配置 -->
                     <annotationProcessorPaths>
                         <path>

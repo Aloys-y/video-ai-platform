@@ -15,9 +15,9 @@ spring:
   servlet:
     multipart:
       # 单个文件大小限制（分片上传不受此限制，因为分片走自定义接口）
-      max-file-size: 50MB
+      max-file-size: 1GB
       # 总上传大小限制
-      max-request-size: 100MB
+      max-request-size: 1100MB
 
   # Jackson配置
   jackson:
@@ -68,6 +68,7 @@ videoai:
   upload:
     # 分片大小（字节）：5MB
     chunk-size: 5242880
+    max-chunk-size: 1073741824
     # 上传会话过期时间（小时）
     session-expire-hours: 24
     # 允许的文件类型
@@ -108,6 +109,48 @@ videoai:
       frontend-url: ${FRONTEND_URL:http://localhost:5173}
 
 # SpringDoc / Swagger配置
+  rag:
+    enabled: true
+    fail-open: true
+    knowledge-base: apex-default
+    top-k: 12
+    final-top-k: 6
+    max-chunks-per-card: 2
+    min-score: 0.72
+    max-context-chars: 3500
+    chunk-target-chars: 650
+    chunk-min-chars: 400
+    chunk-max-chars: 800
+    chunk-overlap-chars: 100
+    dispatch-batch-size: 20
+    dispatch-send-timeout-seconds: 10
+    queued-recovery-timeout-seconds: 60
+    processing-timeout-seconds: 1800
+    rebuild-processing-timeout-seconds: 21600
+    vector:
+      provider: milvus
+      base-url: ${MILVUS_BASE_URL:http://localhost:19530}
+      token: ${MILVUS_TOKEN:}
+      database: default
+      collection: apex_knowledge_chunk
+      metric-type: COSINE
+      index-type: HNSW
+      connect-timeout-seconds: 10
+      timeout-seconds: 30
+      hnsw-m: 16
+      hnsw-ef-construction: 200
+      search-ef: 64
+    embedding:
+      provider: ${RAG_EMBEDDING_PROVIDER:dashscope}
+      base-url: ${RAG_EMBEDDING_BASE_URL:https://dashscope.aliyuncs.com/api/v1}
+      api-key: ${RAG_EMBEDDING_API_KEY:}
+      model: ${RAG_EMBEDDING_MODEL:text-embedding-v3}
+      dimension: 1024
+      connect-timeout-seconds: 10
+      timeout-seconds: 30
+      dashscope:
+        text-type: ${RAG_DASHSCOPE_TEXT_TYPE:document}
+
 springdoc:
   api-docs:
     path: /v3/api-docs

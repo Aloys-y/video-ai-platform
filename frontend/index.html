@@ -194,6 +194,318 @@
       </div>
     </section>
 
+    <!-- ========== RAG Eval Page ========== -->
+    <section id="page-rag-eval" class="page-section" aria-label="RAG 检索评估">
+      <div class="dashboard-header">
+        <div>
+          <h2 class="hud-title">RAG 检索评估</h2>
+          <div class="text-muted mt-md">输入查询，评估知识库检索质量</div>
+        </div>
+      </div>
+      <hr class="divider">
+
+      <div class="card" style="margin-bottom:var(--space-md)">
+        <div style="display:flex;gap:var(--space-sm);align-items:flex-end">
+          <div style="flex:1">
+            <label class="form-label" for="rev-query">Prompt / Query</label>
+            <textarea id="rev-query" class="form-input" rows="2" placeholder="输入中文或英文查询，例如: R-301后坐力控制技巧"></textarea>
+          </div>
+          <button type="button" id="rev-submit" class="btn btn--primary">Search</button>
+        </div>
+      </div>
+
+      <div id="rev-section" class="hidden">
+        <div class="card" style="margin-bottom:var(--space-md)">
+          <div class="card__header"><h3 class="card__title">检索参数</h3></div>
+          <div class="rc-modal__meta">
+            <div><span class="rc-label">Query:</span> <span id="rev-query-display">-</span></div>
+            <div><span class="rc-label">Expanded:</span> <span id="rev-expanded" style="font-size:0.82rem">-</span></div>
+            <div><span class="rc-label">Version:</span> <span id="rev-version">-</span></div>
+            <div><span class="rc-label">topK/minScore:</span> <span id="rev-topk">-</span> / <span id="rev-minscore">-</span></div>
+            <div><span class="rc-label">Hit Count:</span> <strong id="rev-hitcount">0</strong></div>
+            <div><span class="rc-label">Latency:</span> <span id="rev-latency">0 ms</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:var(--space-md)">
+          <div class="card__header"><h3 class="card__title">命中结果</h3></div>
+          <table class="rc-table">
+            <thead><tr>
+              <th style="width:70px">Score</th><th style="width:140px">CardCode</th><th>Title</th><th style="width:90px">Category</th><th>Heading</th>
+            </tr></thead>
+            <tbody id="rev-hits-body"></tbody>
+          </table>
+        </div>
+
+        <div class="card" style="margin-bottom:var(--space-md)">
+          <div class="card__header"><h3 class="card__title">检索上下文 (contextPreview)</h3></div>
+          <pre id="rev-context" class="rc-detail-md" style="max-height:200px;font-size:0.8rem"></pre>
+        </div>
+
+        <details class="card">
+          <summary class="card__header" style="cursor:pointer"><h3 class="card__title" style="display:inline">完整 Prompt Preview</h3></summary>
+          <pre id="rev-prompt" class="rc-detail-md" style="max-height:300px;font-size:0.75rem;white-space:pre-wrap"></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ========== RAG Cards Management Page ========== -->
+    <section id="page-rag-cards" class="page-section" aria-label="RAG 卡片管理">
+      <div class="dashboard-header">
+        <div>
+          <h2 class="hud-title">RAG 卡片管理</h2>
+          <div class="text-muted mt-md">管理知识卡片：搜索、编辑、删除</div>
+        </div>
+        <div class="rc-header-actions">
+          <a href="#/rag-import" class="btn btn--primary btn--small">导入 Markdown</a>
+          <button type="button" id="rc-refresh" class="btn btn--ghost btn--small">刷新</button>
+        </div>
+      </div>
+      <hr class="divider">
+
+      <div id="rc-guard" class="card rag-import-guard hidden">
+        当前账号不是管理员。仅允许 ADMIN 角色访问。
+      </div>
+
+      <div id="rc-panel">
+        <div class="rc-filters">
+          <input id="rc-search" class="form-input" type="text" placeholder="搜索 cardCode / 标题 / subjectCode..." style="flex:1;max-width:320px">
+          <select id="rc-filter-category" class="form-input" style="max-width:140px">
+            <option value="">全部分类</option>
+            <option value="LEGEND">LEGEND</option>
+            <option value="WEAPON">WEAPON</option>
+            <option value="MAP">MAP</option>
+            <option value="TACTIC">TACTIC</option>
+            <option value="MECHANIC">MECHANIC</option>
+            <option value="PATCH">PATCH</option>
+          </select>
+          <select id="rc-filter-enabled" class="form-input" style="max-width:120px">
+            <option value="">全部状态</option>
+            <option value="true">启用</option>
+            <option value="false">禁用</option>
+          </select>
+          <span id="rc-count" class="text-muted"></span>
+        </div>
+
+        <div class="card">
+          <div id="rc-empty" class="empty-state rag-files-empty hidden">
+            <div class="empty-state__title">还没有知识卡片</div>
+            <div class="empty-state__desc">先从 RAG 资料导入页面添加 Markdown 卡片。</div>
+          </div>
+          <table class="rc-table">
+            <thead>
+              <tr>
+                <th style="width:160px">cardCode</th>
+                <th>标题</th>
+                <th style="width:90px">分类</th>
+                <th style="width:80px">索引状态</th>
+                <th style="width:60px">启用</th>
+                <th style="width:120px">操作</th>
+              </tr>
+            </thead>
+            <tbody id="rc-table-body"></tbody>
+          </table>
+          <div id="rc-pagination" class="rc-pagination"></div>
+        </div>
+      </div>
+
+      <!-- Detail Modal -->
+      <div id="rc-detail-modal" class="rc-modal-overlay hidden">
+        <div class="rc-modal">
+          <div class="rc-modal__header">
+            <h2 id="rc-detail-title">-</h2>
+            <button id="rc-detail-close" class="btn btn--ghost btn--small">Close</button>
+          </div>
+          <div class="rc-modal__body">
+            <div class="rc-modal__meta">
+              <div><span class="rc-label">cardCode:</span> <code id="rc-detail-cardcode">-</code></div>
+              <div><span class="rc-label">Category:</span> <span id="rc-detail-category">-</span></div>
+              <div><span class="rc-label">Status:</span> <span id="rc-detail-status">-</span></div>
+              <div><span class="rc-label">Version:</span> <span id="rc-detail-version">-</span></div>
+              <div><span class="rc-label">Aliases:</span> <span id="rc-detail-aliases">-</span></div>
+              <div><span class="rc-label">Tags:</span> <span id="rc-detail-tags">-</span></div>
+              <div><span class="rc-label">Created:</span> <span id="rc-detail-created">-</span></div>
+              <div><span class="rc-label">Updated:</span> <span id="rc-detail-updated">-</span></div>
+            </div>
+            <hr class="divider">
+            <div id="rc-detail-content" class="markdown-body rc-detail-md"></div>
+          </div>
+          <div class="rc-modal__footer">
+            <div id="rc-delete-confirm" class="hidden" style="display:flex;align-items:center;gap:8px">
+              <span class="text-muted">Sure?</span>
+              <button id="rc-delete-confirm-btn" class="btn btn--primary" style="background:var(--accent-red)">Yes, delete</button>
+              <button id="rc-delete-cancel" class="btn btn--ghost btn--small">Cancel</button>
+            </div>
+            <button id="rc-detail-delete" class="btn btn--ghost">Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Panel -->
+      <div id="rc-edit-panel" class="card rc-edit-panel hidden">
+        <div class="card__header">
+          <h3 class="card__title">编辑卡片：<span data-rc-edit="cardCode" class="rc-edit-code"></span></h3>
+          <button type="button" id="rc-edit-cancel" class="btn btn--ghost btn--small">取消</button>
+        </div>
+        <div class="rc-edit-form">
+          <div class="form-row">
+            <div class="form-group form-group--flex">
+              <label class="form-label">标题</label>
+              <input class="form-input" data-rc-edit="title" maxlength="255">
+            </div>
+            <div class="form-group form-group--flex">
+              <label class="form-label">分类</label>
+              <select class="form-input" data-rc-edit="category">
+                <option value="LEGEND">LEGEND</option><option value="WEAPON">WEAPON</option>
+                <option value="MAP">MAP</option><option value="TACTIC">TACTIC</option>
+                <option value="MECHANIC">MECHANIC</option><option value="PATCH">PATCH</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group form-group--flex">
+              <label class="form-label">subjectCode</label>
+              <input class="form-input" data-rc-edit="subjectCode" maxlength="64">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">别名（逗号分隔）</label>
+            <input class="form-input" data-rc-edit="aliases" placeholder="别名1, 别名2">
+          </div>
+          <div class="form-group">
+            <label class="form-label">标签（逗号分隔）</label>
+            <input class="form-input" data-rc-edit="tags" placeholder="tag1, tag2">
+          </div>
+          <div class="form-group">
+            <label class="form-label">contentMarkdown</label>
+            <textarea class="form-input rag-preview-card__textarea" data-rc-edit="contentMarkdown" rows="14"></textarea>
+          </div>
+          <div class="rag-preview-card__switches">
+            <label class="rag-import-check">
+              <input type="checkbox" data-rc-edit="enabled">
+              <span>启用</span>
+            </label>
+            <label class="rag-import-check">
+              <input type="checkbox" data-rc-edit="timeless">
+              <span>timeless</span>
+            </label>
+          </div>
+          <button type="button" id="rc-edit-save" class="btn btn--primary">保存修改</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========== RAG Import Page ========== -->
+    <section id="page-rag-import" class="page-section" aria-label="RAG 资料导入">
+      <div class="dashboard-header">
+        <div>
+          <h2 class="hud-title">RAG 资料导入</h2>
+          <div class="text-muted mt-md">上传 Markdown → 预览解析结果 → 编辑确认 → 导入知识库</div>
+        </div>
+        <a href="#/dashboard" class="btn btn--ghost btn--small">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+          <span class="btn__text">返回列表</span>
+        </a>
+      </div>
+      <hr class="divider">
+
+      <div id="rag-import-guard" class="card rag-import-guard hidden">
+        当前账号不是管理员。`/admin/knowledge/cards/import-markdown` 仅允许 `ADMIN` 使用。
+      </div>
+
+      <div id="rag-import-panel" class="rag-import-layout">
+
+        <div id="rag-step-select">
+        <div class="card">
+          <div class="card__header">
+            <h3 class="card__title">上传 Markdown</h3>
+          </div>
+          <div id="rag-upload-zone" class="upload-zone rag-upload-zone" role="button" tabindex="0" aria-label="点击或拖拽上传 Markdown 文件">
+            <svg class="upload-zone__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="17 8 12 3 7 8" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="12" y1="3" x2="12" y2="15" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="upload-zone__title">拖拽 Markdown 到此处</div>
+            <div class="upload-zone__hint">或点击选择多个文件</div>
+            <div class="upload-zone__formats">支持 .md / .markdown，按文件名和一级标题生成草稿卡片</div>
+            <input type="file" id="rag-file-input" accept=".md,.markdown,text/markdown" multiple style="display:none" aria-hidden="true">
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card__header">
+            <h3 class="card__title">默认导入参数</h3>
+          </div>
+          <div class="rag-import-form">
+            <div class="form-group">
+              <label class="form-label" for="rag-default-category">默认分类</label>
+              <select id="rag-default-category" class="form-input">
+                <option value="MECHANIC">MECHANIC</option>
+                <option value="TACTIC">TACTIC</option>
+                <option value="WEAPON">WEAPON</option>
+                <option value="LEGEND">LEGEND</option>
+                <option value="MAP">MAP</option>
+                <option value="PATCH">PATCH</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="rag-code-prefix">CardCode 前缀</label>
+              <input id="rag-code-prefix" class="form-input" type="text" maxlength="24" placeholder="例如 apex">
+            </div>
+            <label class="rag-import-check">
+              <input id="rag-default-enabled" type="checkbox">
+              <span>导入后立即启用并触发索引</span>
+            </label>
+            <label class="rag-import-check">
+              <input id="rag-default-timeless" type="checkbox">
+              <span>默认标记为 timeless</span>
+            </label>
+            <button type="button" id="rag-import-submit" class="btn btn--primary">预览卡片</button>
+          </div>
+        </div>
+
+        <div class="card rag-files-card">
+          <div class="card__header">
+            <h3 class="card__title">待导入文件</h3>
+            <button type="button" id="rag-files-clear" class="btn btn--ghost btn--small hidden">清空</button>
+          </div>
+          <div id="rag-file-count" class="text-muted">0 个文件待导入</div>
+          <div id="rag-files-empty" class="empty-state rag-files-empty">
+            <div class="empty-state__title">还没有选择资料</div>
+            <div class="empty-state__desc">把 Markdown 拖进来后，这里会显示待导入文件列表。</div>
+          </div>
+          <div id="rag-files-list" class="rag-files-list"></div>
+        </div>
+        </div><!-- /rag-step-select -->
+
+        <div id="rag-step-preview" class="hidden">
+          <div class="card">
+            <div class="card__header">
+              <h3 class="card__title">预览与编辑卡片</h3>
+              <div class="rag-step-preview__actions">
+                <button type="button" id="rag-back-btn" class="btn btn--ghost btn--small">返回选择</button>
+                <button type="button" id="rag-confirm-btn" class="btn btn--primary">确认导入</button>
+              </div>
+            </div>
+            <div id="rag-preview-count" class="text-muted"></div>
+            <div id="rag-preview-list" class="rag-preview-list"></div>
+          </div>
+        </div>
+
+        <div id="rag-results-section" class="hidden">
+          <div class="card">
+            <div class="card__header">
+              <h3 class="card__title">导入结果</h3>
+            </div>
+            <div id="rag-results-summary" class="rag-results-summary"></div>
+            <div id="rag-results-list" class="rag-results-list"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ========== Task Detail Page ========== -->
     <section id="page-task-detail" class="page-section" aria-label="任务详情">
       <div class="dashboard-header">
@@ -216,6 +528,9 @@
   <script src="js/api.js"></script>
   <script src="js/auth.js?v=2"></script>
   <script src="js/upload.js?v=2"></script>
+  <script src="js/rag-import.js?v=1"></script>
+  <script src="js/rag-cards.js?v=1"></script>
+  <script src="js/rag-eval.js?v=1"></script>
   <script src="js/dashboard.js?v=8"></script>
   <script src="js/task-detail.js?v=6"></script>
   <script src="js/app.js"></script>

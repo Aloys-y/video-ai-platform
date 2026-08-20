@@ -64,3 +64,7 @@ docs/
 notes/
 简历*.md
 面试*.md
+
+# 微调相关 - 模型权重和框架源码不提交
+fine-tuning/output/
+fine-tuning/LLaMA-Factory/

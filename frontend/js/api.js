@@ -1,48 +1,30 @@
 /**
- * API Client — HTTP 封装
- *
- * 封装 fetch，自动注入 JWT、处理错误、解析响应
+ * API Client - HTTP wrapper
  */
 
-// 本地开发（静态服务端口如 3000/5173）直连后端 8080；Nginx 反向代理部署时走 '/api'
 const isLocalHost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
 const API_BASE = isLocalHost && window.location.port !== '8080'
   ? 'http://localhost:8080/api'
   : '/api';
 
 const Api = {
-  /**
-   * 获取存储的 JWT token
-   */
   getToken() {
     return localStorage.getItem('jwt_token');
   },
 
-  /**
-   * 存储 JWT token
-   */
   setToken(token) {
     localStorage.setItem('jwt_token', token);
   },
 
-  /**
-   * 清除 token（登出）
-   */
   clearToken() {
     localStorage.removeItem('jwt_token');
     localStorage.removeItem('user_info');
   },
 
-  /**
-   * 存储用户信息
-   */
   setUserInfo(info) {
     localStorage.setItem('user_info', JSON.stringify(info));
   },
 
-  /**
-   * 获取用户信息
-   */
   getUserInfo() {
     try {
       return JSON.parse(localStorage.getItem('user_info'));
@@ -51,31 +33,33 @@ const Api = {
     }
   },
 
-  /**
-   * 检查是否已登录
-   */
   isLoggedIn() {
     return !!this.getToken();
   },
 
-  /**
-   * 通用请求方法
-   */
   async request(method, path, options = {}) {
     const url = `${API_BASE}${path}`;
     const headers = {
       ...options.headers,
     };
 
-    // 注入 JWT
     const token = this.getToken();
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+      headers.Authorization = `Bearer ${token}`;
     }
 
-    // M-09: 请求超时 30s
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), options.timeout || 30000);
+    let externalAbortHandler = null;
+
+    if (options.signal) {
+      if (options.signal.aborted) {
+        controller.abort();
+      } else {
+        externalAbortHandler = () => controller.abort();
+        options.signal.addEventListener('abort', externalAbortHandler, { once: true });
+      }
+    }
 
     const config = {
       method,
@@ -83,7 +67,6 @@ const Api = {
       signal: controller.signal,
     };
 
-    // JSON body
     if (options.body && !(options.body instanceof FormData)) {
       headers['Content-Type'] = 'application/json';
       config.body = JSON.stringify(options.body);
@@ -93,11 +76,9 @@ const Api = {
 
     try {
       const response = await fetch(url, config);
-      clearTimeout(timeoutId);
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        // 401 且非认证接口 → 跳转登录
         const isAuthEndpoint = path.startsWith('/auth/');
         if (response.status === 401 && !isAuthEndpoint) {
           this.clearToken();
@@ -109,18 +90,20 @@ const Api = {
 
       return data.data;
     } catch (err) {
-      clearTimeout(timeoutId);
       if (err.name === 'AbortError') {
-        throw new Error('请求超时，请稍后重试');
+        throw new Error(options.signal?.aborted ? '请求已取消' : '请求超时，请稍后重试');
       }
       if (err.name === 'TypeError' && err.message.includes('fetch')) {
         throw new Error('网络连接失败，请检查网络');
       }
       throw err;
+    } finally {
+      clearTimeout(timeoutId);
+      if (options.signal && externalAbortHandler) {
+        options.signal.removeEventListener('abort', externalAbortHandler);
+      }
     }
   },
-
-  // === 便捷方法 ===
 
   get(path, params) {
     let url = path;
@@ -143,50 +126,102 @@ const Api = {
     return this.request('DELETE', path);
   },
 
-  // === 文件上传（分片）专用 ===
-
-  /**
-   * 上传单个分片
-   */
-  async uploadChunk(uploadId, chunkIndex, chunkBlob) {
+  async uploadChunk(uploadId, chunkIndex, chunkBlob, options = {}) {
     const formData = new FormData();
     formData.append('file', chunkBlob);
 
-    const url = `${API_BASE}/upload/chunk`;
-    const headers = {};
-
-    const token = this.getToken();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-    headers['X-Upload-Id'] = uploadId;
-    headers['X-Chunk-Index'] = String(chunkIndex);
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
+    return this.request('POST', '/upload/chunk', {
       body: formData,
+      timeout: options.timeout || 60000,
+      signal: options.signal,
+      headers: {
+        'X-Upload-Id': uploadId,
+        'X-Chunk-Index': String(chunkIndex),
+      },
     });
+  },
 
-    const data = await response.json();
-    if (!response.ok || !data.success) {
-      if (response.status === 401) {
-        this.clearToken();
-        window.location.hash = '#/login';
-        throw new Error(data.message || '登录已过期');
-      }
-      throw new Error(data.message || '分片上传失败');
+  async importKnowledgeMarkdown(files, options = {}) {
+    const formData = new FormData();
+    files.forEach(file => formData.append('files', file));
+
+    if (options.defaultCategory) {
+      formData.append('defaultCategory', options.defaultCategory);
     }
-    return data.data;
+    if (typeof options.defaultEnabled === 'boolean') {
+      formData.append('defaultEnabled', String(options.defaultEnabled));
+    }
+    if (typeof options.defaultTimeless === 'boolean') {
+      formData.append('defaultTimeless', String(options.defaultTimeless));
+    }
+    if (options.codePrefix) {
+      formData.append('codePrefix', options.codePrefix);
+    }
+
+    return this.request('POST', '/admin/knowledge/cards/import-markdown', {
+      body: formData,
+      timeout: options.timeout || 120000,
+      signal: options.signal,
+    });
+  },
+
+  async previewKnowledgeMarkdown(files, options = {}) {
+    const formData = new FormData();
+    files.forEach(file => formData.append('files', file));
+
+    if (options.defaultCategory) {
+      formData.append('defaultCategory', options.defaultCategory);
+    }
+    if (options.codePrefix) {
+      formData.append('codePrefix', options.codePrefix);
+    }
+    if (typeof options.defaultEnabled === 'boolean') {
+      formData.append('defaultEnabled', String(options.defaultEnabled));
+    }
+    if (typeof options.defaultTimeless === 'boolean') {
+      formData.append('defaultTimeless', String(options.defaultTimeless));
+    }
+
+    return this.request('POST', '/admin/knowledge/cards/preview', {
+      body: formData,
+      timeout: options.timeout || 60000,
+      signal: options.signal,
+    });
+  },
+
+  async batchCreateCards(requests) {
+    return this.request('POST', '/admin/knowledge/cards/batch-create', {
+      body: requests,
+      timeout: 120000,
+    });
+  },
+
+  async listKnowledgeCards(params = {}) {
+    const query = new URLSearchParams();
+    if (params.keyword) query.set('keyword', params.keyword);
+    if (params.category) query.set('category', params.category);
+    if (params.enabled != null) query.set('enabled', params.enabled);
+    if (params.page) query.set('page', params.page);
+    if (params.size) query.set('size', params.size);
+    const qs = query.toString();
+    return this.request('GET', '/admin/knowledge/cards' + (qs ? '?' + qs : ''));
+  },
+
+  async getKnowledgeCard(cardCode) {
+    return this.request('GET', '/admin/knowledge/cards/' + encodeURIComponent(cardCode));
+  },
+
+  async updateKnowledgeCard(cardCode, data) {
+    return this.request('PUT', '/admin/knowledge/cards/' + encodeURIComponent(cardCode), { body: data });
+  },
+
+  async deleteKnowledgeCard(cardCode) {
+    return this.request('DELETE', '/admin/knowledge/cards/' + encodeURIComponent(cardCode));
   },
 };
 
-// 全局暴露
 window.Api = Api;
 
-/**
- * M-11: 后端错误码 → 中文友好提示映射
- */
 Api.ERROR_MESSAGES = {
   10000: '系统繁忙，请稍后重试',
   10001: '提交的信息有误，请检查后重试',
@@ -197,7 +232,7 @@ Api.ERROR_MESSAGES = {
   20004: '分片大小不正确',
   20005: '不支持该文件格式',
   20006: '文件大小超出限制',
-  20007: '分片正在上传中，请稍候',
+  20007: '分片正在上传中，请稍后',
   20008: '分片上传失败，请重试',
   20009: '文件合并失败，请重新上传',
   21001: '任务不存在',

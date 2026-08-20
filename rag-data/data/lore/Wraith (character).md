@@ -1,0 +1,81 @@
+---
+title: "Wraith (character)"
+topic: lore
+categories: ["Characters", "Legend lore"]
+source: https://apexlegends.fandom.com/wiki/Wraith_%28character%29
+---
+
+# Wraith (character)
+
+Wraith
+
+Details
+Real Name | Renee Hope Blasey
+Nickname(s) | Brainwreck (formerly, byMirage)Headcase (formerly, byBangalore)
+Gender | Female
+Pronouns | She/Her/Hers
+Age | 34
+Height | 5'4" (163 cm)[1]
+Home World | Typhon
+Occupation | Science Pilot (formerly)
+Status | Alive
+Real-world Info
+Voice Actor | Shantel VanSanten
+Appearances | VoidwalkerFamily Secrets
+Dr. Renee Hope Blasey, better known asWraith, is aLegendintroduced with the launch ofApex Legends. An amnesiac scientist from another dimension, she entered theApex Gamesto discover the secrets about her past.
+## Lore
+### Background
+Renee Hope “Wraith” Blasey was born on December 21,[2]2701 onTyphon, the planet infamous for housing theIMC’sFold Weapon. She eventually relocated to Solace City,Solace[2]and served in theARES Divisionas a Senior SciencePilot. Working with her colleague,Amer Singh, on what was codenamed Project: Wraith, Blasey testedphase shifttechnology in order to prove the existence of other dimensions.[3]In her original dimension, the IMC defeated theFrontier Militiaand emerged victorious from theFrontier War.[4]
+The two scientists were unable to find a willing human volunteer for their experiments, so Blasey volunteered herself, becoming designated as Subject 61137. The experiment went awry, resulting in Blasey losing her memory and falling into what was believed to be insanity, hearing voices tell her what to do. Rather than help his partner, Singh took advantage of the situation to continue their experiments on an unwilling and unaware Blasey. She describes her first memory after the incident as being gagged and bound to a gurney.[4]Blasey had officially been taken toSolacefor termination.[5]
+### Voidwalker
+Wraith rescues Wraith.
+One day in 2727,[4]an interdimensional portal opened in Singh Labs and Blasey was visited bya warrior in white armor and a purple helmet, who sought vengeance against Singh. Revealing herself to be a version of Blasey from an alternate universe, she helped to free Blasey, giving her the technology required for phase shifting and interdimensional travel, as well as akunai. Telling her to leave, the Voidwalker stayed behind to fight Singh and his contingent of IMC soldiers.
+Entering the portal, Blasey found that the voices she had been hearing were more alternate versions of herself, all communicating through a place between realities. Leaving this in-between space, she found herself in the Voidwalker’s dimension, whereSingh Labswere decrepit and abandoned. Exiting to the surface and taking a cloth as a scarf, she found her surroundings to be under construction for something called theApex Games.[6]
+Blasey began to explore as much ofKings Canyonas she could, finding bewilderment at its differences from her home dimension. She initially believes that she is the only one alive on the island.
+On her fifth day after emerging, Blasey hearda manon the island calling for someone namedNatalie. She erroneously took this as a hint to her identity, believing that she is Natalie. Upon further investigation, she then believed that her name is Natalie Paquette, and that she was married to this man.
+On her eighth day, Blasey found a young girl who entered Singh Labs in an attempt to take two bubble shields. Not knowing this to be a young Wattson attempting an experiment to produce the Ring for the Apex Games, she considered her an assassin sent to kill her “husband” and ordered her to leave. Later, when Wattson’s experiment went wrong and set fire to the area that would become the Shattered Forest, Blasey saved her life and carried her to the Paquette family’s cabin. Here she learned that she herself was not Natalie, but rather it was the name of the girl in her arms.
+Blasey, humiliated, retreated to Singh Labs, where Luc Paquette offered her passage off of the island as thanks for saving his daughter’s life. She took a boat across the river to Solace City, where she swore to herself that she would somehow return to Kings Canyon and Singh Labs to find any clue about her past. Singh Labs was buried the next day, and Wattson referred to the person who saved her as “her ghost” from that day onwards.
+Blasey spent the next several years training and entering into placement matches for the Apex Games, eventually being accepted as aLegendin 2730.[4][7]
+### Season 2
+After the destruction of the Repulsor Tower on Kings Canyon, Singh Labs was unearthed. Blasey returned to the structure, where she discovered her name and the purpose of her experiments.[3]
+Wraith witnessing other realities in the Void.
+### The Broken Ghost
+AfterLobajoined the Apex Games, she solicited the assistance of the other Legends (sansRevenant) to hunt down pieces of an artifact on an alternate Kings Canyon, in theShadowfalldimension. Blasey was unwillingly enlisted as the group’s way in and out of the dimension due to her portals.[8]She monitoredOctane’s “date” withYoko Zepnewski, the assistant ofHammondlegal headCheryl Amacci, as they attempted to gain information on what the artifact was and what Loba wanted with it, but Blasey pulled him out through a portal upon being informed of Wattson’s injury.[9]She later walked Wattson home afterCryptowas framed as a mole within the group.[10]
+### The First Ship
+Blasey helpedRampartsecure a new location for her workshop by setting her up in a room in the Paradise Lounge - much toMirage’s chagrin.[11]This benefitted both of them - Rampart had been searching for a new location after the attack on her shop onGaea,[12]and Mirage desperately needed the money Rampart would provide as rent, as he had spent much of his own onparty boats.[13]Mirage later attempted to tell Blasey aboutPathfinder’s “girlfriend,” but she ignored him.[14]
+After he got all of Rampart’s belongings placed on theMercenary Syndicate’s rocket on World’s Edge, Mirage enlisted Blasey’s help to make it up to her. Mirage suggested buying Rampart flowers (which she later revealed to despise). After absentmindedly describing her as a “brainwreck” due to her memory loss, Blasey snapped at Mirage, having grown tired of his antics and his lack of respect for his friends. In an attempt to better himself and make amends for the situation, he spent a night reading through paperwork saved byhis motherfrom her work with the IMC. He eventually came across files regarding Blasey, which included her birthday, and gave them to her.[15]
+### Overtime
+One Saturday in 2733, Blasey completed an Apex Games match. Wandering around Solace City afterward, she encountered Mirage, who had escaped from an engagement with Revenant holding a metal briefcase. The two opened the case to find an encrypted communications unit, with Mirage enlisting Blasey in fighting back against the case’s owner,Boss Willis.
+Once Willis’s vessel reached a high altitude, Blasey emerged from the portal and fought against him and his henchmen alongside Mirage and Crypto. As a result of the skirmish, the ship crashed into a local hospital, leveling it. Blasey then assisted in the recovery of the hospital’s patients.[16]
+### Pathfinder's Quest
+Blasey met with Pathfinder when the latter sought answers regarding his creator. They discussed the various dimensions in the universe and Blasey’s arrival in the present one.[4]
+### The Legacy Antigen
+During the Medusa outbreak onOlympus, Blasey was able to identify that the Icarus fleet does not ostensibly belong to the IMC[17], and that a cure may be found withina large arachnid.[18]
+Later, in a hospital filled with Medusa patients, Blasey attempted to stop an agitatedBangalorefrom leaving. A fight broke out between the two, where Bangalore revealed that she blames Blasey for her inability to find her brotherJackson.
+Explaining her reasoning for this thinking, Bangalore revealed that she had traveled to Singh Labs on Kings Canyon one day in 2727, the same day Blasey swapped dimensions with the Voidwalker Wraith. Inserting a flash drive obtained froman informantinto a computer, she found a video message recorded by Jackson, proving that he is alive. However, she was interrupted by the Voidwalker entering the room and taking the drive before the message can be completed.
+After hearing this, Blasey, ecstatic that she has the answers for once, formed a pact with Bangalore, with the two agreeing to help each other find the missing links to their past.[19]
+### Season 11
+During an expedition, Bangalore told Blasey the story of how she obtained the data knife.[20]She later approached Bangalore claiming to have found a contact in Solace City.[21]
+### The Williams Sendoff
+Wraith breaks some bad news to Bangalore.
+One day, Blasey arrived at Bangalore's door with news. Having located a morgue on Solace, she had found Jackson's dog tags, as well as five-year-old records of a body whose age, height, weight, and dog tags matched Jackson's. Bangalore demanded to see the body, but the morgue buries its corpses after two weeks if they are not identified. Additionally, the records of the site of burial had been lost in a fire. A distraught Bangalore wept in despair.[22]
+### Season 13 Launch Trailer
+Blasey helped to prepare for Bangalore's retirement party.[23]She later assisted in fighting the beast that came ashore onStorm Point.[24]
+### Family Secrets
+After winning a match on Storm Point, Blasey was about to enter the dropship to leave the island when she overheard an argument between Bangalore and Newcastle. She and Mirage hid, preparing for a potential confrontation. After Bangalore's departure, Blasey overhears a phone call betweenNewcastleand an unknown party, discussing the transferring of his winnings. She and Mirage then left for the Paradise Lounge to gather information.[25]
+At the bar, Mirage conversed with a mercenary who revealed himself to be a member of theForgotten Families, the gang that blackmailed Newcastle. The man eventually revealed that the Forgotten Families specializes in torturing and killing IMC deserters, prompting Wraith to attack. The two then left the bar, believing that Newcastle, and by extension Bangalore, could be in danger.[26]They arrived at a warehouse on the outskirts of Harris Valley, where many members of the Forgotten Families had gathered to intercept Newcastle and his winnings. One of the mobsters addressed Newcastle as "Jackson," much to the surprise of Blasey, who now knew why Bangalore had remained in the Outlands and confusing her as to why she didn't tell her. Adding to her confusion, the void's voices began to behave erratically before Blasey noticed Bangalore attempting to enter the warehouse. After she began brawling with several of the mobsters, Blasey and Mirage moved to intercept.[27]They soon met up with Bangalore and agreed to fight together.[28]
+During the melee, the three attempted to escape when Blasey and Mirage were attacked bya mercenary with a glowing gauntlet. Blasey retaliates, but the mercenary shrinks away in fear, seemingly knowing her as Dr. Renee Blasey.[29]
+After the mercenary fled, Blasey, Mirage, and Bangalore teamed up, albeit clumsily, to take down a soldier wielding a chain gun. After eliminating him, Blasey and Bangalore began to argue, with the former irritated that Bangalore had not helped her to find out more about her past despite her help with Jackson. Bangalore revealed that she had no intentions to, as Blasey had unintentionally led her to believe that her brother was dead. After further debating, Mirage broke up the fight and Bangalore stormed off. Mirage reassured Blasey, suggesting that the mercenary with the gauntlet could be a key to her past.[30]
+Blasey caught up to Bangalore at a block party in Harris Valley, where the two made amends. She then pointed out a familiar face in the crowd, helping Bangalore to learn that her brother had forged a new family in the Outlands.[31]
+Some time after, Mirage invited Blasey to his section of the dropship, where he gave her files he had looted from the Forgotten Families' warehouse. She took particular attention to ARES Division files regarding the mercenary with the gauntlet. Most of the information was heavily redacted, although one important tidbit slipped through - the mercenary's experimentation had been overseen by Dr. Renee Blasey.[32]
+### Friends Like These
+Blasey seemingly skipped a party hosted byMirage.[33]However, as Mirage had simply forgotten to deliver the invitations, she later followedVantageto the Paradise Lounge to finally attend.[34]
+## Appearances
+In-Game | Videos & Trailers | Online Media | Publications
+QuestsThe Broken GhostFamily SecretsFriends Like TheseApex ChroniclesThe Williams SendoffTransitionBlurbsLiberationVoidwalkerGossip Boy(mentioned)Living with it | Stories from the OutlandsVoidwalkerGridironTrailersApex LegendsLaunch TrailerMeltdown Launch TrailerFortune's Favor Launch TrailerBoosted Launch TrailerAscension Launch TrailerLegacy Launch TrailerEmergence Launch TrailerDefiance Launch TrailerArsenal Launch Trailer | Motion ComicsGet Into Her BusinessComicsA Little BirdieGrowing PainsUnleashing the BeastA New LeafThe Truth Comes OutWrong WraithLegacy LostHome Is Where the Hurt IsTeasersData Log 147 61137(mentioned)Skills and Good Looks Award(mentioned)Season 13 Teasers | BooksPathfinder's QuestOvertime
+## Trivia
+- Character- Cultural References- Voice Actor- An audio log found in-game inside the research labs reveals Wraith was a Research Science Pilot. She,Ash, andNewcastleare the only confirmed Pilots to join the Apex Games.- As Wraith learns more and more about herself before she lost her memories, she is actively trying to avoid becoming the person she was. Renee was described as short-tempered, lacking empathy, and a danger to her colleagues.- Wraith's top three friends among theLegends, in no order other than alphabetical, areMirage,Pathfinder, andWattson.[35]- Wraith received her callsign from two main sources: Project Wraith, the experiment she was involved with at Singh Labs; and Luc Paquette, the father ofWattson, who calls her "some kind of apparition or wraith" after she arrives at Kings Canyon.[36]- Wraith's beverage of choice is an appletini.[37]- Wraith hears the voices of her alternate selves at all times. However, she has trained herself to sometimes tune them out. It is also noted that Mirage is louder than said voices.[38]- Wraith's home dimension, in addition to remaining under the control of the IMC, has several differences from the main dimension. For example, Kings Canyon is a peninsula there instead of an island.[39]- Wraith has her nose pierced. The piercing is present in every skin except her Legendaries.- Wraith may be proficient inAmerican Sign Language, as she finger-spells "kunai" in anHeirloominspect animation.- After Wraith's Heirloom inspect animations were updated, her date of birth was incorrectly listed as October 21, 2701. This was corrected to December in aSeason 16update.[40]- Wraith is one of the few Legends to eat breakfast.[41]She enjoys Mirage's Bamboozles cereal.[42]- Wraith's sprint animation used to be what is infamously dubbed the "Naruto run", where she tucks her head forward and runs with her hands behind her back. This was removed because it made her too difficult to hit compared to other Legends, even ones with the same hitbox as her such asLifelineandWattson. This animation is still present when Wraith is in the phase status thanks toInto the Void, however, this is irrelevant as Wraith is invulnerable while using the ability anyway.[43]Her running animation while holding a grenade still resembles the old animation, with the exception of her throwing arm.- Wraith's7th Heaven Skirmisherskin is based on the characters Tifa Lockhart and Vincent Valentine from the JRPGFinal Fantasy VIIand its remakes.The skin's name is also a reference to Tifa's bar and AVALANCHE's hideout, Seventh Heaven.Gallery- 7th Heaven Skirmisher- Wraith's voice actress, Shantel VanSanten, has portrayed a variety of roles, including:Quinn JamesinOne Tree HillBecca ButcherinThe BoysKaren BaldwininFor All Mankind
+## See Also
+- Wraith
+- Wraith (Mobile)
+## References

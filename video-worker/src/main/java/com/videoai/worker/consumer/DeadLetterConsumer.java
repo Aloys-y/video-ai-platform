@@ -30,7 +30,7 @@ public class DeadLetterConsumer {
         log.error("============ DEAD LETTER TASK ============");
         log.error("taskId: {}", message.get("taskId"));
         log.error("error: {}", message.get("error"));
-        log.error("retryCount: {}", message.get("retryCount"));
+        log.error("businessRetryNo: {}", message.get("businessRetryNo"));
         log.error("timestamp: {}", message.get("timestamp"));
         log.error("==========================================");
 

@@ -21,6 +21,10 @@
             <groupId>com.videoai</groupId>
             <artifactId>video-infrastructure</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.videoai</groupId>
+            <artifactId>video-rag</artifactId>
+        </dependency>
 
         <!-- Spring Boot Web -->
         <dependency>

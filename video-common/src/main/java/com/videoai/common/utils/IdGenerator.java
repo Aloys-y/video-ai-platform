@@ -49,6 +49,25 @@ public class IdGenerator {
     }
 
     /**
+     * 生成事件ID
+     * 格式：evt_{timestamp}_{random}
+     */
+    public static String generateEventId() {
+        long timestamp = (System.currentTimeMillis() - EPOCH) / 1000;
+        String random = randomString(6);
+        return String.format("evt_%d_%s", timestamp, random);
+    }
+
+    /**
+     * 生成知识索引任务ID
+     */
+    public static String generateKnowledgeJobId() {
+        long timestamp = (System.currentTimeMillis() - EPOCH) / 1000;
+        String random = randomString(6);
+        return String.format("kbjob_%d_%s", timestamp, random);
+    }
+
+    /**
      * 生成分片存储路径
      * 格式：chunks/{uploadId}/chunk_{index}
      */

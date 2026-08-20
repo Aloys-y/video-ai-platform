@@ -50,6 +50,11 @@ public final class TopicConstant {
      */
     public static final String TASK_EVENT_TOPIC = "videoai.task.event";
 
+    /**
+     * 知识索引任务 Topic
+     */
+    public static final String KNOWLEDGE_INDEX_TOPIC = "videoai.knowledge.index";
+
     // ==================== Consumer Group ====================
 
     /**
@@ -68,4 +73,9 @@ public final class TopicConstant {
      * 用于收集指标和日志
      */
     public static final String MONITOR_GROUP = "videoai-monitor-group";
+
+    /**
+     * 知识索引消费者组
+     */
+    public static final String KNOWLEDGE_INDEX_GROUP = "videoai-knowledge-index-group";
 }

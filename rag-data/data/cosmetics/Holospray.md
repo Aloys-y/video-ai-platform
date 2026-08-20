@@ -1,0 +1,452 @@
+---
+title: "Holospray"
+topic: cosmetics
+categories: ["Cosmetics", "Pages with broken file links"]
+source: https://apexlegends.fandom.com/wiki/Holospray
+---
+
+# Holospray
+
+Not to be confused withHolo-Day Bash.
+Holospraysare bidimensional holographic images introduced inSeason 6projected from a throwable device on the floor and can be deployed during Skydiving. They can be liked by other players when using the ping input.
+Holosprays can be crafted usingCrafting Metalsor obtained fromEvents, theStore,Apex PacksandBattle Passes.
+## Legendary Holosprays
+- Do You Fear Me?Ash1,200
+- I'm Going to Tear You Apart PolitelyBallistic1,200
+- Poppin' the ChimneyBangalore1,200
+- I Bathe In The Bloth!Bloodhound1,200
+- For HopeCatalyst1,200
+- Join My ExperimentCaustic1,200
+- What A Play!Conduit1,200
+- Access DeniedCrypto1,200
+- This Ain't Me First RodeoFuse1,200
+- Gibraltar's Got You!Gibraltar1,200
+- There's Research AfootHorizon1,200
+- Try And Stop Me!Lifeline1,200
+- A Lady Never Kills And TellsLoba1,200
+- Fire StarterMad Maggie1,200
+- I Make This Look GoodMirage1,200
+- Wham!Newcastle1,200
+- Faster! Faster! Faster!Octane1,200
+- This Is Going To Be Fun!Pathfinder1,200
+- Gonna Get Messy!Rampart1,200
+- Death Is ComingRevenant1,200
+- Stand Out or Stand AsideSeer1,200
+- Rise to the OccasionValkyrie1,200
+- Echo Ready Are You?Vantage1,200
+- Sweet Dreams!Wattson1,200
+- Come And Find Me!Wraith1,200
+### Legendary Event Holosprays
+- Happy 2nd Anniversary - Top Tier
+- Happy New Year
+## Epic Holosprays
+- Can't Any Of You Stop Me?Ash400
+- Cold As SteelAsh400
+- Do Not FalterAsh400
+- Even A Rat Can Be TaughtAsh400
+- Fight WinAsh400
+- Go QuietlyAsh400
+- My Ascent BeginsAsh400
+- Run Little RatAsh400
+- You Will Be CrushedAsh400
+- Bloody HooligansBallistic400
+- Fancy a Cuppa?Ballistic400
+- I Have a Particular Set of SkillsBallistic400
+- Smell the RosesBallistic400
+- Smells Like VictoryBallistic400
+- Steeped in ThoughtBallistic400
+- The Game's AfootBallistic400
+- Time's UpBallistic400
+- Boom!Bangalore400
+- Come Get MeBangalore400
+- Cold SteelBangalore400
+- Earned My StripesBangalore400
+- No Such Thing As Auto-aimBangalore400
+- Oscar Mike, Ladies!Bangalore400
+- Safety's OffBangalore400}
+- Champion of Justice400
+- For Artur!Bloodhound400
+- I, Blóðhundur, Will SlátraBloodhound400
+- I WillBloodhound400
+- Our Path Is MadeBloodhound400
+- Prepare For Your EndBloodhound400
+- The Hunt BeginsBloodhound400
+- We RiseBloodhound400
+- Today We Do Battle400
+- DeathCatalyst400
+- Double Double Here's Some TroubleCatalyst400
+- It's The Witching HourCatalyst400
+- Let's Work Some MagicCatalyst400
+- Seeing StarsCatalyst400
+- The Stars Didn't AlignCatalyst400
+- We Are All Made of StardustCatalyst400
+- Wining Takes An Iron WillCatalyst400
+- Everyone Deserves The Chance to RiseCatalyst400
+- A Man Of ScienceCaustic400
+- Breathe It InCaustic400
+- Evil LaughCaustic400
+- My Favorite PartCaustic400
+- The True TestCaustic400
+- You Are The NailCaustic400
+- What A Play!Conduit1,200
+- A Deadly ComboConduit400
+- Heart of a TitanConduit400
+- Laban LangConduit400
+- MVPConduit400
+- My Favorite PlayConduit400
+- My SquadConduit400
+- Ready For AnythingConduit400
+- Tignan Mo!Conduit400
+- Time To ShineConduit400
+- Can't Talk. BusyCrypto400
+- Cracked Your SecuritiesCrypto400
+- I'm Watching You!Crypto400
+- I See YouCrypto400
+- I Won't Be StoppedCrypto400
+- Let's Go FightCrypto400
+- You're So AnnoyingCrypto400
+- I Will Become Stronger400
+- A Prezzie For FuseyFuse400
+- Breakin' Bones, Breakin' HeartsFuse400
+- Bring Out The Big GunsFuse400
+- Game Bloody On!Fuse400
+- Nothin' Like A Lil' Chaos!Fuse400
+- Spotted Your PrideFuse400
+- Watch Your Fingers And ToesFuse400
+- Old Dog, New SteelFuse400
+- Belly FlopGibraltar400
+- Come 'N Get ItGibraltar400
+- Go Out With A BangGibraltar400
+- Takin' FireGibraltar400
+- Today Is Our DayGibraltar400
+- Try And Move MeGibraltar400
+- A Bit Of A FloatHorizon400
+- Best BuddyHorizon400
+- Field WorkHorizon400
+- I Need A Tea BreakHorizon400
+- Not An Exact ScienceHorizon400
+- Science Time!Horizon400
+- Time For Bold ActionHorizon400
+- Bleed, Patch and Keep Movin'Lifeline400
+- Get A LifeLifeline400
+- Got A Job To DoLifeline400
+- Patch 'Em UpLifeline400
+- The Doc Is InLifeline400
+- The Last LaughLifeline400
+- Beauty Is PainLoba400
+- Dodged A BulletLoba400
+- Dressed To KillLoba400
+- I'll Be Seeing YouLoba400
+- Make It Look EasyLoba400
+- On The ProwlLoba400
+- Always ArmedMad Maggie400
+- Break a Few NecksMad Maggie400
+- Chaos is Comin'Mad Maggie400
+- Freedom for SalvoMad Maggie400
+- Need a Hand?Mad Maggie400
+- Put a Pin In ItMad Maggie400
+- The 'War' in WarlordMad Maggie400
+- Try And Kill MeMad Maggie400
+- You're CrackedMad Maggie400
+- A Little Pick Me UpMirage400
+- Get The Party StartedMirage400
+- Handsome DevilsMirage400
+- My Own Worst EnemyMirage400
+- Plenty To Go AroundMirage400
+- Smooth MovesMirage400
+- Welcome To ParadiseMirage400
+- Defense!Newcastle400
+- FlexNewcastle400
+- Got Your BackNewcastle400
+- Hometown HeroNewcastle400
+- I Bring Justice And Wins!Newcastle400
+- Need A Protector?Newcastle400
+- No Matter What, I'll Be HereNewcastle400
+- Run ItNewcastle400
+- Time To School Y'allNewcastle400
+- Boo-Yah!Octane400
+- Break A LegOctane400
+- Can't WaitOctane400
+- Let's Go For A RideOctane400
+- Rapido!Octane400
+- Reckless Full of WrecksOctane400
+- Wanna Race?Octane400
+- Hi, Friends!Pathfinder400
+- Exciting!Pathfinder400
+- Just The Facts, FriendPathfinder400
+- Oh NoPathfinder400
+- Low FivePathfinder400
+- POW!Pathfinder400
+- Stick To Your GunsPathfinder400
+- Boom!Rampart400
+- It's Party Time!Rampart400
+- That's Tip Top, MateRampart400
+- Tip TopRampart400
+- Turn Crap Into GoldRampart400
+- What A BeautyRampart400
+- Death Comes For Us AllRevenant400
+- Enter The ShadowsRevenant400
+- I'm The NightmareRevenant400
+- Shut It!Revenant400
+- You'll Just Be GoneRevenant400
+- DaaluSeer400
+- Dance To Your Own BeatSeer400
+- I Will Not Be Cast AsideSeer400
+- Let's DanceSeer400
+- Moth To A FlameSeer400
+- No One Outlives ArtSeer400
+- Today The Cursed Ones TriumphSeer400
+- Underestimate Me? Please DoSeer400
+- Meet Me Under the Stars400
+- A Toast To The FallenValkyrie400
+- Head In The CloudsValkyrie400
+- Looking FlyValkyrie400
+- Put In The WorkValkyrie400
+- Runs in the FamilyValkyrie400
+- The Ghost of ViperValkyrie400
+- Feeding FrenzyVantage400
+- Gotta Adapt To SurviveVantage400
+- Killing You Is EasyVantage400
+- Living FreeVantage400
+- My Happy PlaceVantage400
+- One Shot One KillVaVantagetage400
+- Pretty HandyVantage400
+- Surviving? I'm LivingVantage400
+- Time To HuntVantage400
+- Charged And ReadyWattson400
+- Ecstatic To FightWattson400
+- Eye of the StormWattson400
+- Nyah!Wattson400
+- Shocking!Wattson400
+- Watt's Up?Wattson400
+- A Fine LineWraith400
+- Every Decision CountsWraith400
+- Everything You NeedWraith400
+- Follow MeWraith400
+- Let's Get To WorkWraith400
+- Nothing Phases MeWraith400
+- This Dimension's Looking UpWraith400
+### Battle Pass Holosprays
+- Unstoppable ForceAshLevel 31
+- Found YouAshLevel 86
+- Deception, Deceit, DelusionAshLevel 17
+- Rather Ordinary, I'm AfraidBallisticLevel 12
+- Lock and LoadBangaloreLevel 04
+- Stay SharpBangaloreLevel 75
+- You Can Choose Your FriendsBangaloreLevel 90
+- On the LookoutBangaloreLevel 72
+- Slátra and Victory!BloodhoundLevel 71
+- Night WatchBloodhoundLevel 39
+- Fire At Will!BloodhoundLevel 35
+- Do You See From On High?BloodhoundLevel 96
+- Bloth's BeatBloodhoundLevel 74
+- Let's See What the Crystals SayCatalystLevel 35
+- One MoreCausticLevel 74
+- Death Inspires MeCausticLevel 78
+- It's My Party NowCausticLevel 65
+- I'm Always WatchingCryptoLevel 66
+- Nothing I Can't HackCryptoLevel 88
+- Expand Your NetworkCryptoLevel 11
+- Night GigCryptoLevel 19
+- Put Up Your TunesFuseLevel 48
+- Good CatchFuseLevel 77
+- Roger That, Boss!FuseLevel 60
+- I'm Ready, Are You?GibraltarLevel 11
+- You're Next BruddahGibraltarLevel 59
+- Bee CarefulGibraltarLevel 66
+- Knock Knock!GibraltarLevel 57
+- Bang, Bang, BruddahGibraltarLevel 43
+- A Promise To KeepHorizonLevel 49
+- Wee Marvel of ScienceHorizonLevel 57
+- Meets Immovable ObjectHorizonLevel 36
+- My Newtie's Hungry TodayHorizonLevel 57
+- I Got Ya BeatLifelineLevel 34
+- Let's RumbleLifelineLevel 04
+- Smoking KillsLifelineLevel 48
+- Cold BloodedLifelineLevel 73
+- Double TroubleLifelineLevel 43
+- Doc's OrdersLifelineLevel 75
+- It's Not Me. It's You.LobaLevel 94
+- Big Bad WolfLobaLevel 19
+- Time To Break Some HeartsLobaLevel 74
+- I Get What I WantLobaLevel 19
+- Strike A PoseLobaLevel 59
+- Leader of the PackLobaLevel 10
+- You're A GemLobaLevel 74
+- Eat This, Eggs!<br/Mad MaggieLevel 11
+- Goin' WildMad MaggieLevel 39
+- Meet Me In The PitMad MaggieLevel 96
+- Bamboozled!MirageLevel 86
+- Getting Ring ReadyMirageLevel 32
+- Nice KittyMirageLevel 99
+- I Am The PartyMirageLevel 41
+- You Can't Choose Your FamilyNewcastleLevel 43
+- Still Got The MovesNewcastleLevel 81
+- Catch Me If You Can!OctaneLevel 04
+- Trouble DoubleOctaneLevel 44
+- Wild RideOctaneLevel 63
+- Octrain WreckOctaneLevel 67
+- Good Job, MePathfinderLevel 04
+- Say Hello To My Feathered FriendsPathfinderLevel 78
+- Zip It!PathfinderLevel 75
+- Live Today, Die TomorrowRampartLevel 34
+- Surprise AttackRampartLevel 66
+- Wait 'Til Ya Meet Sheila!RampartLevel 39
+- Meet CuteRampartLevel 92
+- Bring The PartyRampartLevel 35
+- Sorry Mate, You're DeadRampartLevel 98
+- ObeyRevenantLevel 40
+- Bored To DeathRevenantLevel 90
+- You're Already DeadRevenantLevel 91
+- And For My Next TrickRevenantLevel 57
+- See You Soon My FriendSeerLevel 08
+- Take A ShotSeerLevel 19
+- Charmed I'm SureSeerLevel 41
+- Say the Magic WordSeerLevel 81
+- Born to FlyValkyrieLevel 09
+- Swat This!ValkyrieLevel 34
+- No One Looks UpValkyrieLevel 81
+- Good VibesValkyrieLevel 57
+- Sharpen Your SensesVantageLevel 35
+- Nocturnal By Nature, Predator By ChoiceVantageLevel 10
+- Magnifique!WattsonLevel 42
+- Spark of GeniusWattsonLevel 19
+- Make A ConnectionWattsonLevel 13
+- I Found Your Off SwitchWattsonLevel 27
+- Looking for Me?WraithLevel 78
+- Did You Blink?WraithLevel 10
+- All The Tales Are TrueWraithLevel 18
+- Time to StrikeWraithLevel 17
+- MutateLevel 94
+- Major Party Minor ChillLevel 10
+### Epic Event Holosprays
+- Happy 2nd Anniversary - First Tier
+- Happy 2nd Anniversary - Middle Tier
+- Chosen ExileBloodhound
+- Close EncounterCaustic
+- PreyRevenant
+- Squad Wipe
+- You Chicken?Valkyrie
+- Monster From The DeepRevenant
+- Joyeux Anniversaire
+- We're Better Together
+- Ready For War
+- Finders Keepers
+- Get Hyped
+- You're Outclassed
+- Toasted and Roasted
+- Can't Hold Me400Revenant
+- DOC On Lock400Lifeline
+- Don't Get On My Bad Side400Fuse
+- Powerhouse400Wattson
+- Beamed
+- Clutch
+- Champion of Justice400Bangalore
+- I Will Become Stronger400Crypto
+- Meet Me Under the Stars400Seer
+- Today We Do Battle400Bloodhound
+- OK
+- Third Partied
+- Ice QueenBangalore
+- Under My ProtectionCrypto
+- Beast ModeNewcastle
+- You Cannot Stop the ColdValkyrie
+- Here to Break the Ice
+- Bamboo Bunny
+- Year of the Rabbit
+- Quality Assurance
+- Special Delivery
+- 4th Anniversary[Note 1]
+- Here Comes The Party[Note 2]
+- A Cut Above
+- Protect Your Queen
+- See You There!
+- A Match Made in Heaven
+- Take Us To Your Kill Leader
+- The Ol' One Two Punch
+- Stick Around
+- I Smell A Rat
+- No Cheese No Mercy
+- Not The Dummies You're Looking For
+- Death Suits You
+- Spectre of Death
+- What's Your Name?
+- Doom Squad
+- Small But Unholy
+- Dance, Dummies
+- Escape the Maze
+- Breakin' My Own Rules
+- All Eyes On You
+- Let's Go
+- Show Up Act Out
+- I Like It, Good Move
+- Doomed To Circles
+- Feel the burn
+Notes:
+### Ranked Holosprays
+- Season 9- Season 10- Season 11- Season 12- Season 13- Season 14- Season 15- Season 16- Season 17- Season 9 Bronze- Season 9 Silver- Season 9 Gold- Season 9 Platinum- Season 9 Diamond- Season 9 Master- Season 9 Apex Predator- Season 10 Battle Royale Bronze- Season 10 Battle Royale Silver- Season 10 Battle Royale Gold- Season 10 Battle Royale Platinum- Season 10 Battle Royale Diamond- Season 10 Battle Royale Master- Season 10 Battle Royale Apex Predator- Season 10 Arenas Diamond- Season 10 Arenas Master- Season 10 Arenas Apex Predator- Season 11 Battle Royale Bronze- Season 11 Battle Royale Silver- Season 11 Battle Royale Gold- Season 11 Battle Royale Platinum- Season 11 Battle Royale Diamond- Season 11 Battle Royale Master- Season 11 Battle Royale Apex Predator- Season 11 Arenas Diamond- Season 11 Arenas Master- Season 11 Arenas Apex Predator- Season 12 Battle Royale Bronze- Season 12 Battle Royale Silver- Season 12 Battle Royale Gold- Season 12 Battle Royale Platinum- Season 12 Battle Royale Diamond- Season 12 Battle Royale Master- Season 12 Battle Royale Apex Predator- Season 12 Arenas Diamond- Season 12 Arenas Master- Season 12 Arenas Apex Predator- Season 13 Battle Royale Bronze- Season 13 Battle Royale Silver- Season 13 Battle Royale Gold- Season 13 Battle Royale Platinum- Season 13 Battle Royale Diamond- Season 13 Battle Royale Master- Season 13 Battle Royale Apex Predator- Season 13 Arenas Diamond- Season 13 Arenas Master- Season 13 Arenas Apex Predator- Season 14 Battle Royale Bronze- Season 14 Battle Royale Silver- Season 14 Battle Royale Gold- Season 14 Battle Royale Platinum- Season 14 Battle Royale Diamond- Season 14 Battle Royale Master- Season 14 Battle Royale Apex Predator- Season 14 Arenas Diamond- Season 14 Arenas Master- Season 14 Arenas Apex Predator- Season 15 Battle Royale Bronze- Season 15 Battle Royale Silver- Season 15 Battle Royale Gold- Season 15 Battle Royale Platinum- Season 15 Battle Royale Diamond- Season 15 Battle Royale Master- Season 15 Battle Royale Apex Predator- Season 15 Arenas Diamond- Season 15 Arenas Master- Season 15 Arenas Apex Predator- Season 16 Bronze- Season 16 Silver- Season 16 Gold- Season 16 Platinum- Season 16 Diamond- Season 16 Master- Season 16 Apex Predator- Season 17 Bronze- Season 17 Silver- Season 17 Gold- Season 17 Platinum- Season 17 Diamond- Season 17 Master- Season 17 Apex Predator
+### Store Holosprays
+Main article:Store
+- Come At Me Bro1,000
+- GG1,000 /1,650
+- Great Job!1,000
+- Mine1,000 /2,150
+- Don't Be Suspicious500 /1,250
+- Always Has Been500
+- Salty1,000
+- U Tried Ur Best500
+- Hang In There500
+- Does Not Compute500
+- Nice Aim500
+- This Is Fine500
+- Fortified And RelentlessAsh
+- Kiss My AshAsh
+- Guardian AngelCatalyst3,000
+- Perfect!! Cool! Marvelous!!!Conduit
+- Kia OraMad Maggie3,000
+- Don't Mind If I DoLifeline
+- Duty. Fidelity. Honor.Newcastle3,000
+- Night TerrorRevenant
+- You're Being HuntedVantage4,600
+- Flexing On 'Em OctaneFlexing On 'EmOctane
+### Holospray Pack Holosprays
+#### Series 001
+### Twitch Drops Holosprays
+Main article:Twitch Drops
+- I Am BeautifulRevenant
+- Winners Are GrinnersFuse
+- You Got Blam-BoozledMirage
+- I'm Yuh LifelineLifeline
+- Collecting WinsConduit
+- One Point To MeConduit
+- Time to Sleigh
+- TisThe Season
+### Other Holosprays
+- Fully OperationalUniversal
+## Rare Holosprays
+### Rare Event Holospray
+- Happy Holo-Days!
+### Twitch Drops Holosprays
+Main article:Twitch Drops
+- Let's Go!
+- ALGS Playoffs '21
+- Global Series
+- ALGS-Glitched
+- ALGS-Hunted
+- Ratting
+- ALGS-Golden
+### Other Holosprays
+- Energy!
+- Charged Up!
+- Free Your Speed
+- Apex Legends Dev
+- ProwlerRedeem codes from Sept '22 atMonster Energy
+## Bugs
+- On rare occasions, Holosprays can cause the game to crash.
+- In theFiring Range, players can see other players' Holosprays that are not in their realm, like them, and get their own Holospray liked.
+- Holosprays can be liked from a far distance, even through walls.
+## Trivia
+- TheOKholospray references a famous panel from the Japanese webcomicOne-Punch Man.
+## History
+Patch notes
+October 31, 2023 PatchHolosprays can now be deployed while skydivingMarch 09, 2021 PatchCrypto's animation to bring out hisSurveillance Droneis no longer skippable by throwing a Holospray.November 04, 2020 PatchAdded a new voiceover when you drop a Holospray.October 06, 2020 PatchHolosprays will now remember which players liked them, and will display a count to the owner. This also prevents other players from spamming “like” on the holo spray.[Undocumented]Octanecan no longer drop Holosprays while usingStim.September 03, 2020 PatchMade adjustments to the appearance of several Holosprays.August 18, 2020 PatchIntroduced.

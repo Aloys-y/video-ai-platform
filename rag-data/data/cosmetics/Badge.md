@@ -1,0 +1,387 @@
+---
+title: "Badge"
+topic: cosmetics
+categories: ["Cosmetics", "Pages with broken file links"]
+source: https://apexlegends.fandom.com/wiki/Badge
+---
+
+# Badge
+
+Badgesare unlockable cosmetics that you can put on your banner for display in the arena and in the pre-match sequence. These badges can denote skill or completion of certain challenges.
+## Account Badges
+These badges can be equipped on any legend once unlocked.
+They can be equipped universally or separately.
+- BallerOwn 125legendaryitems.
+- Banner LegendEquip an item in every Banner slot on 8 differentlegends.
+- FashionistaOwn alegendaryfinisherfor 8 differentlegends.
+- Fully KittedEquip two fully kittedweaponsat the same time in a game.
+- Group Theatrics IWith a full pre-made squad, win 1 game where each person executes an enemy.
+- Group Theatrics IIWith a full pre-made squad, win 2 games where each person executes an enemy.
+- Group Theatrics IIIWith a full pre-made squad, win 3 games where each person executes an enemy.
+- High Energy Badge Tier 1Tier 1 of High Energy Badge.
+- High Energy Badge Tier 2Tier 2 of High Energy Badge.
+- High Energy Badge Tier 3Tier 3 of High Energy Badge.
+- High Energy Badge Tier 4Tier 4 of High Energy Badge.
+- High Energy Badge Tier 5Tier 5 of High Energy Badge.
+- Long ShotDown a player from a distance greater than 300 meters.
+- Master Of AllWin at least 10 times with 8 differentlegends.
+- No WitnessesWith a full pre-made squad, kill 15 players and no one who your squad downs is ever revived or resurrected.
+- Pack VictoryWith a full pre-made squad, win a game.
+- Suicide AwarenessAwarded during National Suicide Prevention Month 2021. (September 1, 2021 - September 30, 2021)
+- Team. Work. IWith a full pre-made squad, play a game where each player gets 3 kills.
+- Team. Work. IIWith a full pre-made squad, play a game where each player gets 5 kills.
+- Team. Work. IIIWith a full pre-made squad, play a game where each player gets 7 kills.
+- Team. Work. IVWith a full pre-made squad, play a game where each player gets 10 kills.
+- WarlordOwn a legendary skin for 15weapons.
+- Well-RoundedDeal 20,000 damage with 8 differentlegends.
+- Win Streak IWin 2 matches in a row inBattle Royale.
+- Win Streak IIWin 3 matches in a row inBattle Royale.
+- Win Streak IIIWin 4 matches in a row inBattle Royale.
+- Win Streak IVWin 5 matches in a row inBattle Royale.
+- Respawn Entertainment DeveloperOnly Respawn Entertainment Staff and voice actors are able to wear this badge.
+- Origin AccessSubscribed to Origin Access. (PC exclusive badge)
+- EA AccessSubscribed to EA Access. (PS4/Xbox exclusive badge)
+- Year 1 Anniversary IPlay the game within the first year of release. (Feb 4, 2019 - Feb 4, 2020)
+- Year 1 Anniversary IIPlay the game within the first month of release. (Feb 4, 2019 - Mar 4, 2019)
+- Year 1 Anniversary IIIPlay the game within the first week of release. (Feb 4, 2019 - Feb 11, 2019)
+- Black Lives MatterAwarded during Black History Month 2021. (Feb 1, 2021 - Feb. 28, 2021)
+- Stop Asian HateAwarded during AAPI Heritage Month 2021. (May 1, 2021 - May 31, 2021)
+- Pride MonthAwarded during Pride Month 2021. (June 1, 2021 - June 30, 2021)
+- April FoolsDon't believe everything you see today! (April 1, 2022 - April 2, 2022)
+- ALGS ParticipantFor the select few who have what it takes to participate in theApex Legends Global Series.
+- Apex 101Complete all beginner challenges.
+### Content Pack Badges
+These badges are obtained by owning the correspondingContent Pack. Some can occasionally be purchased as part of aStorebundle.
+- FounderOwn theFounders Pack.
+- Feeding FrenzyOwn theStarter Pack.
+- Angel StruckOwn theLifeline Edition.
+- TormenterOwn theBloodhound Edition.
+- VenomousOwn theOctane Edition.
+- Lone BotOwn thePathfinder Edition.
+- Making WavesOwn theGibraltar Edition.
+- Holo-StarOwn theMirage Edition.
+- StrikerOwn theBangalore Edition.
+- Quartermaster AndradeOwn theLoba Edition.
+### Event Badges
+- Live Die LiveRevive or respawn a player. Available for a limited time aroundValentine's Day.
+- Legendary HuntGet 1 top 5 finish in any queue during theLegendary Huntevent.
+- Iron Crown IGet a Top 5 finish in anApex Solomatch during theIron CrownEvent.
+- Iron Crown IIGet 25 Top 5 finishes in an Apex Solo match during theIron CrownEvent.
+- Iron Crown IIIGet 70 Top 5 finishes in an Apex Solo match during theIron CrownEvent.
+- Iron Crown IVGet 100 Top 5 finishes in an Apex Solo match during theIron CrownEvent.
+- Absolute MonarchyWin at least 10 solo games with 10 different legends during theIron CrownEvent.
+- VoidwalkerPlayArmed and Dangerousduring theVoidwalkerEvent.
+- Armed and DangerousWin 5Armed and Dangerousmatches during theVoidwalkerEvent.
+- Fight or Fright IKill 1 Shadow in theShadowfallgame mode duringFight or Fright.
+- Fight or Fright IIKill 50 Shadows in theShadowfallgame mode duringFight or Fright.
+- Fight or Fright IIIEscape on the dropship 25 times in theShadowfallgame mode duringFight or Fright.
+- Track Master ICapture the Winter Express 3 times in theWinter Expressgame mode duringHolo-Day Bash.
+- Track Master IICapture the Winter Express 15 times in theWinter Expressgame mode duringHolo-Day Bash.
+- Track Master IIICapture the Winter Express 75 times in theWinter Expressgame mode duringHolo-Day Bash.
+- Grand Soirée IAccumulate 250 Event track points during theGrand Soiréeevent.
+- Grand Soirée IIAccumulate 2,500 Event track points during theGrand Soiréeevent.
+- Grand Soirée IIIAccumulate 4,000 Event track points during theGrand Soiréeevent.
+- Valentine's 2020Log in during theValentine's Day Rendezvous, between February 12 - February 19 2020.
+- System Override IAccumulate 1,500 Event track points during theSystem Overrideevent.
+- System Override IIAccumulate 2,500 Event track points during theSystem Overrideevent.
+- System Override IIIAccumulate 3,500 Event track points during theSystem Overrideevent.
+- The Old WaysAccumulate 250 Event track points during theThe Old Waysevent.
+- Lost TreasuresAccumulate 250 Event track points during theLost Treasuresevent.
+- Lost Treasures ScoutKill 100 enemies inArmed and Dangerous Evolvedduring theLost Treasuresevent.
+- Lost Treasures ExplorerRespawn a teammate 15 times inArmed and Dangerous Evolvedduring theLost Treasuresevent.
+- Lost Treasures ExpeditionerWin 5Armed and Dangerous Evolvedgames during theLost Treasuresevent.
+- Lost Treasures MasterEarn all otherArmed and Dangerous Evolvedbadges during theLost Treasuresevent.
+- AftermarketEarn 250 points during theAftermarketEvent.
+- Aftermarket DealerDeal 10.000 damage while inFlashpoint Zonesduring theAftermarketEvent.
+- Aftermarket AssassinKill 100 enemies while inFlashpoint Zonesduring theAftermarketEvent.
+- Aftermarket ProfessionalWin 10Flashpointgames during theAftermarketEvent.
+- Aftermarket MasterEarn all otherFlashpoint Zonesbadges during theAftermarketEvent.
+- Horizon's Test SubjectCompletedA Wee Experimentevent challenges.
+- Fight or Fright 2020Earn 250 points during theFight or FrightEvent.
+- Shadow SlayerKill 100 enemies inShadow Royaleduring theFight or FrightEvent.
+- Shadow GuardianRevive 15 allies inShadow Royaleduring theFight or FrightEvent.
+- Shadow ChampionWin 5Shadow Royalegames during theFight or FrightEvent.
+- Shadow MasterEarn all otherShadow Royalebadges during theFight or FrightEvent.
+- Holo-Day Bash 2020Earn 250 points during the2020 Holo-Day Bashevent.
+- Pain Train ConductorDeal 10000 Damage in Winter Express during the2020 Holo-Day Bashevent.
+- Ticket PuncherKill 100 players in Winter Express during the2020 Holo-Day Bashevent.
+- Holo-Day SurvivorCapture the Train or Be the Last Squad Alive 100 times in Winter Express during the2020 Holo-Day Bashevent.
+- Holo-Day MasterEarn all otherWinter Expressbadges during the2020 Holo-Day Bash.
+- Fight NightEarn 250 points during theFight Nightevent.
+- Airdrop DamagerDeal 10,000 damage to enemy players with fully-kitted weapons during theAirdrop Takeover.
+- Airdrop DownerKnock down 100 enemy players with fully-kitted weapons during theAirdrop Takeover.
+- Airdrop AceWin 5Airdrop Takeovergames.
+- Airdrop MasterEarn all otherAirdrop Takeoverbadges.
+- Nessie's Big DayComplete 75 daily challenges.
+- Mozam-BeastDeal102,816 damage.
+- Smolfinder HereWin a game with 8 differentlegends
+- Legendary AnniversaryEarn all otherAnniversaryBadges.
+- Chaos Theory GamblerPrevent 1000 Ring damage with Heat Shields during theRing Fury Takeover.
+- Chaos Theory FrontlinePrevent 5000 Ring damage with Heat Shields during theRing Fury Takeover.
+- Chaos Theory Vengeance>Knock down 100 players during theRing Fury Takeover.
+- Chaos Theory MasterEarn all otherChaos Theoryevent badges.
+- War GamesEarn 250 points during theWar Gamesevent.
+- War Games ArtistDeal 15,000 damage during theWar Gamesevent.
+- War Games ChampionWin 5 games during theWar Gamesevent.
+- War Games ProdigyKnock down 250 players during theWar Gamesevent.
+- Master of the War GamesEarn all otherWar Gamesevent badges.
+- GenesisEarn 250 points during theGenesisevent.
+- Genesis BehemothDeal 10,000 damage to enemy players inBattle Royaleduring theGenesisevent.
+- Genesis JuggernautKnock down 100 enemy players inBattle Royaleduring theGenesisevent.
+- Genesis Active ParticipantWin 50Arenagames during theGenesisevent.
+- Genesis MasterEarn all otherGenesisevent badges.
+- Thrillseekers AthletePlay 20 Arena Games during the first week of theThrillseekersevent.
+- Thrillseekers PugilistGet 100 Knockdowns in Arenas during the second week of theThrillseekersevent.
+- Thrillseekers Damage DealerDeal 12,000 Damage in Arenas during the third week of theThrillseekersevent.
+- EvolutionAccumulate 250 Event track points during theEvolutionevent.
+- Evolution DestructionDeal 10,000 damage to enemy players in Battle Royale during theEvolutionEvent.
+- Evolution ChampionDeal 25,000 damage to enemy players in Arenas during theEvolutionEvent.
+- Evolution DemolisherKnock Down 100 enemy players in Battle Royale during theEvolutionEvent.
+- Evolution MasterEarn all otherEvolutionbadges.
+- Monsters Within RipperPlay 20 Arenas Games during the first week of theMonsters Withinevent.
+- Monsters Within BeastGet 50 Knockdowns in BR during the second week of theMonsters Withinevent.
+- Monsters Within KaijuDeal 12,000 Damage in Arenas during the third week of theMonsters Withinevent.
+- RaidersAccumulate 250 Event track points during theRaidersevent.
+- Raiders PlundererDeal 10,000 damage to enemy players inWinter Expressduring theRaidersEvent.
+- Raiders PillagerDeal 25,000 damage to enemy players in Arenas during theRaidersEvent.
+- Raiders Shark BaitKnock Down 100 enemy players in Battle Royale during theRaidersEvent.
+- Raiders MasterEarn all otherRaidersbadges.
+- Dark Depths TridentGet 50 Knockdowns in BR during Week 1 of theDark DepthsEvent.
+- Dark Depths Compass RosePlay 20 Arenas Games during Week 2 of theDark DepthsEvent.
+- Dark Depths KrakenDeal 5000 Damage in BR during Week 3 of theDark DepthsEvent.
+- Year 3 AnniversaryAccumulate 250 Event track points during the3rd Anniversaryevent.
+- Control EnthusiastControl 100 objectives inControlduring the3rd AnniversaryEvent.
+- Battle Royale Damage DealerDeal 10,000 damage to enemy players in Arenas during the3rd AnniversaryEvent.
+- Knock Down ChampionKnock Down 100 enemy players in Battle Royale during the3rd AnniversaryEvent.
+- Anniversary Event MasterEarn all other3rd Anniversarybadges.
+- WarriorsAccumulate 250 Event track points during theWarriorsevent.
+- Warriors BrawlerDeal 10,000 damage to enemy players in Battle Royale during theWarriorsEvent.
+- Warriors ControllerCapture 100 Objectives in Control during theWarriorsEvent.
+- Warriors GladiatorKnock Down 100 enemy players in Battle Royale during theWarriorsEvent.
+- Warriors MasterEarn all otherWarriorsbadges.
+- Unshackled RageGet 50 Knockdowns in BR during Week 1 of theUnshackledEvent
+- Unshackled AssaultDeal 5,000 Damage in BR during Week 2 of theUnshackledEvent
+- AwakeningAccumulate 250 Event track points during theAwakeningevent.
+- Awakening Top RatedEarn 30,000 Rating inControlduring theAwakeningevent.
+- Awakening Lights OutKnock down 100 players in Battle Royale during theAwakeningEvent.
+- Awakening Smack DownDeal 10,000 damage to enemy players in Battle Royale during theAwakeningEvent.
+- Awakening MasterEarn all otherAwakeningbadges.
+- Gaiden ScattershotDeal 3000 Damage with Shotguns in Any Mode during Week 1 of theGaidenEvent.
+- Gaiden SurvivorSurvive 50 Ring Closings in Any Mode during Week 2 of theGaidenEvent.
+- Beast of PreyAccumulate 250 Event track points during theBeast of Preyevent.
+- Beast of Prey DevastatorDeal 50,000 damage to enemy players in Any Mode during theBeast of Preyevent.
+- Beast of Prey ExterminatorGet 200 Kills or Assists in Any Mode during theBeast of Preyevent.
+- Beast of Prey Arms DealerWin 10 matches of Gun Run during theBeast of Preyevent.
+- Beast of Prey MasterEarn all otherBeast of Preybadges.
+- Wintertide AvalancheDeal 15,000 damage to enemy players in Any Mode during theWintertideEvent.
+- Wintertide Wipe OutGet 50 Kills or Assists in Any Mode during theWintertideEvent.
+- Wintertide RestorationRestore 2,500 Health in Any Mode during theWintertideEvent.
+- Spellbound BlightDeal 50,000 damage to enemy players in Any Mode during theSpellboundevent.
+- Spellbound Cut-throatGet 200 Kills or Assists in Any Mode during theSpellboundevent.
+- Spellbound VictorWin 10 matches ofControlduring theSpellboundevent.
+- Spellbound MasterEarn all otherSpellboundbadges.
+- Celestial SunriseEarn 250 points during theCelestial Sunriseevent.
+- Celestial Sunrise CrusherDeal 35,000 damage in Any Mode during theCelestial Sunriseevent.
+- Celestial Sunrise CollaboratorGet 50 Kills or Assists in Any Mode during theCelestial Sunriseevent.
+- Celestial Sunrise Top TierPlace in the Top 5 inHardcore BR10 times.
+- Celestial Sunrise MasterEarn all otherCelestial Sunrisebadges.
+- Year 4 AnniversaryEarn 250 points during theYear 4 AnniversaryEvent.
+- Year 4 DevastatorDeal 50,000 Damage in Any Mode during theYear 4 AnniversaryEvent.
+- Year 4 CollaboratorGet 200 Kills or Assists in Any Mode during theYear 4 AnniversaryEvent.
+- Year 4 Team PlayerWin 10 Matches ofTeam Deathmatch.
+- Year 4 MasterEarn all otherYear 4 AnniversaryEvent Badges.
+- Imperial GuardEarn 250 points during theImperial GuardEvent.
+- Imperial Guard BruiserDeal 50,000 Damage in Any Mode during theImperial GuardEvent.
+- Imperial Guard EnforcerGet 200 Kills or Assists in Any Mode during theImperial GuardEvent.
+- Imperial Guard AuthorityWin 20 Matches of Any Mode during theImperial GuardEvent.
+- Imperial Guard MasterEarn all otherImperial GuardBadges.
+- Sun SquadEarn 250 points during theSun Squadevent.
+- Sun BleachedDeal 50,000 Damage in Any Mode during theSun SquadEvent.
+- Sun SlayerGet 100 Kills or Assists in Any Mode during theImperial GuardEvent.
+- Sun FeverFinish top five 10 times in Heatwave during theSun SquadEvent.
+- Sun Squad MasterEarn all otherSun SquadBadges.
+- VeiledEarn 250 points during theVeiledevent.
+- Veiled DevastationDeal 50,000 Damage in Any Mode during theVeiledEvent.
+- Veiled ExterminatorGet 200 Kills or Assists in Any Mode during theVeiledEvent.
+- Veiled CollaboratorWin 10 matches of Team Deathmatch during theVeiledEvent.
+- Veiled MasterEarn all otherVeiledBadges.
+- Threat LevelEarn 250 points during theThreat Levelevent.
+- Threat Level HunterDeal 50,000 Damage in Any Mode during theThreat LevelEvent.
+- Threat Level FacilitatorGet 100 Kills or Assists in Any Mode during theThreat LevelEvent.
+- Threat Level MenderRestore 5000 Health in Any Mode during theThreat LevelEvent.
+- Threat Level MasterEarn all otherThreat LevelBadges.
+- Dressed to KillEarn 250 points during theDressed to Killevent.
+- Moving TargetDeal 50,000 Damage in Any Mode during the Dressed to Kill event.
+- Aiding and AbettingGet 200 Kills or Assists in Any Mode during theDressed to Killevent.
+- Black Tie AffairDeal 5000 Damage with Shotguns in Any Mode during theDressed to Killevent.
+- Dressed to Kill MasterEarn all other Badges during theDressed to Killevent.
+- Neon NetworkCollect 5,000 Nodes during theNeon Networkevent.
+- TargetedCollect 10,000 Nodes during theNeon Networkevent.
+- The Cutting EdgeCollect 20,000 Nodes during theNeon Networkevent.
+- Neon Network MasterCollect 30,000 Nodes during theNeon Networkevent.
+- HarbingersEarn 250 points during theHarbingersevent.
+- Harbingers ProclaimerDeal 50,000 damage to in Any Mode during theHarbingersevent.
+- Harbingers AngelDeal 1,000 Damage with theRevenant Shellduring theHarbingersevent.
+- Harbingers HeraldWin 20 matches of Any Mode during theHarbingersevent.
+- Harbingers MasterEarn all otherHarbingersevent badges.
+- DoppelgangersEarn 250 points during theDoppelgangersevent.
+- Doppelgangers ShadowDeal 50,000 damage to in Any Mode during theDoppelgangersevent.
+- Doppelgangers AmbusherGet 200 Kills or Assists in Any Mode during theDoppelgangersevent.
+- Doppelgangers RingerWin 20 matches of Any Mode during theDoppelgangersevent.
+- Doppelgangers MasterEarn all otherDoppelgangersevent badges.
+- Camo Credit EnthusiastEarn 285 Camo Credits during thePost Maloneevent.
+- Camo Credit CollectorEarn 1,425 Camo Credits during thePost Maloneevent.
+- Camo Credit AficionadoEarn 2,850 Camo Credits during thePost Maloneevent.
+- Camo Credit MogulEarn 3,990 Camo Credits during thePost Maloneevent.
+- Uprising ProtectorEarn 2,000 Points during Week 1 of theUprisingevent.
+- Uprising IntegrityEarn 2,000 Points during Week 2 of theUprisingevent.
+- Uprising OutrightEarn 2,000 Points during Week 3 of theUprisingevent.
+- Uprising FearlessEarn 2,000 Points during Week 4 of theUprisingevent.
+## Legend Badges
+These badges need to be earned separately for eachlegend. For tiered badges, only the highest tier earned can be equipped.
+- Assassin IPlay 5 games with 5 or more kills.
+- Assassin IIPlay 15 games with 5 or more kills.
+- Assassin IIIPlay 50 games with 5 or more kills.
+- Assassin IVPlay 100 games with 5 or more kills.
+- Apex PredatorWin a game while being theKill Leader.
+- DeadeyeGet the last kill of a game.
+- Double DutyWin a game where you were theKill Leader and the Champion.
+- Flawless Victory IWin a game where no one in the squad dies during the match.
+- Flawless Victory IIWin a game where no one in the squad gets knocked down during the match.
+- Headshot HotshotWin a game with 5 headshot kills.
+- Hot StreakWin 2 games in a row as the same legend.
+- No One Left BehindRespawn both teammates in the same game.
+- Rapid EliminationDown 4 enemies within 20 seconds.
+- Reinforcement RecallKill someone within 10 seconds of them landing from a respawn dropship.
+- Shot CallerWin a game as the Jumpmaster.
+- Squad WipeKill all 3 members of an enemy squad.
+- The Legacy ContinuesWin a game where your full squad was alive at the end.
+- Triple TripleKill all 3 members of 3 squads in the same match.
+- [Legend]'s WakeKill at least 20 enemies in one game of Standard BR.
+- [Legend]'s Wrath IDeal 2,000 damage in a single game of Standard BR.
+- [Legend]'s Wrath IIDeal 2,500 damage in a single game of Standard BR.
+- [Legend]'s Wrath IIIDeal 3,000 damage in a single game of Standard BR.
+- [Legend]'s Wrath IVDeal 4,000 damage in a single game of Standard BR.
+### Legend specific badges
+- Ash/Badges
+- Ballistic/Badges
+- Bangalore/Badges
+- Bloodhound/Badges
+- Catalyst/Badges
+- Caustic/Badges
+- Conduit/Badges
+- Crypto/Badges
+- Fuse/Badges
+- Gibraltar/Badges
+- Horizon/Badges
+- Lifeline/Badges
+- Loba/Badges
+- Mad Maggie/Badges
+- Mirage/Badges
+- Newcastle/Badges
+- Octane/Badges
+- Pathfinder/Badges
+- Rampart/Badges
+- Revenant/Badges
+- Seer/Badges
+- Valkyrie/Badges
+- Vantage/Badges
+- Wattson/Badges
+- Wraith/Badges
+## Weapon Badges
+- FlatlineMastery
+- HAVOCMastery
+- HemlokMastery
+- NemesisMastery
+- R-301Mastery
+- P2020Mastery
+- RE-45Mastery
+- WingmanMastery
+- Charge RifleMastery
+- LongbowMastery
+- SentinelMastery
+- KraberMastery
+- BocekMastery
+- G7 ScoutMastery
+- Triple TakeMastery
+- 30-30Mastery
+- AlternatorMastery
+- CARMastery
+- ProwlerMastery
+- R-99Mastery
+- VotMastery
+- EVA-8Mastery
+- MastiffMastery
+- MozambiqueMastery
+- PeacekeeperMastery
+- SpitfireMastery
+- DevotionMastery
+- RampageMastery
+- L-STARMastery
+## Club Badges
+- Club Player IPlay 1 game(s) with a full squad ofclubmates.
+- Club Player IIPlay 25 game(s) with a full squad ofclubmates.
+- Club Player IIIPlay 100 game(s) with a full squad ofclubmates.
+- Club VictoryWin a match with a full squad ofclubmates.
+- Flawless Club 1Win a match with a fullclubsquad where no one in the squad is killed.
+- Flawless Club 2Win a match with a fullclubsquad where no one in the squad is knocked down.
+- Flawless Club 3Win a match with a fullclubsquad where the full squad is alive at the end.
+## Ranked Leagues Badges
+Main article:Ranked Leagues
+- Ranked Season 2- Ranked Season 3- Ranked Season 4- Ranked Season 5- Ranked Season 6- Ranked Season 7- Ranked Season 8- Ranked Season 9- Ranked Season 10- Ranked Season 11- Ranked Season 12- Ranked Season 13- Ranked Season 14- Ranked Season 15- Ranked Season 16- Ranked Season 17- Ranked Season 18- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 2.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 2.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 2.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 2.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 2.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 2.- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 3.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 3.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 3.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 3.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 3.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 3.- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 4.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 4.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 4.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 4.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 4.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 4.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 4.- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 5.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 5.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 5.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 5.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 5.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 5.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 5.- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 6.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 6.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 6.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 6.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 6.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 6.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 6.- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 7.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 7.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 7.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 7.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 7.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 7.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 7.- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 8.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 8.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 8.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 8.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 8.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 8.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 8.- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 9.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 9.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 9.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 9.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 9.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 9.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 9.Battle Royale- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 10.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 10.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 10.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 10.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 10.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 10.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 10.Arenas- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 10.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 10.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 10.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 10.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 10.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 10.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 10.Battle Royale- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 11.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 11.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 11.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 11.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 11.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 11.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 11.Arenas- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 11.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 11.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 11.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 11.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 11.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 11.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 11.Battle Royale- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 12.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 12.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 12.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 12.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 12.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 12.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 12.Arenas- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 12.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 12.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 12.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 12.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 12.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 12.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 12.Battle Royale- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 13.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 13.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 13.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 13.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 13.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 13.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 13.Arenas- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 13.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 13.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 13.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 13.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 13.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 13.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 13.Battle Royale- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 14.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 14.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 14.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 14.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 14.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 14.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 14.Arenas- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 14.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 14.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 14.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 14.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 14.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 14.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 14.Battle Royale- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 15.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 15.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 15.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 15.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 15.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 15.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 15.Arenas- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 15.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 15.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 15.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 15.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 15.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 15.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 15.- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 16.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 16.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 16.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 16.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 16.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 16.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 16.- You're Tiering Me Apart RookieInitial- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 17.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 17.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 17.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 17.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 17.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 17.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 17.- You're Tiering Me Apart RookieInitial- You're Tiering Me Apart BronzeReach Bronze tier in Ranked Season 18.- You're Tiering Me Apart SilverReach Silver tier in Ranked Season 18.- You're Tiering Me Apart GoldReach Gold tier in Ranked Season 18.- You're Tiering Me Apart PlatinumReach Platinum tier in Ranked Season 18.- You're Tiering Me Apart DiamondReach Diamond tier in Ranked Season 18.- You're Tiering Me Apart MasterReach Master tier in Ranked Season 18.- You're Tiering Me Apart Apex PredatorReach Apex Predator tier in Ranked Season 18.
+## Battle Pass Badges
+- Wild Frontier Level 110Reach Level 110 on the Battle Pass.
+- Battle Charge Level 110 Reach Level 110 on the Battle Pass.Battle Charge Level 110Reach Level 110 on the Battle Pass.
+- Meltdown Level 110Reach Level 110 on the Battle Pass.
+- Assimilation Level 110Reach Level 110 on the Battle Pass.
+- Fortune's Favor Level 110Reach Level 110 on the Battle Pass.
+- Boosted Level 110Reach Level 110 on the Battle Pass.
+- Ascension Level 110Reach Level 110 on the Battle Pass.
+- Mayhem Level 110Reach Level 110 on the Battle Pass.
+- Legacy Level 110Reach Level 110 on the Battle Pass.
+- Emergence Level 110Reach Level 110 on the Battle Pass.
+- Escape Level 110Reach Level 110 on the Battle Pass.
+- Defiance Level 110Reach Level 110 on the Battle Pass.
+- Saviors Level 110Reach Level 110 on the Battle Pass.
+- Hunted Level 110Reach Level 110 on the Battle Pass.
+- Eclipse Level 110 Reach Level 110 on the Battle Pass.Eclipse Level 110Reach Level 110 on the Battle Pass.
+- Revelry Level 110Reach Level 110 on the Battle Pass.
+- Arsenal Level 110Reach Level 110 on the Battle Pass.
+- Ressurrection Level 110Reach Level 110 on the Battle Pass.
+- Ignite Level 110Reach Level 110 on the Battle Pass.
+## Season Badges
+These badges can be only be earned during their respectiveseason.
+### Season 1
+Main article:Season 1
+- Bonus Round IEarn 250,000 Battle Pass Points with 7 differentlegends.
+- Bonus Round IIEarn 250,000 Battle Pass Points with 9 differentlegends.
+- Glory Seeker IAchieve a top 5 squads standing 1 time with 7 differentlegends.
+- Glory Seeker IIAchieve a top 5 squads standing 5 times with 7 differentlegends.
+- Glory Seeker IIIAchieve a top 5 squads standing 10 times with 7 differentlegends.
+- Glory Seeker IVAchieve a top 5 squads standing 25 times with 7 differentlegends.
+- Glory Seeker VAchieve a top 5 squads standing 50 times with 7 differentlegends.
+- Variety Show IGet 1 kill with 7 differentlegends.
+- Variety Show IIGet 5 kills with 7 differentlegends.
+- Variety Show IIIGet 25 kills with 7 differentlegends.
+- Variety Show IVGet 50 kills with 7 differentlegends.
+- Variety Show VGet 100 kills with 7 differentlegends.
+- Wild Frontier Champion IWin 1 game with 7 differentlegends.
+- Wild Frontier Champion IIWin 5 games with 7 differentlegends.
+- Wild Frontier Champion IIIWin 10 games with 7 differentlegends.
+- Wild Frontier Champion IVWin 25 games with 7 differentlegends.
+- Wild Frontier Champion VWin 50 games with 7 differentlegends.
+## Game Mode Badges
+### Arenas
+- Impress MeDisplays your highestArenaswin streakCan only be obtained completing theDecrypt the Passcodechallenges in Season 8.
+- Impress MeDisplays your highestArenaswin streakGet the 100 Win Streak
+- Arenas ShutoutWin an Arenas Game without losing a round.
+- Arenas SurvivorWin an Arenas Game without getting downed or killed.
+### Apex Elite Queue
+- Elite StreakDisplays your best Elite Top 5 streak.
+- Elite 888Win at least 8Apex Elite Queuematches with 8 different legends, with at least 8 kills in each game.
+### Duos
+These badges were only available duringSeason 3.
+- Powers of Two IPlay a match ofDuos.
+- Powers of Two IIWin two (2)Duosmatches.
+- Powers of Two IIIWin four (4)Duosmatches.
+- Powers of Two IVWin eight (8)Duosmatches.

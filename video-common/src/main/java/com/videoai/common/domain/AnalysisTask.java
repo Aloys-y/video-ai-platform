@@ -99,6 +99,16 @@ public class AnalysisTask {
      */
     private String errorMessage;
 
+    /**
+     * 下一次允许重试时间
+     */
+    private LocalDateTime nextRetryAt;
+
+    /**
+     * 上一次进入重试时间
+     */
+    private LocalDateTime lastRetryAt;
+
     // ==================== AI分析结果 ====================
 
     /**

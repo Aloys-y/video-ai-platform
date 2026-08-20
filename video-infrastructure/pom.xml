@@ -66,6 +66,12 @@
             <artifactId>s3</artifactId>
         </dependency>
 
+        <!-- Milvus Java SDK (gRPC) -->
+        <dependency>
+            <groupId>io.milvus</groupId>
+            <artifactId>milvus-sdk-java</artifactId>
+        </dependency>
+
         <!-- OkHttp（AI服务HTTP客户端） -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>

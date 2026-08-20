@@ -36,6 +36,11 @@ public class TaskMessage implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 事件ID
+     */
+    private String eventId;
+
+    /**
      * 任务ID
      * 作为Kafka消息的key，保证同一任务的消息有序
      */
@@ -71,7 +76,7 @@ public class TaskMessage implements Serializable {
      * 重试次数
      * 消费者根据这个决定是否继续重试
      */
-    private Integer retryCount;
+    private Integer businessRetryNo;
 
     /**
      * 消息创建时间戳
@@ -80,6 +85,11 @@ public class TaskMessage implements Serializable {
      * 时间戳跨语言兼容性好，JSON序列化简单
      */
     private Long timestamp;
+
+    /**
+     * 实际投递到Kafka的时间
+     */
+    private Long dispatchedAt;
 
     /**
      * 优先级
@@ -106,12 +116,13 @@ public class TaskMessage implements Serializable {
     /**
      * 创建消息（便捷方法）
      */
-    public static TaskMessage create(String taskId, Long userId, String videoUrl) {
+    public static TaskMessage create(String eventId, String taskId, Long userId, String videoUrl) {
         return TaskMessage.builder()
+                .eventId(eventId)
                 .taskId(taskId)
                 .userId(userId)
                 .videoUrl(videoUrl)
-                .retryCount(0)
+                .businessRetryNo(0)
                 .timestamp(System.currentTimeMillis())
                 .priority(5)
                 .analysisType("FULL")
@@ -122,7 +133,7 @@ public class TaskMessage implements Serializable {
      * 增加重试次数
      */
     public TaskMessage incrementRetry() {
-        this.retryCount = (this.retryCount == null ? 0 : this.retryCount) + 1;
+        this.businessRetryNo = (this.businessRetryNo == null ? 0 : this.businessRetryNo) + 1;
         this.timestamp = System.currentTimeMillis();
         return this;
     }

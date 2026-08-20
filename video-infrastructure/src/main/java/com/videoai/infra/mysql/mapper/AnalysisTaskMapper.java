@@ -2,9 +2,13 @@ package com.videoai.infra.mysql.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.videoai.common.domain.AnalysisTask;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 分析任务Mapper
@@ -35,8 +39,19 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
      */
     @Update("UPDATE analysis_task SET status = 'PROCESSING', " +
             "started_at = NOW(), updated_at = NOW() " +
-            "WHERE task_id = #{taskId} AND status IN ('QUEUED', 'RETRYING')")
-    int startProcessing(@Param("taskId") String taskId);
+            "WHERE task_id = #{taskId} AND status IN ('QUEUED', 'RETRYING') " +
+            "AND retry_count = #{retryCount}")
+    int startProcessing(@Param("taskId") String taskId,
+                        @Param("retryCount") Integer retryCount);
+
+    /**
+     * Outbox 成功投递后将任务标记为已入队
+     */
+    @Update("UPDATE analysis_task SET status = 'QUEUED', updated_at = NOW() " +
+            "WHERE task_id = #{taskId} AND retry_count = #{retryCount} " +
+            "AND status IN ('PENDING', 'RETRYING')")
+    int markQueued(@Param("taskId") String taskId,
+                   @Param("retryCount") Integer retryCount);
 
     /**
      * 完成任务
@@ -45,8 +60,10 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
             "progress = 100, completed_at = NOW(), updated_at = NOW(), " +
             "result = #{result}, summary = #{summary}, " +
             "frame_count = #{frameCount}, tokens_used = #{tokensUsed} " +
-            "WHERE task_id = #{taskId}")
+            "WHERE task_id = #{taskId} AND status = 'PROCESSING' " +
+            "AND retry_count = #{retryCount}")
     int completeTask(@Param("taskId") String taskId,
+                     @Param("retryCount") Integer retryCount,
                      @Param("result") String result,
                      @Param("summary") String summary,
                      @Param("frameCount") Integer frameCount,
@@ -55,35 +72,36 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
     /**
      * 任务失败
      */
-    @Update("UPDATE analysis_task SET status = 'FAILED', " +
-            "error_message = #{errorMessage}, updated_at = NOW() " +
-            "WHERE task_id = #{taskId}")
-    int failTask(@Param("taskId") String taskId,
-                 @Param("errorMessage") String errorMessage);
-
-    /**
-     * 增加重试次数并设置状态为RETRYING
-     */
     @Update("UPDATE analysis_task SET status = 'RETRYING', " +
-            "retry_count = retry_count + 1, updated_at = NOW() " +
-            "WHERE task_id = #{taskId}")
-    int incrementRetry(@Param("taskId") String taskId);
+            "retry_count = retry_count + 1, error_message = #{errorMessage}, " +
+            "last_retry_at = NOW(), next_retry_at = #{nextRetryAt}, updated_at = NOW() " +
+            "WHERE task_id = #{taskId} AND status = 'PROCESSING' " +
+            "AND retry_count = #{currentRetryCount}")
+    int scheduleRetry(@Param("taskId") String taskId,
+                      @Param("currentRetryCount") Integer currentRetryCount,
+                      @Param("nextRetryAt") LocalDateTime nextRetryAt,
+                      @Param("errorMessage") String errorMessage);
 
     /**
      * 标记为最终失败（重试次数耗尽）
      */
     @Update("UPDATE analysis_task SET status = 'DEAD', " +
-            "error_message = #{errorMessage}, updated_at = NOW() " +
-            "WHERE task_id = #{taskId}")
+            "error_message = #{errorMessage}, next_retry_at = NULL, " +
+            "last_retry_at = NOW(), updated_at = NOW() " +
+            "WHERE task_id = #{taskId} AND status = 'PROCESSING' " +
+            "AND retry_count = #{currentRetryCount}")
     int markAsDead(@Param("taskId") String taskId,
+                   @Param("currentRetryCount") Integer currentRetryCount,
                    @Param("errorMessage") String errorMessage);
 
     /**
      * 更新进度
      */
     @Update("UPDATE analysis_task SET progress = #{progress}, " +
-            "updated_at = NOW() WHERE task_id = #{taskId}")
+            "updated_at = NOW() WHERE task_id = #{taskId} " +
+            "AND status = 'PROCESSING' AND retry_count = #{retryCount}")
     int updateProgress(@Param("taskId") String taskId,
+                       @Param("retryCount") Integer retryCount,
                        @Param("progress") Integer progress);
 
     /**
@@ -102,6 +120,7 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
      */
     @Update("UPDATE analysis_task SET status = 'PENDING', " +
             "retry_count = 0, progress = 0, error_message = NULL, " +
+            "next_retry_at = NULL, last_retry_at = NULL, " +
             "started_at = NULL, completed_at = NULL, updated_at = NOW() " +
             "WHERE task_id = #{taskId} AND user_id = #{userId} " +
             "AND status IN ('FAILED', 'DEAD')")
@@ -118,4 +137,13 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
             "AND status != 'CANCELLED'")
     int logicalDelete(@Param("taskId") String taskId,
                       @Param("userId") Long userId);
+
+    /**
+     * 查询超时仍在处理中的任务
+     */
+    @Select("SELECT * FROM analysis_task WHERE status = 'PROCESSING' " +
+            "AND started_at IS NOT NULL AND started_at < #{deadline} " +
+            "ORDER BY started_at ASC LIMIT #{limit}")
+    List<AnalysisTask> selectTimedOutProcessingTasks(@Param("deadline") LocalDateTime deadline,
+                                                     @Param("limit") int limit);
 }

@@ -56,3 +56,17 @@ ai:
     timeout: 120
     # MinIO预签名URL过期时间（小时）
     presigned-url-expire-hours: 2
+
+videoai:
+  rag:
+    vector:
+      base-url: http://localhost:19530
+      collection: apex_knowledge_chunk
+    embedding:
+      provider: dashscope
+      base-url: https://dashscope.aliyuncs.com/api/v1
+      api-key: YOUR_DASHSCOPE_API_KEY
+      model: text-embedding-v3
+      dimension: 1024
+      dashscope:
+        text-type: document
