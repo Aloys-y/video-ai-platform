@@ -104,40 +104,91 @@ public class KnowledgeChunkingService {
     }
 
     /**
-     * 如果段落超过最大值，按连续非空行块再切分。
+     * 如果内容超过最大值，先按空行块/句子边界切，相邻 chunk 做 overlap 防边界语义断裂。
      */
     private List<ChunkedSegment> splitIfNeeded(String content, String title,
                                                 String headingPath, int startChunkNo) {
         List<ChunkedSegment> segments = new ArrayList<>();
         String trimmed = content.trim();
-        if (trimmed.length() <= targetMax() || trimmed.length() < targetMin() * 2) {
+
+        // Short enough — return as-is
+        if (trimmed.length() <= targetMax()) {
             segments.add(buildSegment(startChunkNo, title, headingPath, trimmed));
             return segments;
         }
 
-        // Split by blank-line-delimited blocks
-        String[] blocks = trimmed.split("\\n\\s*\\n");
-        StringBuilder batch = new StringBuilder();
+        // 1. 切成原始文本片段（空行块优先，句子边界兜底）
+        List<String> rawChunks = splitToRawChunks(trimmed);
+
+        // 2. 相邻片段做 overlap（同章节内被迫切开的块，防语义断裂）
+        int overlap = ragProperties.getChunkOverlapChars();
         int chunkNo = startChunkNo;
-
-        for (String block : blocks) {
-            String blockTrimmed = block.trim();
-            if (blockTrimmed.isEmpty()) continue;
-
-            if (batch.length() + blockTrimmed.length() > targetMax() && batch.length() >= targetMin()) {
-                segments.add(buildSegment(chunkNo++, title, headingPath, batch.toString().trim()));
-                batch = new StringBuilder();
+        String prevRaw = null;
+        for (String raw : rawChunks) {
+            String chunkText = raw;
+            if (prevRaw != null && overlap > 0) {
+                String tail = prevRaw.substring(Math.max(0, prevRaw.length() - overlap));
+                chunkText = tail + "\n" + raw;
             }
-            if (batch.length() > 0) {
-                batch.append("\n\n");
-            }
-            batch.append(blockTrimmed);
-        }
-
-        if (batch.length() > 0) {
-            segments.add(buildSegment(chunkNo, title, headingPath, batch.toString().trim()));
+            segments.add(buildSegment(chunkNo++, title, headingPath, chunkText));
+            prevRaw = raw;
         }
         return segments;
+    }
+
+    /**
+     * 把长文本切成原始片段。优先级：空行块（段落）> 句子边界 > 硬切。
+     */
+    private List<String> splitToRawChunks(String text) {
+        List<String> result = new ArrayList<>();
+        String[] blocks = text.split("\\n\\s*\\n");
+        for (String block : blocks) {
+            String b = block.trim();
+            if (b.isEmpty()) continue;
+            if (b.length() <= targetMax()) {
+                result.add(b);
+            } else {
+                result.addAll(splitBySentence(b));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 单个块超长时，优先按句子边界（句号/换行）切；单句超长才硬切。
+     */
+    private List<String> splitBySentence(String text) {
+        List<String> result = new ArrayList<>();
+        int max = targetMax();
+
+        // 按句号后的空白、或换行边界切句子
+        String[] sentences = text.split("(?<=[.!?。！？])\\s+|\\n+");
+        StringBuilder chunk = new StringBuilder();
+        for (String sentence : sentences) {
+            String s = sentence.trim();
+            if (s.isEmpty()) continue;
+
+            if (chunk.length() + s.length() > max && chunk.length() > 0) {
+                result.add(chunk.toString().trim());
+                chunk = new StringBuilder();
+            }
+
+            if (s.length() > max) {
+                // 单个句子还超长，只能硬切
+                if (chunk.length() > 0) {
+                    result.add(chunk.toString().trim());
+                    chunk = new StringBuilder();
+                }
+                for (int i = 0; i < s.length(); i += max) {
+                    result.add(s.substring(i, Math.min(i + max, s.length())));
+                }
+            } else {
+                if (chunk.length() > 0) chunk.append(' ');
+                chunk.append(s);
+            }
+        }
+        if (chunk.length() > 0) result.add(chunk.toString().trim());
+        return result;
     }
 
     private String buildHeadingPath(String title, String sectionHeading) {

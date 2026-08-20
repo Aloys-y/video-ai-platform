@@ -20,6 +20,7 @@ import io.milvus.param.collection.LoadCollectionParam;
 import io.milvus.param.dml.DeleteParam;
 import io.milvus.param.dml.InsertParam;
 import io.milvus.param.dml.SearchParam;
+import io.milvus.param.dml.UpsertParam;
 import io.milvus.param.index.CreateIndexParam;
 import io.milvus.response.SearchResultsWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -83,23 +84,28 @@ public class MilvusVectorStoreClient implements VectorStoreClient {
 
     @Override
     public void ensureCollection() {
-        if (!collectionEnsured.compareAndSet(false, true)) {
-            return;
-        }
+        String collectionName = milvusProperties.getCollection();
+        String dbName = milvusProperties.getDatabase();
 
-        try {
-            String collectionName = milvusProperties.getCollection();
-            String dbName = milvusProperties.getDatabase();
-
-            // Check if collection exists
+        // Fast path: collection already verified
+        if (collectionEnsured.get()) {
             R<Boolean> hasColl = client.hasCollection(HasCollectionParam.newBuilder()
                     .withDatabaseName(dbName)
                     .withCollectionName(collectionName)
                     .build());
             if (hasColl.getData() != null && hasColl.getData()) {
-                log.info("Milvus collection already exists: {}", collectionName);
                 return;
             }
+            // Collection was dropped externally — reset and recreate
+            collectionEnsured.set(false);
+            log.warn("Milvus collection disappeared, will recreate: {}", collectionName);
+        }
+
+        if (!collectionEnsured.compareAndSet(false, true)) {
+            return;
+        }
+
+        try {
 
             // Create collection
             FieldType idField = FieldType.newBuilder()
@@ -237,13 +243,13 @@ public class MilvusVectorStoreClient implements VectorStoreClient {
         fields.add(new InsertParam.Field(FIELD_CONTENT_TEXT, contentTextVals));
         fields.add(new InsertParam.Field(FIELD_EMBEDDING, embeddingVals));
 
-        InsertParam insertParam = InsertParam.newBuilder()
+        UpsertParam upsertParam = UpsertParam.newBuilder()
                 .withDatabaseName(milvusProperties.getDatabase())
                 .withCollectionName(milvusProperties.getCollection())
                 .withFields(fields)
                 .build();
 
-        R<MutationResult> result = client.insert(insertParam);
+        R<MutationResult> result = client.upsert(upsertParam);
         if (result.getStatus() != 0) {
             throw new IllegalStateException("Milvus upsert failed: " + result.getMessage());
         }

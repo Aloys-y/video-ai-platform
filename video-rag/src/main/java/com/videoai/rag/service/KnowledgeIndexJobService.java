@@ -92,6 +92,20 @@ public class KnowledgeIndexJobService {
         knowledgeIndexJobMapper.markFailed(jobId, errorMessage);
     }
 
+    /**
+     * 修复调度器在“状态已置为 QUEUED、Kafka 尚未确认”窗口宕机造成的卡死任务，
+     * 并把超时 PROCESSING 任务显式终止，避免管理端永久显示处理中。
+     */
+    public RecoveryResult recoverStaleJobs() {
+        LocalDateTime now = LocalDateTime.now();
+        int requeued = knowledgeIndexJobMapper.recoverStaleQueued(
+                now.minusSeconds(ragProperties.getQueuedRecoveryTimeoutSeconds()));
+        int failed = knowledgeIndexJobMapper.failStaleProcessing(
+                now.minusSeconds(ragProperties.getProcessingTimeoutSeconds()),
+                now.minusSeconds(ragProperties.getRebuildProcessingTimeoutSeconds()));
+        return new RecoveryResult(requeued, failed);
+    }
+
     private KnowledgeIndexJob createJob(String baseCode, String jobType, String cardCode, String createdBy,
                                         Map<String, Object> payload) {
         KnowledgeIndexJob job = new KnowledgeIndexJob();
@@ -116,5 +130,8 @@ public class KnowledgeIndexJobService {
             log.error("Failed to serialize knowledge index job payload", e);
             throw new IllegalStateException("Failed to serialize knowledge index job payload", e);
         }
+    }
+
+    public record RecoveryResult(int requeued, int failed) {
     }
 }

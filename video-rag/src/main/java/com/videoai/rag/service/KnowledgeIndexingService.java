@@ -17,7 +17,7 @@ import com.videoai.rag.model.ChunkedSegment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,6 +38,7 @@ public class KnowledgeIndexingService {
     private final EmbeddingProvider embeddingProvider;
     private final VectorStoreClient vectorStoreClient;
     private final ObjectMapper objectMapper;
+    private final TransactionTemplate transactionTemplate;
 
     public void processJob(String jobId) {
         KnowledgeIndexJob job = knowledgeIndexJobService.getRequiredJob(jobId);
@@ -127,7 +128,7 @@ public class KnowledgeIndexingService {
         List<VectorRecord> records = new ArrayList<>(segments.size());
         for (ChunkedSegment segment : segments) {
             String vectorId = card.getCardCode() + "_" + segment.getChunkNo();
-            List<Float> vector = embeddingProvider.embed(segment.getContentText());
+            List<Float> vector = embeddingProvider.embedDocument(buildEmbeddingText(card, segment));
 
             Map<String, Object> metadata = new LinkedHashMap<>();
             metadata.put("kb_code", card.getBaseCode());
@@ -140,7 +141,7 @@ public class KnowledgeIndexingService {
             metadata.put("chunk_no", segment.getChunkNo());
             metadata.put("title", truncate(card.getTitle(), 255));
             metadata.put("heading_path", truncate(segment.getHeadingPath(), 512));
-            metadata.put("content_text", truncate(segment.getContentText(), 8192));
+            metadata.put("content_text", truncate(segment.getContentText(), 8000));
 
             records.add(VectorRecord.builder()
                     .id(vectorId)
@@ -152,60 +153,86 @@ public class KnowledgeIndexingService {
     }
 
     /**
+     * 向量化时补充标题、别名、类别和标题路径；Milvus 中仍保存原始正文用于最终注入。
+     * 这样实体名或章节名没有重复出现在正文时，也能被查询稳定召回。
+     */
+    private String buildEmbeddingText(KnowledgeCard card, ChunkedSegment segment) {
+        StringBuilder text = new StringBuilder();
+        appendEmbeddingField(text, "Title", card.getTitle());
+        appendEmbeddingField(text, "Aliases", card.getAliases());
+        appendEmbeddingField(text, "Category", card.getCategory());
+        appendEmbeddingField(text, "Subject", card.getSubjectCode());
+        appendEmbeddingField(text, "Section", segment.getHeadingPath());
+        appendEmbeddingField(text, "Content", segment.getContentText());
+        return text.toString().trim();
+    }
+
+    private void appendEmbeddingField(StringBuilder text, String field, String value) {
+        if (value == null || value.isBlank()) {
+            return;
+        }
+        text.append(field).append(": ").append(value.trim()).append('\n');
+    }
+
+    /**
      * 处理已禁用卡片：仅清理 MySQL chunks 并更新状态。
      */
-    @Transactional
     protected int handleDisabledCard(String baseCode, String cardCode, String jobId, boolean markJobSuccess) {
-        knowledgeChunkMapper.deleteByCardCode(baseCode, cardCode);
-        knowledgeCardMapper.updateIndexState(baseCode, cardCode,
-                KnowledgeIndexStatus.INDEXED.getCode(), jobId, LocalDateTime.now(), "system");
-        if (markJobSuccess) {
-            knowledgeIndexJobService.markSuccess(jobId, 0, 0, 0);
-        }
-        return 0;
+        Integer result = transactionTemplate.execute(status -> {
+            knowledgeChunkMapper.deleteByCardCode(baseCode, cardCode);
+            knowledgeCardMapper.updateIndexState(baseCode, cardCode,
+                    KnowledgeIndexStatus.INDEXED.getCode(), jobId, LocalDateTime.now(), "system");
+            if (markJobSuccess) {
+                knowledgeIndexJobService.markSuccess(jobId, 0, 0, 0);
+            }
+            return 0;
+        });
+        return result == null ? 0 : result;
     }
 
     /**
      * MySQL 事务：删除旧 chunks → 插入新 chunks → 更新卡片状态。
      */
-    @Transactional
     protected int persistToDatabase(String baseCode, KnowledgeCard card,
                                     List<ChunkedSegment> segments,
                                     List<VectorRecord> records,
                                     String jobId, boolean markJobSuccess) {
-        // 清理旧 MySQL chunks
-        knowledgeChunkMapper.deleteByCardCode(baseCode, card.getCardCode());
+        Integer result = transactionTemplate.execute(status -> {
+            // 清理旧 MySQL chunks
+            knowledgeChunkMapper.deleteByCardCode(baseCode, card.getCardCode());
 
-        // 批量插入新 chunks
-        List<KnowledgeChunk> chunks = new ArrayList<>(segments.size());
-        for (int i = 0; i < segments.size(); i++) {
-            ChunkedSegment segment = segments.get(i);
-            VectorRecord record = records.get(i);
+            // 批量插入新 chunks
+            List<KnowledgeChunk> chunks = new ArrayList<>(segments.size());
+            for (int i = 0; i < segments.size(); i++) {
+                ChunkedSegment segment = segments.get(i);
+                VectorRecord record = records.get(i);
 
-            KnowledgeChunk chunk = new KnowledgeChunk();
-            chunk.setBaseCode(card.getBaseCode());
-            chunk.setCardCode(card.getCardCode());
-            chunk.setVersionTag(card.getVersionTag());
-            chunk.setCategory(card.getCategory());
-            chunk.setSubjectCode(card.getSubjectCode());
-            chunk.setChunkNo(segment.getChunkNo());
-            chunk.setHeadingPath(segment.getHeadingPath());
-            chunk.setTitle(card.getTitle());
-            chunk.setContentText(segment.getContentText());
-            chunk.setContentLength(segment.getContentText().length());
-            chunk.setMetadataJson(writeJson(record.getFields()));
-            chunk.setVectorId(record.getId());
-            chunk.setIndexStatus(KnowledgeIndexStatus.INDEXED.getCode());
-            knowledgeChunkMapper.insert(chunk);
-            chunks.add(chunk);
-        }
+                KnowledgeChunk chunk = new KnowledgeChunk();
+                chunk.setBaseCode(card.getBaseCode());
+                chunk.setCardCode(card.getCardCode());
+                chunk.setVersionTag(card.getVersionTag());
+                chunk.setCategory(card.getCategory());
+                chunk.setSubjectCode(card.getSubjectCode());
+                chunk.setChunkNo(segment.getChunkNo());
+                chunk.setHeadingPath(segment.getHeadingPath());
+                chunk.setTitle(card.getTitle());
+                chunk.setContentText(segment.getContentText());
+                chunk.setContentLength(segment.getContentText().length());
+                chunk.setMetadataJson(writeJson(record.getFields()));
+                chunk.setVectorId(record.getId());
+                chunk.setIndexStatus(KnowledgeIndexStatus.INDEXED.getCode());
+                knowledgeChunkMapper.insert(chunk);
+                chunks.add(chunk);
+            }
 
-        knowledgeCardMapper.updateIndexState(baseCode, card.getCardCode(),
-                KnowledgeIndexStatus.INDEXED.getCode(), jobId, LocalDateTime.now(), "system");
-        if (markJobSuccess) {
-            knowledgeIndexJobService.markSuccess(jobId, chunks.size(), chunks.size(), 0);
-        }
-        return chunks.size();
+            knowledgeCardMapper.updateIndexState(baseCode, card.getCardCode(),
+                    KnowledgeIndexStatus.INDEXED.getCode(), jobId, LocalDateTime.now(), "system");
+            if (markJobSuccess) {
+                knowledgeIndexJobService.markSuccess(jobId, chunks.size(), chunks.size(), 0);
+            }
+            return chunks.size();
+        });
+        return result == null ? 0 : result;
     }
 
     private String writeJson(Map<String, Object> payload) {

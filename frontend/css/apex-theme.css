@@ -1981,3 +1981,4 @@ h4 { font-size: 1.1rem; }
   padding: var(--space-sm) var(--space-lg) var(--space-md);
   border-top: 1px solid var(--border-default);
 }
+.rev-score { font-weight: 700; font-size: 0.9rem; text-align: center; }

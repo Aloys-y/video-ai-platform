@@ -8,6 +8,7 @@ import com.videoai.common.dto.request.KnowledgeMarkdownDocument;
 import com.videoai.common.enums.KnowledgeIndexStatus;
 import com.videoai.infra.mysql.mapper.KnowledgeCardMapper;
 import com.videoai.infra.mysql.mapper.KnowledgeChunkMapper;
+import com.videoai.infra.mysql.mapper.KnowledgeIndexJobMapper;
 import com.videoai.infra.rag.vector.VectorStoreClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,6 +44,9 @@ class KnowledgeCardServiceTest {
     private KnowledgeChunkMapper knowledgeChunkMapper;
 
     @Mock
+    private KnowledgeIndexJobMapper knowledgeIndexJobMapper;
+
+    @Mock
     private VectorStoreClient vectorStoreClient;
 
     @Mock
@@ -56,6 +60,7 @@ class KnowledgeCardServiceTest {
                 knowledgeCardMapper,
                 knowledgeChunkMapper,
                 knowledgeIndexJobService,
+                knowledgeIndexJobMapper,
                 vectorStoreClient,
                 new ObjectMapper(),
                 transactionTemplate);
@@ -101,6 +106,7 @@ class KnowledgeCardServiceTest {
                 knowledgeCardMapper,
                 knowledgeChunkMapper,
                 knowledgeIndexJobService,
+                knowledgeIndexJobMapper,
                 vectorStoreClient,
                 new ObjectMapper(),
                 transactionTemplate);

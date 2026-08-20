@@ -54,6 +54,9 @@ const App = {
     if (this.currentPage === 'rag-cards') {
       RagCards.destroy();
     }
+    if (this.currentPage === 'rag-eval') {
+      RagEval.destroy();
+    }
 
     document.querySelectorAll('.page-section').forEach(section => section.classList.remove('active'));
 
@@ -73,6 +76,9 @@ const App = {
     } else if (path === '/rag-cards') {
       pageId = 'page-rag-cards';
       RagCards.init();
+    } else if (path === '/rag-eval') {
+      pageId = 'page-rag-eval';
+      RagEval.init();
     } else if (path.startsWith('/task/')) {
       const taskId = path.replace('/task/', '');
       pageId = 'page-task-detail';
@@ -88,6 +94,7 @@ const App = {
       pageId === 'page-upload' ? 'upload' :
       pageId === 'page-rag-import' ? 'rag-import' :
       pageId === 'page-rag-cards' ? 'rag-cards' :
+      pageId === 'page-rag-eval' ? 'rag-eval' :
       pageId === 'page-task-detail' ? 'task-detail' : null;
 
     const page = document.getElementById(pageId);
@@ -168,6 +175,12 @@ const App = {
           上传视频
         </a>
         ${isAdmin ? `
+          <a href="#/rag-eval" class="navbar__link" data-nav="/rag-eval">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:middle">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            RAG 评估
+          </a>
           <a href="#/rag-cards" class="navbar__link" data-nav="/rag-cards">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:middle">
               <rect x="3" y="3" width="18" height="18" rx="2"/>

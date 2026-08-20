@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.videoai.common.domain.KnowledgeBase;
 import com.videoai.common.domain.KnowledgeCard;
 import com.videoai.common.domain.KnowledgeChunk;
+import com.videoai.common.domain.KnowledgeIndexJob;
 import com.videoai.common.dto.request.KnowledgeCardUpsertRequest;
 import com.videoai.common.dto.request.KnowledgeMarkdownDocument;
 import com.videoai.common.dto.response.KnowledgeCardPreviewResponse;
@@ -20,8 +21,10 @@ import com.videoai.common.enums.KnowledgeIndexStatus;
 import com.videoai.common.exception.BusinessException;
 import com.videoai.infra.mysql.mapper.KnowledgeCardMapper;
 import com.videoai.infra.mysql.mapper.KnowledgeChunkMapper;
+import com.videoai.infra.mysql.mapper.KnowledgeIndexJobMapper;
 import com.videoai.infra.rag.vector.VectorStoreClient;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -35,6 +38,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class KnowledgeCardService {
@@ -45,6 +49,7 @@ public class KnowledgeCardService {
     private final KnowledgeCardMapper knowledgeCardMapper;
     private final KnowledgeChunkMapper knowledgeChunkMapper;
     private final KnowledgeIndexJobService knowledgeIndexJobService;
+    private final KnowledgeIndexJobMapper knowledgeIndexJobMapper;
     private final VectorStoreClient vectorStoreClient;
     private final ObjectMapper objectMapper;
     private final TransactionTemplate transactionTemplate;
@@ -89,9 +94,45 @@ public class KnowledgeCardService {
     }
 
     /**
+     * 清空知识库：先清 Milvus（事务外），再删 MySQL（事务内）。
+     */
+    public int cleanup() {
+        KnowledgeBase base = knowledgeBaseService.getRequiredBase();
+        List<KnowledgeCard> cards = knowledgeCardMapper.selectList(
+                new LambdaQueryWrapper<KnowledgeCard>()
+                        .eq(KnowledgeCard::getBaseCode, base.getBaseCode()));
+        if (cards.isEmpty()) return 0;
+
+        // Phase 1: Clear Milvus (outside transaction)
+        for (KnowledgeCard card : cards) {
+            try {
+                List<KnowledgeChunk> chunks = knowledgeChunkMapper.selectByCardCode(base.getBaseCode(), card.getCardCode());
+                if (!chunks.isEmpty()) {
+                    vectorStoreClient.deleteByIds(chunks.stream().map(KnowledgeChunk::getVectorId).toList());
+                }
+            } catch (Exception e) {
+                log.warn("Failed to delete Milvus vectors for card {}: {}", card.getCardCode(), e.getMessage());
+            }
+        }
+
+        // Phase 2: Delete MySQL (transactional)
+        Integer deleted = transactionTemplate.execute(status -> cleanupDatabase(base.getBaseCode()));
+        return deleted == null ? 0 : deleted;
+    }
+
+    protected int cleanupDatabase(String baseCode) {
+        knowledgeChunkMapper.delete(new LambdaQueryWrapper<KnowledgeChunk>()
+                .eq(KnowledgeChunk::getBaseCode, baseCode));
+        int count = knowledgeCardMapper.delete(new LambdaQueryWrapper<KnowledgeCard>()
+                .eq(KnowledgeCard::getBaseCode, baseCode));
+        knowledgeIndexJobMapper.delete(new LambdaQueryWrapper<KnowledgeIndexJob>()
+                .eq(KnowledgeIndexJob::getBaseCode, baseCode));
+        return count;
+    }
+
+    /**
      * 删除知识卡片：先清理 Milvus 向量（事务外），再删除 MySQL chunks + 卡片（事务内）。
      */
-    @Transactional
     public void delete(String cardCode) {
         KnowledgeBase base = knowledgeBaseService.getRequiredBase();
         KnowledgeCard card = getRequiredCard(base.getBaseCode(), cardCode);
@@ -100,8 +141,10 @@ public class KnowledgeCardService {
         if (!chunks.isEmpty()) {
             vectorStoreClient.deleteByIds(chunks.stream().map(KnowledgeChunk::getVectorId).toList());
         }
-        knowledgeChunkMapper.deleteByCardCode(base.getBaseCode(), cardCode);
-        knowledgeCardMapper.deleteById(card.getId());
+        transactionTemplate.executeWithoutResult(status -> {
+            knowledgeChunkMapper.deleteByCardCode(base.getBaseCode(), cardCode);
+            knowledgeCardMapper.deleteById(card.getId());
+        });
     }
 
     public Page<KnowledgeCardResponse> list(String keyword, String category, Boolean enabled, int page, int size) {

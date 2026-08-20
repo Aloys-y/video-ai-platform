@@ -194,6 +194,61 @@
       </div>
     </section>
 
+    <!-- ========== RAG Eval Page ========== -->
+    <section id="page-rag-eval" class="page-section" aria-label="RAG 检索评估">
+      <div class="dashboard-header">
+        <div>
+          <h2 class="hud-title">RAG 检索评估</h2>
+          <div class="text-muted mt-md">输入查询，评估知识库检索质量</div>
+        </div>
+      </div>
+      <hr class="divider">
+
+      <div class="card" style="margin-bottom:var(--space-md)">
+        <div style="display:flex;gap:var(--space-sm);align-items:flex-end">
+          <div style="flex:1">
+            <label class="form-label" for="rev-query">Prompt / Query</label>
+            <textarea id="rev-query" class="form-input" rows="2" placeholder="输入中文或英文查询，例如: R-301后坐力控制技巧"></textarea>
+          </div>
+          <button type="button" id="rev-submit" class="btn btn--primary">Search</button>
+        </div>
+      </div>
+
+      <div id="rev-section" class="hidden">
+        <div class="card" style="margin-bottom:var(--space-md)">
+          <div class="card__header"><h3 class="card__title">检索参数</h3></div>
+          <div class="rc-modal__meta">
+            <div><span class="rc-label">Query:</span> <span id="rev-query-display">-</span></div>
+            <div><span class="rc-label">Expanded:</span> <span id="rev-expanded" style="font-size:0.82rem">-</span></div>
+            <div><span class="rc-label">Version:</span> <span id="rev-version">-</span></div>
+            <div><span class="rc-label">topK/minScore:</span> <span id="rev-topk">-</span> / <span id="rev-minscore">-</span></div>
+            <div><span class="rc-label">Hit Count:</span> <strong id="rev-hitcount">0</strong></div>
+            <div><span class="rc-label">Latency:</span> <span id="rev-latency">0 ms</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:var(--space-md)">
+          <div class="card__header"><h3 class="card__title">命中结果</h3></div>
+          <table class="rc-table">
+            <thead><tr>
+              <th style="width:70px">Score</th><th style="width:140px">CardCode</th><th>Title</th><th style="width:90px">Category</th><th>Heading</th>
+            </tr></thead>
+            <tbody id="rev-hits-body"></tbody>
+          </table>
+        </div>
+
+        <div class="card" style="margin-bottom:var(--space-md)">
+          <div class="card__header"><h3 class="card__title">检索上下文 (contextPreview)</h3></div>
+          <pre id="rev-context" class="rc-detail-md" style="max-height:200px;font-size:0.8rem"></pre>
+        </div>
+
+        <details class="card">
+          <summary class="card__header" style="cursor:pointer"><h3 class="card__title" style="display:inline">完整 Prompt Preview</h3></summary>
+          <pre id="rev-prompt" class="rc-detail-md" style="max-height:300px;font-size:0.75rem;white-space:pre-wrap"></pre>
+        </details>
+      </div>
+    </section>
+
     <!-- ========== RAG Cards Management Page ========== -->
     <section id="page-rag-cards" class="page-section" aria-label="RAG 卡片管理">
       <div class="dashboard-header">
@@ -475,6 +530,7 @@
   <script src="js/upload.js?v=2"></script>
   <script src="js/rag-import.js?v=1"></script>
   <script src="js/rag-cards.js?v=1"></script>
+  <script src="js/rag-eval.js?v=1"></script>
   <script src="js/dashboard.js?v=8"></script>
   <script src="js/task-detail.js?v=6"></script>
   <script src="js/app.js"></script>

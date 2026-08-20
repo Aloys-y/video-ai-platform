@@ -38,12 +38,26 @@ public class DashScopeEmbeddingProvider implements EmbeddingProvider {
 
     @Override
     public List<Float> embed(String text) {
+        return embedDocument(text);
+    }
+
+    @Override
+    public List<Float> embedDocument(String text) {
+        return requestEmbedding(text, properties.getDashscope().getTextType());
+    }
+
+    @Override
+    public List<Float> embedQuery(String text) {
+        return requestEmbedding(text, "query");
+    }
+
+    private List<Float> requestEmbedding(String text, String textType) {
         try {
             String requestJson = objectMapper.writeValueAsString(Map.of(
                     "model", properties.getModel(),
                     "input", Map.of("texts", List.of(text)),
                     "parameters", Map.of(
-                            "text_type", properties.getDashscope().getTextType(),
+                            "text_type", textType,
                             "dimension", properties.getDimension()
                     )
             ));

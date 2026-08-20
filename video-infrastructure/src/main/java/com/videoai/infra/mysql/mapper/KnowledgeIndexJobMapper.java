@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
+import java.time.LocalDateTime;
 
 @Mapper
 public interface KnowledgeIndexJobMapper extends BaseMapper<KnowledgeIndexJob> {
@@ -37,4 +38,17 @@ public interface KnowledgeIndexJobMapper extends BaseMapper<KnowledgeIndexJob> {
     @Update("UPDATE knowledge_index_job SET status = 'FAILED', error_message = #{errorMessage}, " +
             "completed_at = NOW(), updated_at = NOW() WHERE job_id = #{jobId}")
     int markFailed(@Param("jobId") String jobId, @Param("errorMessage") String errorMessage);
+
+    @Update("UPDATE knowledge_index_job SET status = 'NEW', queued_at = NULL, " +
+            "error_message = 'Recovered after Kafka dispatch timeout', updated_at = NOW() " +
+            "WHERE status = 'QUEUED' AND queued_at < #{cutoff}")
+    int recoverStaleQueued(@Param("cutoff") LocalDateTime cutoff);
+
+    @Update("UPDATE knowledge_index_job SET status = 'FAILED', " +
+            "error_message = 'Index processing timed out', completed_at = NOW(), updated_at = NOW() " +
+            "WHERE status = 'PROCESSING' AND " +
+            "((job_type = 'REBUILD_ALL' AND started_at < #{rebuildCutoff}) OR " +
+            "(job_type <> 'REBUILD_ALL' AND started_at < #{cardCutoff}))")
+    int failStaleProcessing(@Param("cardCutoff") LocalDateTime cardCutoff,
+                            @Param("rebuildCutoff") LocalDateTime rebuildCutoff);
 }

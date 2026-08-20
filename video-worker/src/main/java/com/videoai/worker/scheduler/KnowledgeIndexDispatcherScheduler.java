@@ -18,6 +18,12 @@ public class KnowledgeIndexDispatcherScheduler {
 
     @Scheduled(fixedDelayString = "${videoai.rag.dispatch-interval-ms:3000}")
     public void dispatch() {
+        KnowledgeIndexJobService.RecoveryResult recovery = knowledgeIndexJobService.recoverStaleJobs();
+        if (recovery.requeued() > 0 || recovery.failed() > 0) {
+            log.warn("Recovered stale knowledge jobs: requeued={}, failed={}",
+                    recovery.requeued(), recovery.failed());
+        }
+
         List<KnowledgeIndexJob> jobs = knowledgeIndexJobService.selectReadyToDispatch();
         if (jobs.isEmpty()) {
             return;

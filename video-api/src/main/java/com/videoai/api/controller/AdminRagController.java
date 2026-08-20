@@ -19,6 +19,7 @@ import com.videoai.common.exception.BusinessException;
 import com.videoai.common.rag.PromptEnvelope;
 import com.videoai.common.rag.RagContext;
 import com.videoai.infra.mysql.mapper.TaskRagContextMapper;
+import com.videoai.infra.rag.config.RagProperties;
 import com.videoai.rag.service.ApexPromptTemplateService;
 import com.videoai.rag.service.KnowledgeBaseService;
 import com.videoai.rag.service.KnowledgeCardService;
@@ -58,6 +59,7 @@ public class AdminRagController {
     private final KnowledgeRetrievalService knowledgeRetrievalService;
     private final ApexPromptTemplateService apexPromptTemplateService;
     private final TaskRagContextMapper taskRagContextMapper;
+    private final RagProperties ragProperties;
 
     @Operation(summary = "Create knowledge card")
     @PostMapping("/knowledge/cards")
@@ -177,6 +179,14 @@ public class AdminRagController {
         return ApiResponse.success(knowledgeCardService.reindex(cardCode, UserContext.getUserBizId()));
     }
 
+    @Operation(summary = "Cleanup all knowledge data")
+    @DeleteMapping("/knowledge/cleanup")
+    public ApiResponse<String> cleanupKnowledge() {
+        assertAdmin();
+        int count = knowledgeCardService.cleanup();
+        return ApiResponse.success("Deleted " + count + " cards and all related chunks, jobs, and Milvus vectors");
+    }
+
     @Operation(summary = "Rebuild all knowledge indexes")
     @PostMapping("/knowledge/rebuild")
     public ApiResponse<String> rebuildKnowledge() {
@@ -199,7 +209,7 @@ public class AdminRagController {
         return ApiResponse.success(knowledgeBaseService.updateCurrentVersion(request.getVersionTag()).getCurrentVersionTag());
     }
 
-    @Operation(summary = "RAG retrieval debug", description = "Return retrieval hits and prompt preview for a query")
+    @Operation(summary = "RAG retrieval eval", description = "Return detailed retrieval results for quality evaluation")
     @PostMapping("/rag/retrieve-test")
     public ApiResponse<RagRetrieveDebugResponse> retrieveDebug(@Valid @RequestBody RagRetrieveDebugRequest request) {
         assertAdmin();
@@ -209,9 +219,20 @@ public class AdminRagController {
                 .retrievalContext(apexPromptTemplateService.retrievalBlock(context.getContextText()))
                 .userPrompt(apexPromptTemplateService.normalizeUserPrompt(request.getQuery()))
                 .build();
+
+        String contextPreview = context.getContextText() != null && context.getContextText().length() > 500
+                ? context.getContextText().substring(0, 500) + "..."
+                : context.getContextText();
+
         return ApiResponse.success(RagRetrieveDebugResponse.builder()
+                .queryText(request.getQuery())
                 .expandedQuery(context.getQueryText())
                 .versionTag(context.getVersionTag())
+                .topK(ragProperties.getTopK())
+                .minScore(ragProperties.getMinScore())
+                .hitCount(context.getHits() != null ? context.getHits().size() : 0)
+                .latencyMs(context.getLatencyMs())
+                .contextPreview(contextPreview)
                 .promptPreview(envelope.buildFullPrompt())
                 .hits(context.getHits())
                 .build());

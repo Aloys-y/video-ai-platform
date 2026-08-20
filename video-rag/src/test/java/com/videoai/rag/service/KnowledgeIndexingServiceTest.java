@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 
@@ -48,6 +50,9 @@ class KnowledgeIndexingServiceTest {
     @Mock
     private VectorStoreClient vectorStoreClient;
 
+    @Mock
+    private TransactionTemplate transactionTemplate;
+
     @Test
     void rebuildShouldStillCleanDisabledCards() {
         KnowledgeIndexingService service = new KnowledgeIndexingService(
@@ -58,7 +63,13 @@ class KnowledgeIndexingServiceTest {
                 knowledgeChunkingService,
                 embeddingProvider,
                 vectorStoreClient,
-                new ObjectMapper());
+                new ObjectMapper(),
+                transactionTemplate);
+
+        when(transactionTemplate.execute(any())).thenAnswer(invocation -> {
+            TransactionCallback<?> callback = invocation.getArgument(0);
+            return callback.doInTransaction(null);
+        });
 
         KnowledgeIndexJob job = new KnowledgeIndexJob();
         job.setJobId("job-1");
@@ -104,6 +115,6 @@ class KnowledgeIndexingServiceTest {
         verify(knowledgeIndexJobService).markSuccess("job-1", 0, 0, 0);
         verify(knowledgeIndexJobService, never()).markFailed(anyString(), anyString());
         verify(knowledgeChunkingService, never()).chunkMarkdown(anyString(), anyString());
-        verify(embeddingProvider, never()).embed(anyString());
+        verify(embeddingProvider, never()).embedDocument(anyString());
     }
 }

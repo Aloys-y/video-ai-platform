@@ -29,4 +29,30 @@ class KnowledgeChunkingServiceTest {
         assertFalse(result.isEmpty());
         assertTrue(result.stream().allMatch(item -> item.getHeadingPath().startsWith("R301 卡片")));
     }
+
+    @Test
+    void shouldOverlapAdjacentChunksWhenForcedToSplit() {
+        RagProperties properties = new RagProperties();
+        properties.setChunkMinChars(50);
+        properties.setChunkMaxChars(120);
+        properties.setChunkOverlapChars(20);
+
+        KnowledgeChunkingService service = new KnowledgeChunkingService(properties);
+        // 超长无标题文本，会被迫切分成多块
+        String longText = "这是一段用于测试分块逻辑的较长文本内容，用来验证 overlap 是否生效。".repeat(15);
+
+        var result = service.chunkMarkdown("测试卡片", longText);
+
+        assertTrue(result.size() >= 2, "应该切成多块，实际 " + result.size());
+
+        // 相邻 chunk 有 overlap：后一个 chunk 开头包含前一个 chunk 的末尾
+        for (int i = 1; i < result.size(); i++) {
+            String prev = result.get(i - 1).getContentText();
+            String curr = result.get(i).getContentText();
+            assertTrue(prev.length() >= 20, "前一个 chunk 应该足够长");
+            String prevTail = prev.substring(prev.length() - 20);
+            assertTrue(curr.startsWith(prevTail),
+                    "chunk " + i + " 开头应包含前一个 chunk 的末尾（overlap）");
+        }
+    }
 }
