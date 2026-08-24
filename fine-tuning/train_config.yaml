@@ -1,0 +1,80 @@
+# ============================================================================
+# Qwen2.5-VL-7B QLoRA 微调配置
+# 硬件：4x RTX 4090 (24GB x 4 = 96GB)
+# ============================================================================
+
+### 模型配置
+model_name_or_path: Qwen/Qwen2.5-VL-7B-Instruct
+template: qwen2_vl
+finetuning_type: lora
+
+### LoRA 参数
+lora_target: all
+lora_rank: 16
+lora_alpha: 32
+lora_dropout: 0.05
+
+# 4090 24GB 跑 7B 模型，rank=16 完全够，不需要降到 rank=8
+# lora_target: all 会覆盖所有 Attention/FFN 线性层，效果最好
+
+### QLoRA 量化配置
+quantization_method: bitsandbytes
+quantization_bit: 4
+# bnb_4bit_compute_dtype: bfloat16  # Ada Lovelace 支持 bf16，比 fp16 更稳定
+# double_quantization: true          # 二次量化，再省 0.4GB/卡
+
+### 视觉模块冻结（QLoRA 标配，大幅省显存）
+freeze_vision_tower: true
+freeze_multi_modal_projector: true
+
+### 数据集
+dataset: my_video_dataset
+val_size: 0.1
+cutoff_len: 8192
+streaming: false
+preprocessing_num_workers: 8
+
+# 视频预处理（关键参数，直接决定微调效果）
+video_max_pixels: 262144              # 512×512，绝对不能低于这个值
+video_min_pixels: 16384               # 128×128
+video_fps: 1.0                        # 每秒抽1帧
+video_max_frames: 16                  # 单视频最多16帧
+image_max_pixels: 589824              # ~768×768，纯图片时用
+
+### 训练参数
+output_dir: ./output/qwen2.5-vl-7b-lora
+logging_dir: ./output/logs
+logging_steps: 5
+save_steps: 50
+eval_steps: 50
+save_total_limit: 3
+
+do_train: true
+num_train_epochs: 3
+
+# 4x4090 DDP：每张卡 batch=1，累积8步，等效 batch_size=32
+per_device_train_batch_size: 1
+per_device_eval_batch_size: 1
+gradient_accumulation_steps: 8
+
+learning_rate: 5.0e-5
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+weight_decay: 0.01
+
+# Ada Lovelace 架构优化
+bf16: true
+fp16: false
+dataloader_num_workers: 4
+dataloader_pin_memory: true
+
+# 断点续训
+resume_from_checkpoint: true
+
+### DeepSpeed ZeRO-2（4卡优化）
+# 路径相对于 LLaMA-Factory 运行目录，ds_config.json 在上级 fine-tuning/
+deepspeed: ../ds_config.json
+
+### 报告
+report_to: tensorboard
+plot_loss: true

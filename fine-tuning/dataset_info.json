@@ -1,0 +1,10 @@
+{
+  "my_video_dataset": {
+    "file_name": "data/my_video_dataset.jsonl",
+    "formatting": "sharegpt",
+    "columns": {
+      "messages": "messages",
+      "videos": "videos"
+    }
+  }
+}
