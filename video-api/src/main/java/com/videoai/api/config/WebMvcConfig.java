@@ -43,6 +43,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // 1. 全局限流（最先执行）
             registry.addInterceptor(rateLimitInterceptor)
                 .addPathPatterns("/**")
+                // 该路径只在 loadtest profile 存在，并由独立压测 Token 保护。
+                .excludePathPatterns("/load-test/**")
                 .order(1);
 
         // 2. 认证拦截器
@@ -62,6 +64,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/auth/oauth/**",
                         // 测试接口（仅 dev 环境）
                         "/test/user/**",
+                        // 压测接口（仅 loadtest 环境，使用独立 Token）
+                        "/load-test/**",
                         // 公开接口
                         "/api/public/**"
                 )

@@ -70,3 +70,5 @@ notes/
 # 微调相关 - 模型权重和框架源码不提交
 fine-tuning/output/
 fine-tuning/LLaMA-Factory/
+# 全链路压测运行结果（机器和时间相关，不提交）
+architecture/load-test/results/
