@@ -8,6 +8,14 @@ spring:
   profiles:
     active: dev
 
+  kafka:
+    consumer:
+      # 同步处理长任务时一次只拉取一条，避免同批任务耗时累加到下一次 poll。
+      max-poll-records: ${KAFKA_CONSUMER_MAX_POLL_RECORDS:1}
+      properties:
+        # AI 任务最长30分钟，预留10分钟用于存储、数据库和网络抖动。
+        "[max.poll.interval.ms]": ${KAFKA_CONSUMER_MAX_POLL_INTERVAL_MS:2400000}
+
 # MyBatis-Plus配置
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
@@ -17,9 +25,16 @@ mybatis-plus:
 
 # Worker配置
 videoai:
+  kafka:
+    task-topic:
+      # 分区数决定同一消费组的视频分析并行上限。
+      partitions: ${VIDEOAI_KAFKA_TASK_PARTITIONS:6}
+      # 本地默认单副本；三Broker生产集群建议通过环境变量设为3。
+      replicas: ${VIDEOAI_KAFKA_TASK_REPLICAS:1}
+
   worker:
     # 并发处理数
-    concurrency: 5
+    concurrency: ${VIDEOAI_WORKER_CONCURRENCY:3}
     # 每秒最大AI请求数
     ai-qps-limit: 2
     # 单任务超时（分钟）

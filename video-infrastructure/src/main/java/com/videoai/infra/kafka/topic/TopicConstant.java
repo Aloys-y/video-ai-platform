@@ -24,8 +24,8 @@ public final class TopicConstant {
     /**
      * 任务Topic
      * 消息类型：TaskMessage
-     * 分区数：10（根据并发量调整）
-     * 副本数：3
+     * 默认分区数：6（由 videoai.kafka.task-topic.partitions 配置）
+     * 默认副本数：1（本地单Broker；生产环境按Broker数量调整）
      */
     public static final String TASK_TOPIC = "videoai.task.analyze";
 

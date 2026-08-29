@@ -42,6 +42,13 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+        <!-- Kafka 消费组与长任务行为集成测试 -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- 阿里云DashScope SDK（支持Qwen-VL视频理解） -->
         <dependency>
             <groupId>com.alibaba</groupId>
