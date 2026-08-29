@@ -73,8 +73,8 @@ public class TaskMessage implements Serializable {
     private Integer videoDuration;
 
     /**
-     * 重试次数
-     * 消费者根据这个决定是否继续重试
+     * 执行代次。首次为0，仅在用户手动重新分析时递增。
+     * 字段名为兼容已有消息保留 businessRetryNo。
      */
     private Integer businessRetryNo;
 
@@ -129,12 +129,4 @@ public class TaskMessage implements Serializable {
                 .build();
     }
 
-    /**
-     * 增加重试次数
-     */
-    public TaskMessage incrementRetry() {
-        this.businessRetryNo = (this.businessRetryNo == null ? 0 : this.businessRetryNo) + 1;
-        this.timestamp = System.currentTimeMillis();
-        return this;
-    }
 }

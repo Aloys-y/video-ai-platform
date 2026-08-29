@@ -2,7 +2,7 @@ package com.videoai.worker.scheduler;
 
 import com.videoai.common.domain.AnalysisTask;
 import com.videoai.infra.mysql.mapper.AnalysisTaskMapper;
-import com.videoai.worker.service.TaskRetryService;
+import com.videoai.worker.service.TaskFailureService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * 处理超时任务恢复
+ * 处理超时任务收敛。
+ * 超时后只标记 FAILED，不自动重新调用 AI。
  */
 @Slf4j
 @Component
@@ -21,7 +22,7 @@ import java.util.List;
 public class ProcessingTimeoutRecoveryScheduler {
 
     private final AnalysisTaskMapper analysisTaskMapper;
-    private final TaskRetryService taskRetryService;
+    private final TaskFailureService taskFailureService;
 
     @Value("${videoai.worker.task-timeout-minutes:30}")
     private int taskTimeoutMinutes;
@@ -34,11 +35,12 @@ public class ProcessingTimeoutRecoveryScheduler {
         LocalDateTime deadline = LocalDateTime.now().minusMinutes(taskTimeoutMinutes);
         List<AnalysisTask> tasks = analysisTaskMapper.selectTimedOutProcessingTasks(deadline, recoveryBatchSize);
         for (AnalysisTask task : tasks) {
-            int retryNo = task.getRetryCount() == null ? 0 : task.getRetryCount();
-            TaskRetryService.FailureResult result = taskRetryService.recoverTimedOutTask(task.getTaskId(), retryNo);
-            if (result.getOutcome() != TaskRetryService.Outcome.STALE) {
-                log.warn("Recovered timed out task: taskId={}, outcome={}",
-                        task.getTaskId(), result.getOutcome());
+            int executionNo = task.getRetryCount() == null ? 0 : task.getRetryCount();
+            boolean markedFailed = taskFailureService.markExecutionFailed(
+                    task.getTaskId(), executionNo, "Task processing timeout");
+            if (markedFailed) {
+                log.warn("Marked timed out task as failed: taskId={}, executionNo={}",
+                        task.getTaskId(), executionNo);
             }
         }
     }

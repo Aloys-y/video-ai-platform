@@ -72,12 +72,9 @@ CREATE TABLE IF NOT EXISTS analysis_task (
     status          VARCHAR(20) NOT NULL DEFAULT 'PENDING' COMMENT '任务状态',
     progress        INT DEFAULT 0 COMMENT '进度百分比(0-100)',
 
-    -- 重试机制
-    retry_count     INT DEFAULT 0 COMMENT '重试次数',
-    max_retry       INT DEFAULT 3 COMMENT '最大重试次数',
+    -- 执行代次（首次为0，用户每次手动重新分析后递增）
+    retry_count     INT NOT NULL DEFAULT 0 COMMENT '执行代次/用户手动重新分析次数',
     error_message   TEXT COMMENT '错误信息',
-    next_retry_at   DATETIME NULL COMMENT '下一次允许重试时间',
-    last_retry_at   DATETIME NULL COMMENT '上一次进入重试时间',
 
     -- AI分析结果
     frame_count     INT COMMENT '抽取帧数',
@@ -87,17 +84,16 @@ CREATE TABLE IF NOT EXISTS analysis_task (
     summary         TEXT COMMENT '视频摘要',
 
     -- 时间记录
-    created_at      DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    started_at      DATETIME COMMENT '开始处理时间',
-    completed_at    DATETIME COMMENT '完成时间',
-    updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    created_at      DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
+    started_at      DATETIME(3) COMMENT '开始处理时间',
+    completed_at    DATETIME(3) COMMENT '完成时间',
+    updated_at      DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
 
     UNIQUE KEY uk_task_id (task_id),
     INDEX idx_user_id (user_id),
     INDEX idx_upload_id (upload_id),
     INDEX idx_status (status),
     INDEX idx_created_at (created_at),
-    INDEX idx_status_retry (status, next_retry_at),
     INDEX idx_status_started (status, started_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='分析任务表';
 
@@ -107,15 +103,15 @@ CREATE TABLE IF NOT EXISTS task_outbox (
     event_id            VARCHAR(64) NOT NULL COMMENT '事件ID',
     task_id             VARCHAR(64) NOT NULL COMMENT '任务ID',
     event_type          VARCHAR(32) NOT NULL COMMENT '事件类型',
-    business_retry_no   INT NOT NULL DEFAULT 0 COMMENT '业务执行次数',
+    business_retry_no   INT NOT NULL DEFAULT 0 COMMENT '任务执行代次（仅用户手动重新分析时递增）',
     payload             LONGTEXT NOT NULL COMMENT '消息快照',
     status              VARCHAR(16) NOT NULL DEFAULT 'NEW' COMMENT '投递状态: NEW/SENDING/SENT/FAILED/CANCELLED',
-    available_at        DATETIME NOT NULL COMMENT '最早可投递时间',
+    available_at        DATETIME(3) NOT NULL COMMENT '最早可投递时间',
     send_attempt_count  INT NOT NULL DEFAULT 0 COMMENT 'Kafka投递尝试次数',
     last_error          TEXT COMMENT '最近一次投递错误',
-    sent_at             DATETIME NULL COMMENT '成功投递时间',
-    created_at          DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    updated_at          DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    sent_at             DATETIME(3) NULL COMMENT '成功投递时间',
+    created_at          DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
+    updated_at          DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
 
     UNIQUE KEY uk_event_id (event_id),
     UNIQUE KEY uk_task_retry (task_id, event_type, business_retry_no),

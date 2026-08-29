@@ -24,7 +24,7 @@ public class TaskOutboxService {
     private final TaskOutboxMapper taskOutboxMapper;
     private final ObjectMapper objectMapper;
 
-    public TaskOutbox createExecuteOutbox(AnalysisTask task, int businessRetryNo, LocalDateTime availableAt) {
+    public TaskOutbox createExecuteOutbox(AnalysisTask task, int executionNo, LocalDateTime availableAt) {
         String eventId = IdGenerator.generateEventId();
         TaskMessage payload = TaskMessage.builder()
                 .eventId(eventId)
@@ -33,7 +33,7 @@ public class TaskOutboxService {
                 .userId(task.getUserId())
                 .videoUrl(task.getVideoUrl())
                 .videoDuration(task.getVideoDuration())
-                .businessRetryNo(businessRetryNo)
+                .businessRetryNo(executionNo)
                 .timestamp(System.currentTimeMillis())
                 .priority(5)
                 .analysisType("FULL")
@@ -44,7 +44,7 @@ public class TaskOutboxService {
         outbox.setEventId(eventId);
         outbox.setTaskId(task.getTaskId());
         outbox.setEventType(OutboxEventType.TASK_EXECUTE.getCode());
-        outbox.setBusinessRetryNo(businessRetryNo);
+        outbox.setBusinessRetryNo(executionNo);
         outbox.setPayload(writePayload(payload));
         outbox.setStatus(TaskOutboxStatus.NEW.getCode());
         outbox.setAvailableAt(availableAt);
@@ -59,10 +59,6 @@ public class TaskOutboxService {
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Failed to deserialize task outbox payload", e);
         }
-    }
-
-    public void deleteByTaskId(String taskId) {
-        taskOutboxMapper.deleteByTaskId(taskId);
     }
 
     private String writePayload(TaskMessage payload) {

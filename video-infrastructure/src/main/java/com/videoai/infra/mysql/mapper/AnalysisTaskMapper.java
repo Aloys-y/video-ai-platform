@@ -27,7 +27,7 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
      * 加校验：只有一个Worker能成功，另一个返回影响行数为0
      */
     @Update("UPDATE analysis_task SET status = #{newStatus}, " +
-            "updated_at = NOW() " +
+            "updated_at = NOW(3) " +
             "WHERE task_id = #{taskId} AND status = #{oldStatus}")
     int updateStatusWithCheck(@Param("taskId") String taskId,
                               @Param("oldStatus") String oldStatus,
@@ -38,8 +38,8 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
      * 设置状态为PROCESSING，记录开始时间
      */
     @Update("UPDATE analysis_task SET status = 'PROCESSING', " +
-            "started_at = NOW(), updated_at = NOW() " +
-            "WHERE task_id = #{taskId} AND status IN ('QUEUED', 'RETRYING') " +
+            "started_at = NOW(3), updated_at = NOW(3) " +
+            "WHERE task_id = #{taskId} AND status = 'QUEUED' " +
             "AND retry_count = #{retryCount}")
     int startProcessing(@Param("taskId") String taskId,
                         @Param("retryCount") Integer retryCount);
@@ -47,9 +47,9 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
     /**
      * Outbox 成功投递后将任务标记为已入队
      */
-    @Update("UPDATE analysis_task SET status = 'QUEUED', updated_at = NOW() " +
+    @Update("UPDATE analysis_task SET status = 'QUEUED', updated_at = NOW(3) " +
             "WHERE task_id = #{taskId} AND retry_count = #{retryCount} " +
-            "AND status IN ('PENDING', 'RETRYING')")
+            "AND status = 'PENDING'")
     int markQueued(@Param("taskId") String taskId,
                    @Param("retryCount") Integer retryCount);
 
@@ -57,7 +57,7 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
      * 完成任务
      */
     @Update("UPDATE analysis_task SET status = 'COMPLETED', " +
-            "progress = 100, completed_at = NOW(), updated_at = NOW(), " +
+            "progress = 100, completed_at = NOW(3), updated_at = NOW(3), " +
             "result = #{result}, summary = #{summary}, " +
             "frame_count = #{frameCount}, tokens_used = #{tokensUsed} " +
             "WHERE task_id = #{taskId} AND status = 'PROCESSING' " +
@@ -70,35 +70,21 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
                      @Param("tokensUsed") Long tokensUsed);
 
     /**
-     * 任务失败
+     * 当前执行失败。系统不自动重试，等待用户手动重新提交。
      */
-    @Update("UPDATE analysis_task SET status = 'RETRYING', " +
-            "retry_count = retry_count + 1, error_message = #{errorMessage}, " +
-            "last_retry_at = NOW(), next_retry_at = #{nextRetryAt}, updated_at = NOW() " +
+    @Update("UPDATE analysis_task SET status = 'FAILED', " +
+            "error_message = #{errorMessage}, completed_at = NOW(3), updated_at = NOW(3) " +
             "WHERE task_id = #{taskId} AND status = 'PROCESSING' " +
-            "AND retry_count = #{currentRetryCount}")
-    int scheduleRetry(@Param("taskId") String taskId,
-                      @Param("currentRetryCount") Integer currentRetryCount,
-                      @Param("nextRetryAt") LocalDateTime nextRetryAt,
-                      @Param("errorMessage") String errorMessage);
-
-    /**
-     * 标记为最终失败（重试次数耗尽）
-     */
-    @Update("UPDATE analysis_task SET status = 'DEAD', " +
-            "error_message = #{errorMessage}, next_retry_at = NULL, " +
-            "last_retry_at = NOW(), updated_at = NOW() " +
-            "WHERE task_id = #{taskId} AND status = 'PROCESSING' " +
-            "AND retry_count = #{currentRetryCount}")
-    int markAsDead(@Param("taskId") String taskId,
-                   @Param("currentRetryCount") Integer currentRetryCount,
+            "AND retry_count = #{executionNo}")
+    int markFailed(@Param("taskId") String taskId,
+                   @Param("executionNo") Integer executionNo,
                    @Param("errorMessage") String errorMessage);
 
     /**
      * 更新进度
      */
     @Update("UPDATE analysis_task SET progress = #{progress}, " +
-            "updated_at = NOW() WHERE task_id = #{taskId} " +
+            "updated_at = NOW(3) WHERE task_id = #{taskId} " +
             "AND status = 'PROCESSING' AND retry_count = #{retryCount}")
     int updateProgress(@Param("taskId") String taskId,
                        @Param("retryCount") Integer retryCount,
@@ -108,31 +94,30 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
      * 重命名任务（含归属校验）
      */
     @Update("UPDATE analysis_task SET task_name = #{taskName}, " +
-            "updated_at = NOW() " +
+            "updated_at = NOW(3) " +
             "WHERE task_id = #{taskId} AND user_id = #{userId}")
     int renameTask(@Param("taskId") String taskId,
                    @Param("userId") Long userId,
                    @Param("taskName") String taskName);
 
     /**
-     * 重置任务为PENDING（用户手动重试）
-     * 同时清零retry_count、清除错误信息、重置进度和时间
+     * 用户手动重新分析。
+     * retry_count 在这里作为单调递增的执行代次，不能清零，否则旧 Kafka 消息可能匹配新执行。
      */
     @Update("UPDATE analysis_task SET status = 'PENDING', " +
-            "retry_count = 0, progress = 0, error_message = NULL, " +
-            "next_retry_at = NULL, last_retry_at = NULL, " +
-            "started_at = NULL, completed_at = NULL, updated_at = NOW() " +
+            "retry_count = retry_count + 1, progress = 0, error_message = NULL, " +
+            "started_at = NULL, completed_at = NULL, updated_at = NOW(3) " +
             "WHERE task_id = #{taskId} AND user_id = #{userId} " +
             "AND status IN ('FAILED', 'DEAD')")
-    int resetForRetry(@Param("taskId") String taskId,
-                      @Param("userId") Long userId);
+    int resetForManualRetry(@Param("taskId") String taskId,
+                            @Param("userId") Long userId);
 
     /**
      * 逻辑删除任务（状态改为CANCELLED）
      * 允许所有状态删除（用户可取消卡死的任务）
      */
     @Update("UPDATE analysis_task SET status = 'CANCELLED', " +
-            "updated_at = NOW() " +
+            "updated_at = NOW(3) " +
             "WHERE task_id = #{taskId} AND user_id = #{userId} " +
             "AND status != 'CANCELLED'")
     int logicalDelete(@Param("taskId") String taskId,

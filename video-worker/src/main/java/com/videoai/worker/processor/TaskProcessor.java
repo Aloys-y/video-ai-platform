@@ -12,7 +12,7 @@ import com.videoai.infra.mysql.mapper.AnalysisTaskMapper;
 import com.videoai.infra.redis.key.RedisKey;
 import com.videoai.rag.service.RagOrchestrator;
 import com.videoai.worker.service.AiService;
-import com.videoai.worker.service.TaskRetryService;
+import com.videoai.worker.service.TaskFailureService;
 import com.videoai.worker.service.provider.AiProviderException;
 import com.videoai.worker.service.provider.AiVideoProvider;
 import lombok.RequiredArgsConstructor;
@@ -39,13 +39,13 @@ public class TaskProcessor {
     private final AiVideoProvider aiVideoProvider;
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
-    private final TaskRetryService taskRetryService;
+    private final TaskFailureService taskFailureService;
     private final RagOrchestrator ragOrchestrator;
 
     public boolean process(TaskMessage message) {
         String taskId = message.getTaskId();
-        int businessRetryNo = normalizeRetryNo(message.getBusinessRetryNo());
-        log.info("Processing task: {}, businessRetryNo: {}", taskId, businessRetryNo);
+        int executionNo = normalizeExecutionNo(message.getBusinessRetryNo());
+        log.info("Processing task: {}, executionNo: {}", taskId, executionNo);
 
         AnalysisTask task = queryByTaskId(taskId);
         if (task == null) {
@@ -58,10 +58,10 @@ public class TaskProcessor {
             return true;
         }
 
-        int currentRetryCount = normalizeRetryNo(task.getRetryCount());
-        if (businessRetryNo != currentRetryCount) {
-            log.info("Skip stale task message: taskId={}, messageRetry={}, dbRetry={}",
-                    taskId, businessRetryNo, currentRetryCount);
+        int currentExecutionNo = normalizeExecutionNo(task.getRetryCount());
+        if (executionNo != currentExecutionNo) {
+            log.info("Skip stale task message: taskId={}, messageExecutionNo={}, dbExecutionNo={}",
+                    taskId, executionNo, currentExecutionNo);
             return true;
         }
 
@@ -72,20 +72,20 @@ public class TaskProcessor {
             if (rows == 0) {
                 AnalysisTask latest = queryByTaskId(taskId);
                 if (latest == null || latest.isFinalState()
-                        || normalizeRetryNo(latest.getRetryCount()) != businessRetryNo) {
+                        || normalizeExecutionNo(latest.getRetryCount()) != executionNo) {
                     return true;
                 }
             }
         }
 
-        int started = analysisTaskMapper.startProcessing(taskId, businessRetryNo);
+        int started = analysisTaskMapper.startProcessing(taskId, executionNo);
         if (started == 0) {
-            log.info("Start processing skipped: taskId={}, businessRetryNo={}", taskId, businessRetryNo);
+            log.info("Start processing skipped: taskId={}, executionNo={}", taskId, executionNo);
             return true;
         }
 
         try {
-            doProcess(taskId, task, businessRetryNo);
+            doProcess(taskId, task, executionNo);
             cacheTask(taskId);
             sendTaskEvent(taskId, "COMPLETED", null);
             return true;
@@ -94,13 +94,13 @@ public class TaskProcessor {
             return true;
         } catch (Exception e) {
             log.error("Task processing error: {}", taskId, e);
-            return handleFailure(taskId, businessRetryNo, e);
+            return handleFailure(taskId, executionNo, e);
         }
     }
 
-    private void doProcess(String taskId, AnalysisTask task, int businessRetryNo) {
+    private void doProcess(String taskId, AnalysisTask task, int executionNo) {
         log.info("Task processing started: {}", taskId);
-        updateProgressOrThrow(taskId, businessRetryNo, 10);
+        updateProgressOrThrow(taskId, executionNo, 10);
 
         String videoUrl = task.getVideoUrl();
         // 生成带签名的临时 URL，AI 服务可以通过这个 URL 下载视频
@@ -109,7 +109,7 @@ public class TaskProcessor {
                 aiVideoProvider.getPresignedUrlExpireHours());
         log.info("Generated presigned URL for task: {}, url: {}, originalPath: {}",
                 taskId, presignedUrl, videoUrl);
-        updateProgressOrThrow(taskId, businessRetryNo, 20);
+        updateProgressOrThrow(taskId, executionNo, 20);
         
         // RAG 检索构建提示词
         PromptEnvelope promptEnvelope = ragOrchestrator.buildPrompt(task);
@@ -120,11 +120,11 @@ public class TaskProcessor {
         
         // 调用 AI 分析
         String aiResult = aiService.analyzeVideo(presignedUrl, promptEnvelope);
-        updateProgressOrThrow(taskId, businessRetryNo, 80);
+        updateProgressOrThrow(taskId, executionNo, 80);
 
         // 完成任务,提取摘要
         String summary = extractSummary(aiResult);
-        int rows = analysisTaskMapper.completeTask(taskId, businessRetryNo,
+        int rows = analysisTaskMapper.completeTask(taskId, executionNo,
                 aiResult, summary, 0, 0L);
         if (rows == 0) {
             throw new StaleTaskExecutionException("Task completion skipped due to stale attempt");
@@ -135,39 +135,24 @@ public class TaskProcessor {
         log.info("Task completed: {}", taskId);
     }
 
-    private boolean handleFailure(String taskId, int businessRetryNo, Exception exception) {
+    private boolean handleFailure(String taskId, int executionNo, Exception exception) {
         if (exception instanceof StaleTaskExecutionException) {
             return true;
         }
 
         String errorMessage = truncateError(resolveErrorMessage(exception));
-        boolean retryable = isRetryable(exception);
-
-        TaskRetryService.FailureResult result = taskRetryService.handleExecutionFailure(
-                taskId, businessRetryNo, errorMessage, retryable);
+        boolean markedFailed = taskFailureService.markExecutionFailed(
+                taskId, executionNo, errorMessage);
         cacheTask(taskId);
 
-        if (result.getOutcome() == TaskRetryService.Outcome.RETRY_SCHEDULED) {
-            sendTaskEvent(taskId, "RETRYING",
-                    errorMessage + " | nextRetryAt=" + result.getNextRetryAt());
-            return true;
+        if (markedFailed) {
+            sendTaskEvent(taskId, "FAILED", errorMessage);
         }
-
-        if (result.getOutcome() == TaskRetryService.Outcome.DEAD) {
-            kafkaTemplate.send(TopicConstant.DEAD_LETTER_TOPIC, taskId,
-                    Map.of("taskId", taskId,
-                            "error", errorMessage,
-                            "businessRetryNo", businessRetryNo,
-                            "timestamp", System.currentTimeMillis()));
-            sendTaskEvent(taskId, "DEAD", errorMessage);
-            return true;
-        }
-
         return true;
     }
 
-    private void updateProgressOrThrow(String taskId, int businessRetryNo, int progress) {
-        int rows = analysisTaskMapper.updateProgress(taskId, businessRetryNo, progress);
+    private void updateProgressOrThrow(String taskId, int executionNo, int progress) {
+        int rows = analysisTaskMapper.updateProgress(taskId, executionNo, progress);
         if (rows == 0) {
             throw new StaleTaskExecutionException("Task progress update skipped due to stale attempt");
         }
@@ -247,8 +232,8 @@ public class TaskProcessor {
         }
     }
 
-    private int normalizeRetryNo(Integer retryNo) {
-        return retryNo == null ? 0 : retryNo;
+    private int normalizeExecutionNo(Integer executionNo) {
+        return executionNo == null ? 0 : executionNo;
     }
 
     private String truncateError(String errorMessage) {
@@ -267,29 +252,6 @@ public class TaskProcessor {
             cursor = cursor.getCause();
         }
         return throwable.getMessage() != null ? throwable.getMessage() : throwable.getClass().getSimpleName();
-    }
-
-    private boolean isRetryable(Throwable throwable) {
-        Throwable cursor = throwable;
-        while (cursor != null) {
-            if (cursor instanceof AiProviderException aiProviderException) {
-                return aiProviderException.isRetryable();
-            }
-            cursor = cursor.getCause();
-        }
-
-        String message = throwable.getMessage();
-        if (message == null) {
-            return false;
-        }
-        String lower = message.toLowerCase();
-        return lower.contains("timeout")
-                || lower.contains("timed out")
-                || lower.contains("connection reset")
-                || lower.contains("429")
-                || lower.contains("503")
-                || lower.contains("502")
-                || lower.contains("504");
     }
 
     private static final class StaleTaskExecutionException extends RuntimeException {

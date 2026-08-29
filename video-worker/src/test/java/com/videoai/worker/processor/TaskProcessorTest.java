@@ -9,7 +9,7 @@ import com.videoai.infra.minio.service.StorageService;
 import com.videoai.infra.mysql.mapper.AnalysisTaskMapper;
 import com.videoai.rag.service.RagOrchestrator;
 import com.videoai.worker.service.AiService;
-import com.videoai.worker.service.TaskRetryService;
+import com.videoai.worker.service.TaskFailureService;
 import com.videoai.worker.service.provider.AiVideoProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,11 +23,10 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -58,7 +57,7 @@ class TaskProcessorTest {
     private ObjectMapper objectMapper;
 
     @Mock
-    private TaskRetryService taskRetryService;
+    private TaskFailureService taskFailureService;
 
     @Mock
     private RagOrchestrator ragOrchestrator;
@@ -78,7 +77,7 @@ class TaskProcessorTest {
                 aiVideoProvider,
                 redisTemplate,
                 objectMapper,
-                taskRetryService,
+                taskFailureService,
                 ragOrchestrator);
     }
 
@@ -147,7 +146,42 @@ class TaskProcessorTest {
         assertTrue(taskProcessor.process(message));
 
         verify(ragOrchestrator, never()).saveTaskContext(anyString(), any());
-        verify(taskRetryService, never()).handleExecutionFailure(anyString(), anyInt(), anyString(), anyBoolean());
+        verify(taskFailureService, never()).markExecutionFailed(anyString(), anyInt(), anyString());
+    }
+
+    @Test
+    void shouldMarkFailedWithoutSchedulingAutomaticRetry() throws Exception {
+        AnalysisTask task = buildPendingTask();
+        AnalysisTask failedTask = buildPendingTask();
+        failedTask.setStatus(TaskStatus.FAILED.getCode());
+        failedTask.setErrorMessage("AI service unavailable");
+        TaskMessage message = TaskMessage.builder()
+                .taskId("task-1")
+                .businessRetryNo(0)
+                .build();
+        PromptEnvelope promptEnvelope = PromptEnvelope.builder()
+                .systemPrompt("system")
+                .userPrompt("user")
+                .build();
+
+        when(analysisTaskMapper.selectOne(any())).thenReturn(task, failedTask);
+        when(analysisTaskMapper.updateStatusWithCheck("task-1", TaskStatus.PENDING.getCode(), TaskStatus.QUEUED.getCode()))
+                .thenReturn(1);
+        when(analysisTaskMapper.startProcessing("task-1", 0)).thenReturn(1);
+        when(analysisTaskMapper.updateProgress("task-1", 0, 10)).thenReturn(1);
+        when(analysisTaskMapper.updateProgress("task-1", 0, 20)).thenReturn(1);
+        when(storageService.getPresignedUrl(anyString(), anyInt())).thenReturn("https://example.com/video");
+        when(aiVideoProvider.getPresignedUrlExpireHours()).thenReturn(2);
+        when(ragOrchestrator.buildPrompt(task)).thenReturn(promptEnvelope);
+        doThrow(new RuntimeException("AI service unavailable"))
+                .when(aiService).analyzeVideo("https://example.com/video", promptEnvelope);
+        when(taskFailureService.markExecutionFailed("task-1", 0, "AI service unavailable")).thenReturn(true);
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(objectMapper.writeValueAsString(any())).thenReturn("{}");
+
+        assertTrue(taskProcessor.process(message));
+
+        verify(taskFailureService).markExecutionFailed("task-1", 0, "AI service unavailable");
     }
 
     private AnalysisTask buildPendingTask() {
@@ -156,7 +190,6 @@ class TaskProcessorTest {
         task.setPrompt("分析这段视频");
         task.setVideoUrl("/video-ai/tasks/demo.mp4");
         task.setRetryCount(0);
-        task.setMaxRetry(3);
         task.setStatus(TaskStatus.PENDING.getCode());
         return task;
     }

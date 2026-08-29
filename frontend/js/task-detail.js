@@ -197,8 +197,8 @@ const TaskDetail = {
             </div>` : ''}
             ${task.retryCount > 0 ? `
             <div class="task-sidebar__row">
-              <span class="task-sidebar__label">重试次数</span>
-              <span class="task-sidebar__value">${task.retryCount} / ${task.maxRetry}</span>
+              <span class="task-sidebar__label">重新分析次数</span>
+              <span class="task-sidebar__value">${task.retryCount}</span>
             </div>` : ''}
           </div>
 
@@ -245,7 +245,7 @@ const TaskDetail = {
   },
 
   /**
-   * 重试任务
+   * 用户手动重新分析失败任务
    */
   async confirmRetry() {
     if (!confirm('确定要重新分析此任务吗？')) return;
