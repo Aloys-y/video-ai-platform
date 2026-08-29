@@ -124,12 +124,18 @@ public class KnowledgeIndexingService {
     /**
      * 构建 Milvus VectorRecord 列表。
      */
-    private List<VectorRecord> buildVectorRecords(KnowledgeCard card, List<ChunkedSegment> segments) {
+    List<VectorRecord> buildVectorRecords(KnowledgeCard card, List<ChunkedSegment> segments) {
+        List<VectorRecord> records = buildMetadataRecords(card, segments);
+        for (int index = 0; index < records.size(); index++) {
+            records.get(index).setVector(embeddingProvider.embedDocument(buildEmbeddingText(card, segments.get(index))));
+        }
+        return records;
+    }
+
+    List<VectorRecord> buildMetadataRecords(KnowledgeCard card, List<ChunkedSegment> segments) {
         List<VectorRecord> records = new ArrayList<>(segments.size());
         for (ChunkedSegment segment : segments) {
             String vectorId = card.getCardCode() + "_" + segment.getChunkNo();
-            List<Float> vector = embeddingProvider.embedDocument(buildEmbeddingText(card, segment));
-
             Map<String, Object> metadata = new LinkedHashMap<>();
             metadata.put("kb_code", card.getBaseCode());
             metadata.put("version_tag", card.getVersionTag());
@@ -145,7 +151,6 @@ public class KnowledgeIndexingService {
 
             records.add(VectorRecord.builder()
                     .id(vectorId)
-                    .vector(vector)
                     .fields(metadata)
                     .build());
         }

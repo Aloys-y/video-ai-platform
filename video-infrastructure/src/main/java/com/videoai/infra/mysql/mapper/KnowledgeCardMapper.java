@@ -16,6 +16,10 @@ public interface KnowledgeCardMapper extends BaseMapper<KnowledgeCard> {
     @Select("SELECT * FROM knowledge_card WHERE base_code = #{baseCode} AND card_code = #{cardCode} LIMIT 1")
     KnowledgeCard selectByCardCode(@Param("baseCode") String baseCode, @Param("cardCode") String cardCode);
 
+    @Select("SELECT * FROM knowledge_card WHERE base_code = #{baseCode} AND category = #{category} ORDER BY card_code ASC")
+    List<KnowledgeCard> selectByCategory(@Param("baseCode") String baseCode,
+                                         @Param("category") String category);
+
     @Select("SELECT * FROM knowledge_card WHERE base_code = #{baseCode} AND enabled = 1 " +
             "AND (timeless = 1 OR version_tag = #{versionTag}) ORDER BY updated_at DESC")
     List<KnowledgeCard> selectRetrievalCandidates(@Param("baseCode") String baseCode,

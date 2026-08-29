@@ -110,14 +110,19 @@ videoai:
 
 # SpringDoc / Swagger配置
   rag:
+    legend-alias-enhancement-enabled: ${RAG_LEGEND_ALIAS_ENHANCEMENT_ENABLED:true}
     enabled: true
     fail-open: true
     knowledge-base: apex-default
-    top-k: 12
-    final-top-k: 6
-    max-chunks-per-card: 2
-    min-score: 0.72
-    max-context-chars: 3500
+    query-expansion-enabled: false
+    # L02 可回滚实验开关：只检索 PC 玩法英雄卡，不删除 Mobile/lore 原始数据
+    legend-pc-gameplay-filter-enabled: ${RAG_LEGEND_PC_GAMEPLAY_FILTER_ENABLED:true}
+    top-k: ${RAG_TOP_K:20}
+    final-top-k: ${RAG_FINAL_TOP_K:3}
+    max-chunks-per-card: ${RAG_MAX_CHUNKS_PER_CARD:2}
+    # LEGEND 正负样本开发集标定值；扩大知识类别或更换 Embedding 后需重测
+    min-score: ${RAG_MIN_SCORE:0.61}
+    max-context-chars: ${RAG_MAX_CONTEXT_CHARS:3500}
     chunk-target-chars: 650
     chunk-min-chars: 400
     chunk-max-chars: 800
@@ -132,7 +137,7 @@ videoai:
       base-url: ${MILVUS_BASE_URL:http://localhost:19530}
       token: ${MILVUS_TOKEN:}
       database: default
-      collection: apex_knowledge_chunk
+      collection: ${VIDEOAI_RAG_VECTOR_COLLECTION:apex_knowledge_chunk_l03_v1}
       metric-type: COSINE
       index-type: HNSW
       connect-timeout-seconds: 10

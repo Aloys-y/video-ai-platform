@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,11 +24,12 @@ public class KnowledgeRetrievalService {
     private final EmbeddingProvider embeddingProvider;
     private final VectorStoreClient vectorStoreClient;
     private final RagProperties ragProperties;
+    private final LegendQueryEnhancementService legendQueryEnhancementService;
 
     public RagContext retrieve(String query) {
         long start = System.currentTimeMillis();
         KnowledgeBase base = knowledgeBaseService.getRequiredBase();
-        String expandedQuery = expandQuery(query);
+        String expandedQuery = prepareQuery(query);
         List<Float> vector = embeddingProvider.embedQuery(expandedQuery);
         String filter = buildFilterExpression(base.getBaseCode(), base.getCurrentVersionTag());
         List<VectorSearchResult> searchResults = vectorStoreClient.search(vector, ragProperties.getTopK(), filter);
@@ -88,18 +90,42 @@ public class KnowledgeRetrievalService {
      * Query expansion: 给用户查询附加 Apex 领域术语作为语义引导。
      * 不做关键词匹配（跨语言场景下字符串匹配低效），纯靠 embedding 跨语言语义检索。
      */
-    private String expandQuery(String query) {
+    private String prepareQuery(String query) {
         String safeQuery = (query == null || query.isBlank())
                 ? "Analyze this Apex Legends gameplay video."
                 : query.trim();
+        String entityEnhancedQuery = legendQueryEnhancementService.enhance(safeQuery);
 
-        return safeQuery + "\nKey Apex terminology: Legend abilities (tactical, passive, ultimate), "
+        if (!ragProperties.isQueryExpansionEnabled()) {
+            return entityEnhancedQuery;
+        }
+
+        return entityEnhancedQuery + "\nKey Apex terminology: Legend abilities (tactical, passive, ultimate), "
                 + "weapon stats (damage, DPS, attachments), map POI names and rotations, "
                 + "team compositions and fight decisions, item and ability timing.";
     }
 
     private String buildFilterExpression(String baseCode, String versionTag) {
-        return "kb_code == \"" + baseCode + "\" and enabled == 1 and (timeless == 1 or version_tag == \"" + versionTag + "\")";
+        String filter = "kb_code == \"" + escapeFilterValue(baseCode)
+                + "\" and enabled == 1 and (timeless == 1 or version_tag == \""
+                + escapeFilterValue(versionTag) + "\")";
+        if (!ragProperties.isLegendPcGameplayFilterEnabled()) {
+            return filter;
+        }
+
+        List<String> excludedCardCodes = ragProperties.getLegendExcludedCardCodes();
+        if (excludedCardCodes == null || excludedCardCodes.isEmpty()) {
+            return filter + " and category == \"LEGEND\"";
+        }
+        String excludedValues = excludedCardCodes.stream()
+                .map(this::escapeFilterValue)
+                .map(value -> "\"" + value + "\"")
+                .collect(Collectors.joining(", "));
+        return filter + " and category == \"LEGEND\" and card_code not in [" + excludedValues + "]";
+    }
+
+    private String escapeFilterValue(String value) {
+        return value == null ? "" : value.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
     private String stringValue(Object value) {

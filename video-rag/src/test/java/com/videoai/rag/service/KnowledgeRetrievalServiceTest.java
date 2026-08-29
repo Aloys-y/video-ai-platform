@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.ArgumentCaptor;
 
 import java.util.List;
 import java.util.Map;
@@ -44,8 +45,10 @@ class KnowledgeRetrievalServiceTest {
         properties.setMaxChunksPerCard(1);
         properties.setMinScore(0.72);
         properties.setMaxContextChars(3500);
+        properties.setLegendPcGameplayFilterEnabled(false);
         service = new KnowledgeRetrievalService(
-                knowledgeBaseService, embeddingProvider, vectorStoreClient, properties);
+                knowledgeBaseService, embeddingProvider, vectorStoreClient, properties,
+                new LegendQueryEnhancementService(properties));
 
         KnowledgeBase base = new KnowledgeBase();
         base.setBaseCode("apex-default");
@@ -81,6 +84,36 @@ class KnowledgeRetrievalServiceTest {
         assertEquals("MISS", context.getStatus());
         assertEquals(0, context.getHits().size());
         assertEquals("", context.getContextText());
+    }
+
+    @Test
+    void shouldAllowGenericQueryExpansionToBeDisabledForAblation() {
+        properties.setQueryExpansionEnabled(false);
+        when(vectorStoreClient.search(eq(List.of(0.1F, 0.2F)), eq(12), anyString()))
+                .thenReturn(List.of());
+
+        RagContext context = service.retrieve("  R-301 使用什么弹药？  ");
+
+        assertEquals("R-301 使用什么弹药？", context.getQueryText());
+        verify(embeddingProvider).embedQuery("R-301 使用什么弹药？");
+    }
+
+    @Test
+    void shouldFilterMobileLoreAndAuxiliaryLegendCardsWhenEnabled() {
+        properties.setLegendPcGameplayFilterEnabled(true);
+        when(vectorStoreClient.search(eq(List.of(0.1F, 0.2F)), eq(12), anyString()))
+                .thenReturn(List.of());
+
+        service.retrieve("Wraith abilities");
+
+        ArgumentCaptor<String> filterCaptor = ArgumentCaptor.forClass(String.class);
+        verify(vectorStoreClient).search(eq(List.of(0.1F, 0.2F)), eq(12), filterCaptor.capture());
+        String filter = filterCaptor.getValue();
+        org.junit.jupiter.api.Assertions.assertTrue(filter.contains("category == \"LEGEND\""));
+        org.junit.jupiter.api.Assertions.assertTrue(filter.contains("card_code not in"));
+        org.junit.jupiter.api.Assertions.assertTrue(filter.contains("\"wraith-mobile\""));
+        org.junit.jupiter.api.Assertions.assertTrue(filter.contains("\"wraith-id\""));
+        org.junit.jupiter.api.Assertions.assertTrue(filter.contains("\"ballistic-character\""));
     }
 
     private VectorSearchResult result(String id, String cardCode, double score) {

@@ -38,6 +38,8 @@ logs/
 *.tmp
 *.temp
 *.bak
+__pycache__/
+*.pyc
 
 # Java
 *.class

@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "videoai.rag")
@@ -15,14 +17,55 @@ public class RagProperties {
 
     private String knowledgeBase = "apex-default";
 
-    private int topK = 12;
+    /** 是否在原始查询后追加通用 Apex 术语；消融实验表明固定追加会稀释实体查询。 */
+    private boolean queryExpansionEnabled = false;
 
-    private int finalTopK = 6;
+    /** 中文英雄名和玩家俗称的定向实体增强；与通用查询扩展独立，便于真实 A/B。 */
+    private boolean legendAliasEnhancementEnabled = true;
+
+    /**
+     * 英雄知识实验过滤开关。开启后仅检索 LEGEND，并排除冻结快照中已识别的
+     * Mobile、lore 和辅助语言卡片；不删除原始数据，便于 A/B 回滚。
+     */
+    private boolean legendPcGameplayFilterEnabled = true;
+
+    private List<String> legendExcludedCardCodes = List.of(
+            "ash-mobile",
+            "ballistic-character",
+            "bloodhound-mobile",
+            "caustic-mobile",
+            "conduit-character",
+            "crypto-mobile",
+            "fade",
+            "gibraltar-mobile",
+            "horizon-mobile",
+            "how-to-play-guide-for-apex-legends",
+            "how-to-play-guide-for-apex-legends-game-",
+            "legend",
+            "lifeline-mobile",
+            "loba-mobile",
+            "mirage-mobile",
+            "octane-mobile",
+            "pathfinder-mobile",
+            "pathfinder-ru",
+            "revenant-mobile",
+            "rhapsody",
+            "wraith-id",
+            "wraith-mobile"
+    );
+
+    /** 仅供隔离集合实验使用，默认禁止通过管理接口批量构建影子索引。 */
+    private boolean shadowIndexBuildEnabled = false;
+
+    private int topK = 20;
+
+    private int finalTopK = 3;
 
     /** 单张知识卡片最多进入最终上下文的分块数，避免相邻块挤占全部结果。 */
     private int maxChunksPerCard = 2;
 
-    private double minScore = 0.72D;
+    /** LEGEND 开发集正负样本标定阈值；扩大知识类别或更换 Embedding 后必须重测。 */
+    private double minScore = 0.61D;
 
     private int maxContextChars = 3500;
 

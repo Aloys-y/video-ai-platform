@@ -3,24 +3,21 @@ package com.videoai.rag.service;
 import com.videoai.infra.rag.config.RagProperties;
 import com.videoai.rag.model.ChunkedSegment;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Markdown 知识卡片分块服务。
  *
- * 策略：按文档层级切分（heading-first, paragraph-fallback），不做纯字符截断。
- * - ## 标题 → 首选边界
- * - ### 标题 → 二级边界
- * - 段落（连续非空行块） → 兜底边界
- * - 键值行（Key | Value）作为独立段落处理，不拆分
+ * V2 策略：先按 H1/H2/H3 建立互不污染的章节，再在章节内部按目标长度组合句子和行。
+ * 只有同一章节内被迫分块时才增加 overlap，并保证最终块不超过 max。
  */
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class KnowledgeChunkingService {
@@ -28,174 +25,252 @@ public class KnowledgeChunkingService {
     private static final Pattern H1_PATTERN = Pattern.compile("^#\\s+(.+)$");
     private static final Pattern H2_PATTERN = Pattern.compile("^##\\s+(.+)$");
     private static final Pattern H3_PATTERN = Pattern.compile("^###\\s+(.+)$");
-    private static final Pattern HEADING_PATTERN = Pattern.compile("^#{1,3}\\s+(.+)$");
+    private static final Pattern SENTENCE_BOUNDARY = Pattern.compile("(?<=[.!?。！？])\\s+|(?=\\s*-\\s+)");
+    private static final Pattern LOWER_TO_UPPER = Pattern.compile("(?<=[\\p{Ll}\\d])(?=[\\p{Lu}])");
 
     private final RagProperties ragProperties;
 
     public List<ChunkedSegment> chunkMarkdown(String title, String markdown) {
-        List<ChunkedSegment> result = new ArrayList<>();
         if (markdown == null || markdown.isBlank()) {
-            return result;
+            return List.of();
         }
 
-        String cleaned = stripFrontmatter(markdown);
-        List<Paragraph> paragraphs = parseParagraphs(cleaned);
+        List<Paragraph> paragraphs = parseParagraphs(stripFrontmatter(markdown));
+        List<String> protectedTerms = protectedTerms(title, paragraphs);
+        List<ChunkedSegment> result = new ArrayList<>();
 
-        String h1Heading = title;
-        String h2Heading = null;
+        String h1 = null;
+        String h2 = null;
+        String h3 = null;
+        StringBuilder section = new StringBuilder();
+
+        for (Paragraph paragraph : paragraphs) {
+            if (paragraph.type == ParagraphType.H1) {
+                flushSection(result, title, h1, h2, h3, section, protectedTerms);
+                h1 = paragraph.content;
+                h2 = null;
+                h3 = null;
+                continue;
+            }
+            if (paragraph.type == ParagraphType.H2) {
+                flushSection(result, title, h1, h2, h3, section, protectedTerms);
+                h2 = paragraph.content;
+                h3 = null;
+                continue;
+            }
+            if (paragraph.type == ParagraphType.H3) {
+                flushSection(result, title, h1, h2, h3, section, protectedTerms);
+                h3 = paragraph.content;
+                continue;
+            }
+
+            if (section.length() > 0) {
+                section.append('\n');
+            }
+            section.append(paragraph.content);
+        }
+        flushSection(result, title, h1, h2, h3, section, protectedTerms);
+        return result;
+    }
+
+    private void flushSection(List<ChunkedSegment> result, String title,
+                              String h1, String h2, String h3,
+                              StringBuilder section, List<String> protectedTerms) {
+        if (section.length() == 0) {
+            return;
+        }
+        String content = normalizeContent(section.toString(), protectedTerms);
+        section.setLength(0);
+        if (content.isBlank()) {
+            return;
+        }
+
+        String headingPath = buildHeadingPath(title, h1, h2, h3);
+        List<String> rawChunks = packToTarget(content);
+        List<String> chunksWithOverlap = applyBoundedOverlap(rawChunks);
+        for (String chunk : chunksWithOverlap) {
+            if (!chunk.isBlank()) {
+                result.add(buildSegment(result.size(), title, headingPath, chunk));
+            }
+        }
+    }
+
+    private List<String> packToTarget(String content) {
+        List<String> units = semanticUnits(content);
+        List<String> chunks = new ArrayList<>();
         StringBuilder current = new StringBuilder();
-        int chunkNo = 0;
+        int target = targetChars();
+        int min = minChars();
+        int max = maxChars();
 
-        for (Paragraph p : paragraphs) {
-            if (p.type == ParagraphType.H1) {
-                if (current.length() > 0) {
-                    result.addAll(splitIfNeeded(current.toString(), title,
-                            buildHeadingPath(title, h2Heading), chunkNo));
-                    chunkNo = result.size();
-                    current = new StringBuilder();
-                }
-                h1Heading = p.content;
-                h2Heading = null;
-                continue;
+        for (String unit : units) {
+            int projected = current.length() + (current.length() == 0 ? 0 : 1) + unit.length();
+            boolean targetReached = current.length() >= min && projected > target;
+            boolean maxExceeded = projected > max;
+            if (current.length() > 0 && (targetReached || maxExceeded)) {
+                chunks.add(current.toString().trim());
+                current.setLength(0);
             }
-
-            if (p.type == ParagraphType.H2) {
-                if (current.length() > 0) {
-                    result.addAll(splitIfNeeded(current.toString(), title,
-                            buildHeadingPath(title, h2Heading), chunkNo));
-                    chunkNo = result.size();
-                    current = new StringBuilder();
-                }
-                h2Heading = p.content;
-                continue;
-            }
-
-            if (p.type == ParagraphType.H3) {
-                if (current.length() >= targetMin() && current.length() + p.content.length() > targetMax()) {
-                    result.addAll(splitIfNeeded(current.toString(), title,
-                            buildHeadingPath(title, h2Heading), chunkNo));
-                    chunkNo = result.size();
-                    current = new StringBuilder();
-                }
-                h2Heading = (h2Heading != null ? h2Heading + " > " : "") + p.content;
-                current.append(p.content).append('\n');
-                continue;
-            }
-
-            if (current.length() + p.content.length() > targetMax() && current.length() >= targetMin()) {
-                result.addAll(splitIfNeeded(current.toString(), title,
-                        buildHeadingPath(title, h2Heading), chunkNo));
-                chunkNo = result.size();
-                current = new StringBuilder();
-            }
-
             if (current.length() > 0) {
                 current.append('\n');
             }
-            current.append(p.content);
+            current.append(unit);
         }
-
         if (current.length() > 0) {
-            result.addAll(splitIfNeeded(current.toString(), title,
-                    buildHeadingPath(title, h2Heading), chunkNo));
+            chunks.add(current.toString().trim());
         }
 
-        return result;
+        mergeSmallTail(chunks);
+        return chunks;
     }
 
-    /**
-     * 如果内容超过最大值，先按空行块/句子边界切，相邻 chunk 做 overlap 防边界语义断裂。
-     */
-    private List<ChunkedSegment> splitIfNeeded(String content, String title,
-                                                String headingPath, int startChunkNo) {
-        List<ChunkedSegment> segments = new ArrayList<>();
-        String trimmed = content.trim();
-
-        // Short enough — return as-is
-        if (trimmed.length() <= targetMax()) {
-            segments.add(buildSegment(startChunkNo, title, headingPath, trimmed));
-            return segments;
-        }
-
-        // 1. 切成原始文本片段（空行块优先，句子边界兜底）
-        List<String> rawChunks = splitToRawChunks(trimmed);
-
-        // 2. 相邻片段做 overlap（同章节内被迫切开的块，防语义断裂）
-        int overlap = ragProperties.getChunkOverlapChars();
-        int chunkNo = startChunkNo;
-        String prevRaw = null;
-        for (String raw : rawChunks) {
-            String chunkText = raw;
-            if (prevRaw != null && overlap > 0) {
-                String tail = prevRaw.substring(Math.max(0, prevRaw.length() - overlap));
-                chunkText = tail + "\n" + raw;
+    private List<String> semanticUnits(String content) {
+        List<String> units = new ArrayList<>();
+        for (String rawLine : content.split("\\R+")) {
+            String line = rawLine.trim();
+            if (line.isEmpty()) {
+                continue;
             }
-            segments.add(buildSegment(chunkNo++, title, headingPath, chunkText));
-            prevRaw = raw;
-        }
-        return segments;
-    }
-
-    /**
-     * 把长文本切成原始片段。优先级：空行块（段落）> 句子边界 > 硬切。
-     */
-    private List<String> splitToRawChunks(String text) {
-        List<String> result = new ArrayList<>();
-        String[] blocks = text.split("\\n\\s*\\n");
-        for (String block : blocks) {
-            String b = block.trim();
-            if (b.isEmpty()) continue;
-            if (b.length() <= targetMax()) {
-                result.add(b);
-            } else {
-                result.addAll(splitBySentence(b));
-            }
-        }
-        return result;
-    }
-
-    /**
-     * 单个块超长时，优先按句子边界（句号/换行）切；单句超长才硬切。
-     */
-    private List<String> splitBySentence(String text) {
-        List<String> result = new ArrayList<>();
-        int max = targetMax();
-
-        // 按句号后的空白、或换行边界切句子
-        String[] sentences = text.split("(?<=[.!?。！？])\\s+|\\n+");
-        StringBuilder chunk = new StringBuilder();
-        for (String sentence : sentences) {
-            String s = sentence.trim();
-            if (s.isEmpty()) continue;
-
-            if (chunk.length() + s.length() > max && chunk.length() > 0) {
-                result.add(chunk.toString().trim());
-                chunk = new StringBuilder();
-            }
-
-            if (s.length() > max) {
-                // 单个句子还超长，只能硬切
-                if (chunk.length() > 0) {
-                    result.add(chunk.toString().trim());
-                    chunk = new StringBuilder();
+            for (String sentence : SENTENCE_BOUNDARY.split(line)) {
+                String value = sentence.trim();
+                if (!value.isEmpty()) {
+                    units.addAll(splitLongUnit(value, targetChars()));
                 }
-                for (int i = 0; i < s.length(); i += max) {
-                    result.add(s.substring(i, Math.min(i + max, s.length())));
-                }
-            } else {
-                if (chunk.length() > 0) chunk.append(' ');
-                chunk.append(s);
             }
         }
-        if (chunk.length() > 0) result.add(chunk.toString().trim());
+        return units;
+    }
+
+    private List<String> splitLongUnit(String value, int budget) {
+        if (value.length() <= budget) {
+            return List.of(value);
+        }
+        List<String> parts = new ArrayList<>();
+        int start = 0;
+        while (start < value.length()) {
+            int end = Math.min(start + budget, value.length());
+            if (end < value.length()) {
+                int boundary = lastBoundary(value, start, end);
+                if (boundary > start) {
+                    end = boundary;
+                }
+            }
+            String part = value.substring(start, end).trim();
+            if (!part.isEmpty()) {
+                parts.add(part);
+            }
+            start = end;
+            while (start < value.length() && Character.isWhitespace(value.charAt(start))) {
+                start++;
+            }
+        }
+        return parts;
+    }
+
+    private int lastBoundary(String value, int start, int end) {
+        for (int index = end; index > start; index--) {
+            char c = value.charAt(index - 1);
+            if (Character.isWhitespace(c) || c == ',' || c == ';' || c == '，' || c == '；') {
+                return index;
+            }
+        }
+        return end;
+    }
+
+    private void mergeSmallTail(List<String> chunks) {
+        if (chunks.size() < 2) {
+            return;
+        }
+        int lastIndex = chunks.size() - 1;
+        String tail = chunks.get(lastIndex);
+        String previous = chunks.get(lastIndex - 1);
+        int overlapHeadroom = Math.max(0, ragProperties.getChunkOverlapChars()) + 1;
+        int mergeLimit = Math.max(minChars(), maxChars() - overlapHeadroom);
+        if (tail.length() < minChars() && previous.length() + 1 + tail.length() <= mergeLimit) {
+            chunks.set(lastIndex - 1, previous + "\n" + tail);
+            chunks.remove(lastIndex);
+        }
+    }
+
+    private List<String> applyBoundedOverlap(List<String> rawChunks) {
+        if (rawChunks.size() < 2 || ragProperties.getChunkOverlapChars() <= 0) {
+            return rawChunks;
+        }
+        List<String> result = new ArrayList<>(rawChunks.size());
+        result.add(rawChunks.get(0));
+        for (int index = 1; index < rawChunks.size(); index++) {
+            String raw = rawChunks.get(index);
+            int available = Math.max(0, maxChars() - raw.length() - 1);
+            int overlapBudget = Math.min(ragProperties.getChunkOverlapChars(), available);
+            String tail = semanticTail(rawChunks.get(index - 1), overlapBudget);
+            result.add(tail.isEmpty() ? raw : tail + "\n" + raw);
+        }
         return result;
     }
 
-    private String buildHeadingPath(String title, String sectionHeading) {
-        if (sectionHeading == null || sectionHeading.isBlank()) {
-            return title;
+    private String semanticTail(String previous, int budget) {
+        if (budget <= 0 || previous.isEmpty()) {
+            return "";
         }
-        return title + " > " + sectionHeading;
+        int start = Math.max(0, previous.length() - budget);
+        if (start > 0) {
+            for (int index = start; index < previous.length(); index++) {
+                if (Character.isWhitespace(previous.charAt(index)) && index + 1 < previous.length()) {
+                    start = index + 1;
+                    break;
+                }
+            }
+        }
+        return previous.substring(start).trim();
+    }
+
+    private String normalizeContent(String content, List<String> protectedTerms) {
+        String normalized = content.replace('\u00A0', ' ')
+                .replaceAll("[ \\t]+", " ")
+                .replaceAll(" *\\n *", "\n");
+        normalized = LOWER_TO_UPPER.matcher(normalized).replaceAll(" ");
+
+        // Fandom 抽取器曾使用 get_text(strip=true)，会把链接词与前后正文粘连。
+        // 标题和技能标题是高置信词，只在它们紧邻字母/数字时补边界。
+        for (String term : protectedTerms) {
+            String quoted = Pattern.quote(term);
+            normalized = normalized.replaceAll("(?<=[\\p{L}\\p{N}])(" + quoted + ")", " $1");
+            normalized = normalized.replaceAll("(" + quoted + ")(?=[\\p{Ll}\\d])", "$1 ");
+        }
+        return normalized.replaceAll(" {2,}", " ").trim();
+    }
+
+    private List<String> protectedTerms(String title, List<Paragraph> paragraphs) {
+        Set<String> terms = new LinkedHashSet<>();
+        if (title != null && title.trim().length() >= 3) {
+            terms.add(title.trim());
+        }
+        for (Paragraph paragraph : paragraphs) {
+            if ((paragraph.type == ParagraphType.H1
+                    || paragraph.type == ParagraphType.H2
+                    || paragraph.type == ParagraphType.H3)
+                    && paragraph.content.length() >= 3) {
+                terms.add(paragraph.content);
+            }
+        }
+        return terms.stream().sorted((left, right) -> Integer.compare(right.length(), left.length())).toList();
+    }
+
+    private String buildHeadingPath(String title, String h1, String h2, String h3) {
+        List<String> parts = new ArrayList<>();
+        addPathPart(parts, title);
+        if (h1 == null || title == null || !h1.equalsIgnoreCase(title.trim())) {
+            addPathPart(parts, h1);
+        }
+        addPathPart(parts, h2);
+        addPathPart(parts, h3);
+        return String.join(" > ", parts);
+    }
+
+    private void addPathPart(List<String> parts, String value) {
+        if (value != null && !value.isBlank()) {
+            parts.add(value.trim());
+        }
     }
 
     private ChunkedSegment buildSegment(int chunkNo, String title, String headingPath, String content) {
@@ -206,8 +281,6 @@ public class KnowledgeChunkingService {
                 .contentText(content)
                 .build();
     }
-
-    // ---- frontmatter stripping ----
 
     private String stripFrontmatter(String raw) {
         String trimmed = raw.trim();
@@ -220,8 +293,6 @@ public class KnowledgeChunkingService {
         return trimmed;
     }
 
-    // ---- paragraph parsing ----
-
     private List<Paragraph> parseParagraphs(String text) {
         List<Paragraph> result = new ArrayList<>();
         StringBuilder current = new StringBuilder();
@@ -230,93 +301,78 @@ public class KnowledgeChunkingService {
         for (String rawLine : text.split("\\r?\\n")) {
             String line = rawLine.trim();
             if (line.isEmpty()) {
-                if (current.length() > 0) {
-                    result.add(new Paragraph(currentType, current.toString().trim()));
-                    current = new StringBuilder();
-                    currentType = null;
-                }
-                continue;
-            }
-
-            Matcher h1 = H1_PATTERN.matcher(line);
-            if (h1.matches()) {
-                if (current.length() > 0) {
-                    result.add(new Paragraph(currentType, current.toString().trim()));
-                    current = new StringBuilder();
-                }
-                result.add(new Paragraph(ParagraphType.H1, h1.group(1).trim()));
+                flushParagraph(result, currentType, current);
                 currentType = null;
                 continue;
             }
 
-            Matcher h2 = H2_PATTERN.matcher(line);
-            if (h2.matches()) {
-                if (current.length() > 0) {
-                    result.add(new Paragraph(currentType, current.toString().trim()));
-                    current = new StringBuilder();
-                }
-                result.add(new Paragraph(ParagraphType.H2, h2.group(1).trim()));
+            Paragraph heading = parseHeading(line);
+            if (heading != null) {
+                flushParagraph(result, currentType, current);
                 currentType = null;
-                continue;
-            }
-
-            Matcher h3 = H3_PATTERN.matcher(line);
-            if (h3.matches()) {
-                if (current.length() > 0) {
-                    result.add(new Paragraph(currentType, current.toString().trim()));
-                    current = new StringBuilder();
-                }
-                result.add(new Paragraph(ParagraphType.H3, h3.group(1).trim()));
-                currentType = null;
+                result.add(heading);
                 continue;
             }
 
             ParagraphType lineType = classifyLine(line);
             if (currentType != null && currentType != lineType) {
-                if (current.length() > 0) {
-                    result.add(new Paragraph(currentType, current.toString().trim()));
-                    current = new StringBuilder();
-                }
+                flushParagraph(result, currentType, current);
             }
-
             if (current.length() > 0) {
                 current.append('\n');
             }
             current.append(line);
             currentType = lineType;
         }
-
-        if (current.length() > 0) {
-            result.add(new Paragraph(currentType, current.toString().trim()));
-        }
+        flushParagraph(result, currentType, current);
         return result;
     }
 
+    private Paragraph parseHeading(String line) {
+        Matcher h1 = H1_PATTERN.matcher(line);
+        if (h1.matches()) return new Paragraph(ParagraphType.H1, h1.group(1).trim());
+        Matcher h2 = H2_PATTERN.matcher(line);
+        if (h2.matches()) return new Paragraph(ParagraphType.H2, h2.group(1).trim());
+        Matcher h3 = H3_PATTERN.matcher(line);
+        if (h3.matches()) return new Paragraph(ParagraphType.H3, h3.group(1).trim());
+        return null;
+    }
+
+    private void flushParagraph(List<Paragraph> result, ParagraphType type, StringBuilder current) {
+        if (current.length() > 0) {
+            result.add(new Paragraph(type == null ? ParagraphType.PROSE : type, current.toString().trim()));
+            current.setLength(0);
+        }
+    }
+
     private ParagraphType classifyLine(String line) {
-        // Infobox key-value pairs or table rows
         if (line.contains("|") && !line.startsWith("-") && !line.startsWith("#")) {
             return ParagraphType.KV_TABLE;
         }
-        // List items
         if (line.startsWith("-") || line.startsWith("*")) {
             return ParagraphType.LIST;
         }
         return ParagraphType.PROSE;
     }
 
-    private int targetMin() {
-        return ragProperties.getChunkMinChars();
+    private int minChars() {
+        return Math.max(1, Math.min(ragProperties.getChunkMinChars(), maxChars()));
     }
 
-    private int targetMax() {
-        return ragProperties.getChunkMaxChars();
+    private int maxChars() {
+        return Math.max(1, ragProperties.getChunkMaxChars());
     }
 
-    // ---- inner types ----
+    private int targetChars() {
+        int overlapHeadroom = Math.max(0, ragProperties.getChunkOverlapChars()) + 1;
+        int payloadMax = Math.max(1, maxChars() - overlapHeadroom);
+        return Math.max(1, Math.min(ragProperties.getChunkTargetChars(), payloadMax));
+    }
 
     private enum ParagraphType {
         H1, H2, H3, PROSE, KV_TABLE, LIST
     }
 
-    private record Paragraph(ParagraphType type, String content) {}
+    private record Paragraph(ParagraphType type, String content) {
+    }
 }
