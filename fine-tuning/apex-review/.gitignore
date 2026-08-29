@@ -1,0 +1,8 @@
+data/raw-videos/
+data/frames/
+data/prepared/
+outputs/
+cache/
+*.log
+__pycache__/
+*.pyc

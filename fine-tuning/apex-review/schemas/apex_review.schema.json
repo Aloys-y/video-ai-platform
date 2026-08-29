@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dovideoai.local/schemas/apex-review-record-v1.json",
+  "title": "APEX 复盘训练样本",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "clip_id",
+    "source_match_id",
+    "source_video_path",
+    "source_start_sec",
+    "duration_sec",
+    "frames",
+    "frame_timestamps_sec",
+    "instruction",
+    "answer"
+  ],
+  "properties": {
+    "clip_id": {"type": "string", "minLength": 1},
+    "source_match_id": {"type": "string", "minLength": 1},
+    "source_video_path": {"type": "string", "minLength": 1},
+    "source_start_sec": {"type": "number", "minimum": 0},
+    "duration_sec": {"type": "number", "exclusiveMinimum": 0, "maximum": 180},
+    "frames": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 16,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "frame_timestamps_sec": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 16,
+      "items": {"type": "number", "minimum": 0}
+    },
+    "instruction": {"type": "string", "minLength": 1},
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "player_legend": {"type": ["string", "null"]},
+        "map": {"type": ["string", "null"]},
+        "mode": {"type": ["string", "null"]},
+        "squad_context": {"type": ["string", "null"]},
+        "patch_version": {"type": ["string", "null"]},
+        "annotator": {"type": ["string", "null"]},
+        "annotation_version": {"type": ["string", "null"]}
+      }
+    },
+    "answer": {"$ref": "#/$defs/review"},
+    "split": {"enum": ["train", "val", "test"]}
+  },
+  "$defs": {
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "clip_summary",
+        "result",
+        "events",
+        "reviews",
+        "positive_actions",
+        "uncertainties"
+      ],
+      "properties": {
+        "schema_version": {"const": "apex_review.v1"},
+        "clip_summary": {"type": "string", "minLength": 1},
+        "result": {
+          "enum": ["win_fight", "lose_fight", "disengage", "rotation", "loot", "exploration", "unknown"]
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["start_sec", "end_sec", "type", "observation", "impact"],
+            "properties": {
+              "start_sec": {"type": "number", "minimum": 0},
+              "end_sec": {"type": "number", "minimum": 0},
+              "type": {
+                "enum": ["engagement", "knock", "elimination", "damage_taken", "ability_use", "heal", "shield_swap", "reload", "loot", "rotation", "revive", "respawn", "ring", "third_party", "other"]
+              },
+              "observation": {"type": "string", "minLength": 1},
+              "impact": {"type": "string", "minLength": 1},
+              "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+            }
+          }
+        },
+        "reviews": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["category", "verdict", "severity", "evidence", "reason", "suggestion"],
+            "properties": {
+              "category": {
+                "enum": ["aim", "positioning", "cover", "movement", "resource", "ability", "information", "rotation", "teamfight", "decision"]
+              },
+              "verdict": {"enum": ["good", "mistake", "neutral"]},
+              "severity": {"type": "integer", "minimum": 1, "maximum": 3},
+              "evidence": {"type": "string", "minLength": 1},
+              "reason": {"type": "string", "minLength": 1},
+              "suggestion": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "positive_actions": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "uncertainties": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    }
+  }
+}
