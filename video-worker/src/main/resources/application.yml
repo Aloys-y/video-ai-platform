@@ -40,6 +40,18 @@ videoai:
     # 单任务超时（分钟）
     task-timeout-minutes: 30
 
+  # Transactional Outbox 投递参数（经 2026-08-29 缩时全链路压测标定）。
+  outbox:
+    # 一次查询上限；实际同时在途数量还受 max-in-flight 约束。
+    dispatch-batch-size: ${VIDEOAI_OUTBOX_DISPATCH_BATCH_SIZE:50}
+    # 1 秒在突发 100 条时兼顾投递延迟与空轮询开销。
+    dispatch-interval-ms: ${VIDEOAI_OUTBOX_DISPATCH_INTERVAL_MS:1000}
+    # 有界异步，避免 Kafka 故障时 Future 和数据库回调无限堆积。
+    max-in-flight: ${VIDEOAI_OUTBOX_MAX_IN_FLIGHT:10}
+    callback-threads: ${VIDEOAI_OUTBOX_CALLBACK_THREADS:10}
+    send-timeout-ms: ${VIDEOAI_OUTBOX_SEND_TIMEOUT_MS:10000}
+    recovery-interval-ms: ${VIDEOAI_OUTBOX_RECOVERY_INTERVAL_MS:60000}
+
   # 视频处理配置
   video:
     # 抽帧间隔（秒）
