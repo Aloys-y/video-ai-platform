@@ -1,148 +1,107 @@
 ---
-title: "Gibraltar"
+title: "直布罗陀"
+title_en: "Gibraltar"
 topic: legends
-categories: ["Apex Legends", "Apex Legends Legends", "LGBTQ+ legends", "Legends", "Male Legends", "Pages with broken file links", "Unlocked legends"]
+language: zh-CN
+categories: ["Apex英雄", "PC端", "玩法资料"]
 source: https://apexlegends.fandom.com/wiki/Gibraltar
 ---
 
-# Gibraltar
+# 直布罗陀（Gibraltar）
 
-“ | Being an Apex Legend takes courage, strength, and confidence... or as some call it, 'Just being Gibraltar' heh heh... We all put passion in our matches and fight like each day depends on it; my work with S.A.R.A.S. taught me that. You need to love what you do, care about what you do, and believe in your ability to do what you do; my parents taught me that. Finally, brothas, trust in those around you, protect those around you, and never forget that no matter how big you are, the world is always bigger; the Apex Games taught me that. Let's go change a life![1]
-Gibraltar
+## 玩法概览
+职业 | 支援型
+战术技能 | 防护穹顶（Dome of Protection）
+被动技能 | 枪盾（Gun Shield）
+终极技能 | 防御轰炸（Defensive Bombardment）
+被动特性 | 强化（Fortified）
 
-Shielded Fortress
-Details
-Real Name | Makoa Gibraltar
-Gender | Male
-Age | 32
-Home World | Solace
-Weight | 292 lbs (132 kg)
-Height | 6'5" (196 cm)
-Gameplay
-Class | Support
-Tactical Ability | Dome of Protection
-Passive Ability | Gun Shield
-Ultimate Ability | Defensive Bombardment
-Passive Perk | Fortified
-Real-world Info
-Voice Actor | Branscombe Richmond
-Gibraltaris aSupportLegend. He is unlocked by default.
-Gibraltar is a mountainous Legend. His tactical abilityDome of Protectioncreates a temporary half-dome shield that can be walked through, but not fired through. His passive abilityGun Shieldcauses a shield to form around the upper half of his body whenever he aims down sights; this shield takes some damage before breaking. His ultimate abilityDefensive Bombardmentcauses a damaging and stunning cluster strike to land on a targeted location.
-## Abilities
-### Dome of Protection
-| Tactical | Q///
-Dome of Protection
-Description | Blocks incoming and outgoing attacks.
-Cooldown | 13 seconds- Info- Interactions- Tips- Bugs- Throws a large disc, which upon landing projects a dome shield around it. The dome has a radius of 6 meters and lasts 12 seconds.- The dome shield stops all incoming and outgoing bullets and projectiles while allowing players to move through it.- Gibraltar revives allies 33% faster while inside his dome (6 seconds -> 4.5 seconds).- The dome blocks line of sight for things likeWattson'sPerimeter SecurityorCrypto'sNeurolink.- Since From the Rift update, the dome can't be destroyed byCrypto'sDrone EMPorMad Maggie'sWrecking Ball.- If an enemy squad is firing at you and your team, throw the dome down. It will block their bullets allowing you and your squad to escape.- Combining the dome with Defensive Bombardment can be very helpful.Example: If you have a downed teammate and are being rushed, throw down your ultimate and then your dome right behind the center of the explosion, so the enemy has to walk through it to get to you.- The dome shield is not a complete bubble and depending on the terrain it can have its weak spots.- No shots can go through the dome, but you can still be damaged by enemies while inside it.- Remember that the dome is not a safe space, but a breathing room from which you can revive teammates, reload and recharge your health and shields.- Dome shield dancing can be really useful if done right. Go in and out of the dome shield while being shot to reduce the damage you take, while also making enemies waste their ammo. While they reload, shoot.- Due to the size and glow, it easily gives your position away; expect enemy to wait out the timer to snipe your team when the dome is down.- It's very common for enemies to throw a grenade at the dome shield and force you out of it. Be aware of that, but be careful with your positioning so you know how to deal with this situation.- In theFiring Range, the dome can sometimes go through floors of high places. It is unsure if this also happens onWorld's EdgeorOlympus.- The ability’s icon that previously indicated fast healing inside the dome shield is still visible above the healing items slot on the HUD, even though fast healing no longer exists.- Caustic'sNox Gas Trapwhich are deployed on top of shield will stay "floating" at their positions after the shield is gone.
-### Gun Shield
-| Passive | H//to disable
-Gun Shield
-Description | Aiming down sights deploys a gun shield that blocks incoming fire.
-Cooldown | ?- Info- Interactions- Tips- Bugs- While aiming, Gibraltar will have an energy shield in front of him with 50 health that protects his upper body from incoming fire while allowing him to shoot out.- If broken, it has a 9-second cooldown before regenerating.- The health of the energy shield can be seen on both the left and right sides while aiming down sights. The cooldown meter can also be seen refilling the 1-8 bars of energy meter.- Any excess damage inflicted when destroying the shield will be transferred over to Gibraltar himself.- The shield deflectsArc Starslaunched against Gibraltar.- Seer'sFocus of Attentiondisables Gibraltar’s Gun Shield.- The shield can sometimes make it easier to spot Gibraltar while he is hiding, so it may be worth disabling temporarily if you're pretty sure you're otherwise hidden.- Crouching while using your gun shield makes you a hard target to do damage to from the front.- Activating the gun shield during a sniper fight often grants you the upper hand. Thus, Gibraltar is one the best Legends to use snipers.- A player who uses Gibraltar’s Gun Shield to aim down sights at anArc Staror aFrag Grenadewill be completely protected from taking any damage. Their Gun Shield will also not take any damage at all.
-### Defensive Bombardment
-| Ultimate | Z/+/+/+
-Defensive Bombardment
-Description | Call in a concentrated mortar strike on a marked position.
-Charge time | 3 minutes- Info- Interactions- Tips- Throws a smoke grenade that marks a 24-meter radius around it for a mortar strike.- For 6 seconds, explosives continuously rain down on the area, dealing 40 damage per hit and shell-shocking players.- The area is marked for all players with red circles indicating where mortar shells will hit.- Wattson'sInterception Pyloncan shoot down both the mortar shells and the initial smoke grenade.- This ability also damages you so use it with caution.- This ability is nice for support; if enemies are hiding, it can drive them out of cover and into an easier line of fire. It can also be used as an attack or a defensive ability.- You can call it inside your shield to temporize and give you few seconds of rest, as enemies will be unable to come inside. Use this time to revive, heal, reload, or run away.- Use this ability to finish off enemies you downed from a distance.- Wattson'sInterception Pyloncan negate a sizable area of the bombardment. Try to use the ability after it's been destroyed.
-### Fortified
-| Perk | 
-Fortified
-Description | Incoming damage reduced by 15%. Not slowed by bullets.
-Cooldown | ?- Info- Tips- Bugs- Take 15% less damage from every attack, except headshots.- Don't overestimate this ability, 15% less damage generally translates to surviving 1 more shot.- The combination of Gibraltar'sGun Shield, aRed Evo Shield, and this perk allows him to tank a lot of damage.- For whatever reason, Gibraltar takes more damage from grenades than normal when he has aBody ShieldorEvo Shield.
-### Legend Upgrades
-Main article:Legend Upgrades
-Legend Upgrades are special perks introduced inSeason 20to all Battle Royale modes. These add upgrades to a Legend's abilities as you level up your Evo Armor. Only one option may be chosen per level-up for a maximum of two perks total.
-Level 2 Upgrades- Big Bruddah:Increase Ult Radius by 20%.- Fast Shotties:Move faster with Shotguns and Auto-Reload on knocks.Level 3 Upgrades- Baby Bubble:SmallerDome of Protection; faster cooldown. Reduces cooldown to 12s.- Bubble Bunker:+4sDome of Protectionlifetime.
-## Lore
-Main article:Gibraltar (character)
-“ | Gibraltar is a gentle giant with a wild side. The son of two SARAS (Search and Rescue Association of Solace) volunteers, he has always been skilled at getting others out of dangerous situations that are common in the Outlands. However, he only began to understand the value of protecting others when he  was a teenager: one day, he and his boyfriend stole his father’s motorcycle, took it on a joyride, and got trapped by a deadly mudslide. His parents saved them, and his father lost an arm in the process. Gibraltar has never forgotten that sacrifice and has devoted his life to helping those in need.The Apex Games didn’t change that, but they changed what it meant. Many of Gibraltar’s friends and colleagues have competed in the Games for extra money, fame, and glory over the years, and some never came home. Gibraltar joined to keep them safe and, for the first time, his skills as a rescuer and his rebellious nature worked together. He’s now become an icon in the Apex Games, putting himself in the line of fire to protect his squad and send his opponents running for cover.He's seen plenty in the Games - and out of them - to challenge his upbeat way of seeing things. Letting the love of his life take the fall for a mistake he made, only to meet him again and try to make amends. Watching his friends throw themselves into dangerous situations over and over again, and seeing ancient rivalries play out in painful ways. A few competitors have even tried to break his spirit for the fun of it. But Gibraltar is like a rock - they can TRY to move him, and he'll just smile and laugh.
-## Cosmetic items
-### Skins
-There are a total of 87 Legend skins for Gibraltar; 33Legendary, 11Epic, 27Rareand 16Common.
-- Legendary- Epic- Rare- Common- Millennium Tusk[Story 1]1,200- Dark Side1,200- Ride or Die1,200- Bunker Buster1,200- Soft PowerNeedsMillenium Tusk- Code RedNeedsBunker Buster- Call to Arms- Monster Mashed- Redwood RaiderNeedsDark Side- Brudda Bear- Shell-ShockedNeedsRide or Die- Gibraltron- Imperial Defender- Blazin' Hot- Born in Blood4,000- Golden God- King of the Sea- Lost Dynasty- Blood and Thunder1,800- Gentle Giant[Story 2]- Ring Leader1,800- Booming System1,800- Glorious CombatantLevel 50- Golden Guardian- Pandamonium- Frozen Magma- Bass Drop- Spirit of Protection- Court Executioner- Fallen Guardian- Bionic Bodyguard- Grave Protector- Thunder ClapThunder ClapNote:Story of Gibraltar:- Daemon Hunter400- Fiber Optics400- Hack the System400- Heat Sync400- Neural Net400- Toxic Touch400- Easy BreezyJune 2022- Chrome Dome- Hollow One- Rune Rock- Hot DropLevel 1- Bloodline60- Green Screen60- Hieroglyph60- Interdimensional60- Molten Core60- Ornamental Nature60- Purgatory60- Scales of Justice60- Sizzle Reel60- Tartan Fleece60- Tight Rope60- Tropic Streak60- Warlord60- Woodland Warfare60- Volcanic60- Founder- Deep BluePreseason- GildedLevel 01- Hardline500- Shield of the North- Arctic PlateSeason 5- Tribal InstinctJune 2020- Decked Out- Gate KeeperLevel 01- Hive MindedLevel 01- Doom and GloomLevel 57- Natural Selection- OriginalDefault- Arctic30- Cardinal30- Clearwater30- Evergreen30- Flamingo30- Hydro30- Limelight30- Mandarin30- Midnight30- Orchid30- Rage30- Sahara30- Skyward30- Vino30- Yellowjacket30
-### Finishers
-Main article:Finisher
-- https://apexlegends.fandom.com/wiki/File:Execution_Gibraltar_Warrior_Spirit.mp4Warrior SpiritDefault
-- https://apexlegends.fandom.com/wiki/File:Execution_Gibraltar_Force_of_Gravity.mp4Force of Gravity1,200
-- https://apexlegends.fandom.com/wiki/File:Execution_Gibraltar_War_Cry.mp4Warcry1,200
-### Badges
-See:Gibraltar/Badges
-### Heirloom Set
-Main article:Heirloom
-Gibraltar's Heirloom Set
-This set was made available during theFight Nightevent. Anyone who completed the Fight Night Collection set will be given this automatically.
-The set contains:
-- A Melee Weapon Skin:War Club
-- A Banner Pose:Like a Rock
-- An Intro Quip:"When this is over, they'll all know the name 'Gibraltar.'"
-### Emotes
-Main article:Emote
-- Haka-1,200
-- Playing With Fire-1,200
-- Kickflip-400
-- Side Hustle- Level 19
-- Gibby With It
-- Tropical Tune
-- Bring It- Default
-### Skydive Emotes
-Main article:Skydive Emote
-https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Gibraltar_Front_Row_Seat.mp4Front Row SeatLevel 40 | https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Gibraltar_Surf%27s_Up.mp4Surf's UpLevel 13 | https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Gibraltar_Good_Vibes.mp4Good VibesLevel 83
-### Banner Frames
-- Legendary- Epic- Rare- Common- APEX Projection1,200- Bricks and Mortars1,200- Burnout Legend1,200- Catch of the Day1,200- Power Posturing1,200- Protective Element1,200- Coat of ArmsLevel 98- Slow and SteadyLevel 12- Brilliant SplitLevel 92- Fight With HonorLevel 58- Queens ClutchLevel 67- Winds of TimeLevel 58- Brudda In ArmsLevel 16- Hi-Tech Temple- Pharaoh's Respite- Protector of the Realm- Cage Match60- Close Combat60- Full Steam60- Megalodon60- Razor Sharp60- Noxic Exposure60- Deep BluePreseason- Founder's Frame- Land of GiantsLevel 81- Hot ChainsLevel 27- ShieldedSeason 5- Island LegaciesJune 2022- Rookie CardDefault- Rage30- Serene30- Tracks30- Velvet30
-### Banner Poses
-- Mythic- Epic- Rare- Common- Like a Rock- Fight Mode400- Good Company400- Just Kidding400- Re-Galvanized- Roll Out- Keeper of the Peace- Big BruddahBig Bruddah- Blocked- Come On60- Fired Up60- Humble60- Intense Focus60- Sky Show60- Teamwork60- Victorious60- IncomingDefault
-### Holosprays
-Main article:Holospray
-- Gibraltar's Got You!1,200
-- Belly Flop400
-- Come 'N Get It400
-- Go Out With A Bang400
-- Takin' Fire400
-- Today Is Our Day400
-- Try And Move Me400
-- I'm Ready, Are You?Level 11
-- You're Next BruddahLevel 59
-- Bee CarefulLevel 66
-- Knock Knock!Level 57
-- Here to Break the Ice
-- Bang, Bang, BruddahLevel 43
-### Music Packs
-Main article:Music Pack
-- Gibraltar Music PackLevel 29
-### Transitions
-Main article:Transition
-- Tip of the SpearLevel 04
-- Rose-Colored LegendsLevel 79
-- AftermatchLevel 47
-- Kings Canyon - Fortune's Favor
-## Voice lines
-See:Gibraltar/Voice lines
-## History
-Patch notes
-August 08, 2023 PatchDefensive Bombardmentto 180s (-90s)Fixed ultimates not triggering if thrown on Ziprail Launcher and Skydive TowersFixed ultimates not cooldown if they’re killed while holding the ultimate grenadeMay 10, 2022 PatchFortifiedNo longer reduces headshot damage.March 09, 2021 PatchDome of Protection: Removed 15% fast healing while inside the dome shield.Gun Shield:Damaging the Gun Shield now counts as damage towardsEvo Shieldand stats.Damage that exceeds the Gun Shield’s 50 HP will now bleed through to damage Gibraltar.Corrected an issue with Gibraltar not getting hit registrations when simultaneously releasing ADS and shooting while it was up.October 06, 2020 PatchDome of Protection: Fixed an issue with the shield looking white in certain conditions.September 03, 2020 PatchDome of Protection: Fixed an issue allowing a player to shoot through the dome while on aEmplaced Minigun "Sheila".August 18, 2020 PatchDefensive Bombardment:Increased cooldown from 3 minutes to 4.5 minutes.Fixed an issue with the airstrike markers sometimes appearing inside buildings.June 23, 2020 PatchDome of Protection: Healing speed while in dome reduced from 25% to 15%.May 27, 2020 PatchDome of Protection: Ability text updated to correctly reflect the new 12s duration.May 12, 2020 PatchDome of Protection: Reduced duration from 18s to 12s.April 07, 2020 PatchGun Shield: Now disabled if silenced byRevenant.March 03, 2020 PatchGun Shield: Health reduced from 75 to 50.Dome of Protection: Fixed an issue with the player being able to place the dome on Crypto’s drone, allowing the dome to be mobile while in use.January 14, 2020 PatchDome of Protection: Gibraltar now revives teammates faster within the dome.October 01, 2019 PatchDome of Protection:Players in the Dome Shield use healing items 25% faster.Increased the throw distance by 60%.Increased cooldown from 20 seconds to 30 seconds.Defensive Bombardment:Decreased cooldown from 4.5 minutes to 3 minutes.Decreased duration from 8 seconds to 6 seconds.Increased throw distance by 36%.August 13, 2019 PatchFixed a bug where activating a healing item would cancel the Ultimate for Legends that need to prime it.July 02, 2019 PatchFortified:Increased damage reduction from 10% to 15%.Now grants immunity to slow effects from weapon fire.Dome of Protection: Increased the duration by 3 seconds (15 to 18).May 20, 2019 PatchGun Shield: Fixed the bug that allowed players to stick objects to the shield. It will now also deflectArc Stars.April 16, 2019 PatchAddedFortifiedPassive Perk which reduces damage taken by 10%.Gun Shield: Health increased from 50 to 75.April 03, 2019 PatchAdjusted the hitbox for Gibraltar to better align with his shape.March 19, 2019 PatchAdjusted the hitbox for Gibraltar to better align with his shape.Defensive Bombardment: Fixed a bug where teammates are not affected by Shell Shock. This was meant to be the same as Bangalore's ultimate.Gun Shield: Patched up the hole we found in the shield.February 19, 2019 PatchFixed issue with hisEpicskins on Xbox One causing crashes.
-## Trivia
-- Gibraltar's dome shield is adapted from theDome Shieldtitan kit in both Titanfall games used to protect newly called titans. His gun shield is similar to theGun Shieldused byLegion.
-- The sped up revive inside hisDome of Protectionuses a custom animation, where he picks his ally with one hand, put them back on their feet and give them a big pat on the back.
-## Gallery
-Videos
-Images
-- Early concept art of Gibraltar.[2]
--
-- Gibraltar working for SARAS.
-- Concept art of Gibraltar.[3]
--
-- Concept art of the Dome of Protection's projector disc.[4]
-- Concept art for Gibraltar'sGibraltronskin.
-- Concept art for Gibraltar'sMonster Mashedskin.[5]
-- Concept art for Gibraltar'sMillennium Tuskskin.[6]
-- Concept art for Gibraltar'sRide or Dieskin.
-- Concept art for Gibraltar'sImperial Defenderskin.[7]
-- Gibraltar's character sheet for "The Endorsement".[8]
-- Concept art for Gibraltar'sGentle Giantskin.[9]
-- Concept art for Gibraltar'sGolden Guardianskin.[10]
-Merchandise
-- A Funko Pop of Gibraltar released in November 2019.
-- Pin depicting theGolden Guardianskin's Gun Shield.
-## See Also
-- Gibraltar (Mobile)
-## References
+## 技能
+### 防护穹顶（Dome of Protection）
+| 战术技能 | Q///
+防护穹顶（Dome of Protection）
+描述 | 阻挡所有进入与射出的攻击。
+冷却时间 | 13 秒  
+- 信息  
+- 互动  
+- 技巧  
+- 已知问题  
+- 投掷一枚大型圆盘，落地后在其周围生成一个防护穹顶。该穹顶半径为 6 米，持续 12 秒。  
+- 穹顶可阻挡所有进入与射出的子弹及投射物，但玩家仍可自由穿行其中。  
+- 直布罗陀在自身穹顶内复活队友的速度提升 33%（从 6 秒缩短至 4.5 秒）。  
+- 穹顶会阻挡视线，因此可遮蔽沃特森（Wattson）的“外围安保（Perimeter Security）”或密客（Crypto）的“神经链接（Neurolink）”等依赖视野的技能。  
+- 自“裂隙突袭（From the Rift）”更新起，该穹顶无法被密客（Crypto）的“无人机 EMP（Drone EMP）”或疯玛吉（Mad Maggie）的“破坏球（Wrecking Ball）”摧毁。  
+- 若敌方小队正朝你和你的队友开火，立即投下穹顶。它将阻挡敌方子弹，为你和队友争取逃脱机会。  
+- 将防护穹顶与“防御轰炸（Defensive Bombardment）”配合使用效果极佳。例如：当你有倒地队友且正遭敌方突袭时，先施放终极技能，再于爆炸中心后方精准投下穹顶——迫使敌人必须穿过穹顶才能接近你。  
+- 防护穹顶并非完全封闭的球形屏障；其实际防护效果受地形影响，可能存在薄弱点。  
+- 子弹无法穿透穹顶，但你在穹顶内仍可能因其他方式（如爆炸溅射、近战、环境伤害等）受到伤害。  
+- 请牢记：穹顶并非绝对安全区，而是为你提供喘息空间——可用于复活队友、重新装填弹药、恢复生命值与护盾。  
+- “穹顶进出舞（Dome shield dancing）”若操作得当，将极为实用：在被射击时反复进出穹顶，既可减少所受伤害，又能诱使敌人浪费弹药；待其换弹间隙，果断还击。  
+- 因穹顶体积庞大且自带发光效果，极易暴露你的位置；敌人常会耐心等待穹顶消失后，再对你小队进行狙击。  
+- 敌人常向穹顶投掷手雷以迫你离开。需对此保持警惕，并谨慎选择站位，以便妥善应对这一情况。  
+- 在“靶场（Firing Range）”中，穹顶有时会穿透高层建筑的地板。尚不确定此现象是否同样出现在“世界边缘（World's Edge）”或“奥林匹斯（Olympus）”地图中。  
+- 该技能图标此前曾于 H.U.D. 的治疗物品栏上方显示“穹顶内快速治疗”提示，但该机制现已移除，而图标仍残留可见。  
+- 若腐蚀（Caustic）的“毒气陷阱（Nox Gas Trap）”部署于穹顶之上，则穹顶消失后，这些陷阱将维持“悬浮”状态并停留在原位。
+
+### 枪盾（Gun Shield）
+| 被动技能 | H// 可关闭  
+枪盾（Gun Shield）  
+描述 | 瞄准时展开一面枪盾，阻挡来袭火力。  
+冷却时间 | ?  
+- 信息  
+- 互动  
+- 技巧  
+- 已知问题  
+- 瞄准时，直布罗陀前方将生成一面能量护盾，拥有 50 点生命值，可保护其上半身免受 incoming 火力伤害，同时允许他向外射击。  
+- 若护盾被击破，需 9 秒冷却时间方可再生。  
+- 瞄准时，护盾剩余生命值可在屏幕左右两侧清晰显示；同时，能量条（共 1–8 格）亦会显示其充能进度。  
+- 护盾被摧毁瞬间所承受的超额伤害，将全额转移至直布罗陀本体。  
+- 该护盾可偏转飞向直布罗陀的“弧星手雷（Arc Star）”。  
+- 希尔（Seer）的“聚焦凝视（Focus of Attention）”可禁用直布罗陀的枪盾。  
+- 护盾开启时可能反而更易暴露直布罗陀藏身位置，因此若你确信自己已充分隐蔽，临时关闭护盾或许更为明智。  
+- 使用枪盾时蹲下，可大幅降低正面被击中的概率。  
+- 在狙击对决中启用枪盾往往能助你占据上风，因此直布罗陀是使用狙击枪的顶尖传奇之一。  
+- 若玩家使用直布罗陀的枪盾瞄准“弧星手雷（Arc Star）”或“破片手雷（Frag Grenade）”，则可完全免疫其全部伤害；且枪盾本身亦不会因此受损。
+
+### 防御轰炸（Defensive Bombardment）
+| 终极技能 | Z/+/+/+  
+防御轰炸（Defensive Bombardment）  
+描述 | 召唤一次集中式迫击炮打击，落点由标记位置决定。  
+充能时间 | 3 分钟  
+- 信息  
+- 互动  
+- 技巧  
+- 投掷一枚烟雾弹，在其周围 24 米范围内标记迫击炮打击区域。  
+- 接下来 6 秒内，爆炸物将持续倾泻至该区域，每次命中造成 40 点伤害，并使目标陷入“震晕（shell-shock）”状态。  
+- 所有玩家均可见该区域标记——红色圆圈清晰标示每发迫击炮弹的落点。  
+- 沃特森（Wattson）的“拦截哨塔（Interception Pylon）”可击落迫击炮弹及初始烟雾弹。  
+- 此技能亦会对使用者自身造成伤害，请谨慎使用。  
+- 此技能支援性极强：若敌人藏匿于掩体后，可借此将其驱赶出掩体，使其暴露于更易命中的射击线中；亦可作为进攻或防守手段灵活运用。  
+- 你可在自身防护穹顶内施放此技能，以暂时阻滞敌人推进，为自己争取数秒喘息时间（敌人无法闯入穹顶）。善用这段时间进行复活、治疗、装填或撤离。  
+- 可利用此技能终结远距离击倒的敌人。  
+- 沃特森（Wattson）的“拦截哨塔（Interception Pylon）”可抵消轰炸区域的相当一部分伤害。建议在哨塔被摧毁后再施放此技能。
+
+### 强化（Fortified）
+| 被动天赋 |   
+强化（Fortified）  
+描述 | 承受的所有伤害降低 15%；不会因子弹命中而减速。  
+冷却时间 | ?  
+- 信息  
+- 技巧  
+- 已知问题  
+- 所有攻击（头部命中除外）所造成的伤害均降低 15%。  
+- 切勿高估此天赋效果：15% 减伤通常仅意味着多承受 1 发子弹而不倒。  
+- 直布罗陀的“枪盾（Gun Shield）”、红色进化护盾（Red Evo Shield）与此天赋三者叠加，可使其承受海量伤害。  
+- 出于未知原因，当直布罗陀装备“躯干护盾（Body Shield）”或“进化护盾（Evo Shield）”时，其遭受手雷伤害会高于正常水平。
+
+### 传奇升级（Legend Upgrades）
+主条目：传奇升级（Legend Upgrades）  
+传奇升级是第 20 赛季起为所有大逃杀模式新增的特殊天赋。随着你的进化护甲（Evo Armor）等级提升，传奇技能将获得相应强化。每次升级仅可选择一项天赋，总计最多选择两项。
+
+2 级升级  
+- 大块头（Big Bruddah）：终极技能作用半径提升 20%。  
+- 快速霰弹（Fast Shotties）：使用霰弹枪时移动速度提升；击倒敌人后自动装填。
+
+3 级升级  
+- 小型穹顶（Baby Bubble）：“防护穹顶（Dome of Protection）”尺寸缩小；冷却时间缩短至 12 秒。  
+- 穹顶堡垒（Bubble Bunker）：“防护穹顶（Dome of Protection）”持续时间延长 +4 秒。

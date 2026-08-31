@@ -25,6 +25,9 @@ public class TaskOutbox {
 
     private String eventType;
 
+    /**
+     * 任务执行代次。字段名为兼容现有表结构保留 business_retry_no。
+     */
     private Integer businessRetryNo;
 
     private String payload;

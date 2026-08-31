@@ -3,13 +3,10 @@ package com.videoai.api.config;
 import com.videoai.api.interceptor.AuthInterceptor;
 import com.videoai.api.interceptor.RateLimitInterceptor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.List;
 
 /**
  * Web MVC配置
@@ -30,9 +27,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final AuthInterceptor authInterceptor;
     private final RateLimitInterceptor rateLimitInterceptor;
-
-    @Value("${videoai.cors.allowed-origins:http://localhost:3000,http://localhost:8080}")
-    private List<String> allowedOrigins;
+    private final CorsProperties corsProperties;
 
     /**
      * 注册拦截器
@@ -43,6 +38,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // 1. 全局限流（最先执行）
             registry.addInterceptor(rateLimitInterceptor)
                 .addPathPatterns("/**")
+                // 该路径只在 loadtest profile 存在，并由独立压测 Token 保护。
+                .excludePathPatterns("/load-test/**")
                 .order(1);
 
         // 2. 认证拦截器
@@ -62,6 +59,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/auth/oauth/**",
                         // 测试接口（仅 dev 环境）
                         "/test/user/**",
+                        // 压测接口（仅 loadtest 环境，使用独立 Token）
+                        "/load-test/**",
                         // 公开接口
                         "/api/public/**"
                 )
@@ -75,7 +74,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(allowedOrigins.toArray(new String[0]))
+                .allowedOrigins(corsProperties.getAllowedOrigins().toArray(new String[0]))
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)

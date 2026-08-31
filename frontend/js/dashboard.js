@@ -123,7 +123,7 @@ const Dashboard = {
           </div>
           <div class="task-card__meta">
             <span class="badge badge--${statusClass}">${statusText}</span>
-            ${task.retryCount > 0 ? `<span class="text-muted" style="margin-left:8px">重试 ${task.retryCount}/${task.maxRetry}</span>` : ''}
+            ${task.retryCount > 0 ? `<span class="text-muted" style="margin-left:8px">已重新分析 ${task.retryCount} 次</span>` : ''}
           </div>
         </div>
         <div class="task-card__progress">
@@ -172,7 +172,7 @@ const Dashboard = {
   },
 
   /**
-   * 重试任务
+   * 用户手动重新分析失败任务
    */
   async confirmRetry(taskId) {
     if (!confirm('确定要重新分析此任务吗？')) return;

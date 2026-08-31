@@ -1,14 +1,18 @@
 # Apex Legends Wiki RAG 数据集
 
+> 当前实验范围已收敛为 PC 英雄玩法知识。`data/legends` 只保留 28 位英雄的玩法与
+> 技能信息，不包含 Mobile、背景故事、皮肤和通用说明。正文统一为简体中文；英文
+> 规范名只保留在元数据和技能名括注中，用于实体对齐与溯源。
+
 基于 [Apex Legends Wiki](https://apexlegends.fandom.com/wiki/Apex_Legends_Wiki)（Fandom MediaWiki）通过 API 采集，用于 RAG（检索增强生成）场景。
 
 ## 数据规模
 
 | 项目 | 值 |
 |------|------|
-| 页面总数 | 569 |
-| 总字符数 | **3,689,476** |
-| 总大小 | ~4.6 MB（Markdown）/ ~3.7 MB（JSONL） |
+| PC 英雄玩法页 | 28 |
+| PC 英雄目标数 | 28 |
+| 语料语言 | 简体中文（zh-CN） |
 | 采集时间 | 2026-07-04 |
 | 数据来源 | `https://apexlegends.fandom.com` |
 
@@ -19,27 +23,24 @@ rag-data/
 ├── README.md                    <- 本文档
 ├── scraper.py                   <- 采集脚本（可重新运行更新数据）
 └── data/
-    ├── legends/                 <- 91 个文件，英雄/角色
+    ├── legends/                 <- PC 英雄玩法页，不含 Mobile/Lore
     ├── weapons/                 <- 82 个文件，武器
     ├── maps/                    <- 64 个文件，地图/点位
-    ├── lore/                    <- 62 个文件，剧情/故事
     ├── events/                  <- 129 个文件，活动/赛季
     ├── game_modes/              <- 37 个文件，游戏模式
     ├── gameplay/                <- 24 个文件，机制/装备
     ├── cosmetics/               <- 21 个文件，装扮/皮肤
     ├── general/                 <- 59 个文件，其他
-    ├── rag_corpus.jsonl         <- JSONL 汇总（导入 RAG）
-    └── index.json               <- 全量元数据索引
+    └── 其他主题目录              <- 当前保留但默认不导入
 ```
 
 ## 各主题详情
 
 | 主题 | 页面数 | 字符数 | 内容范围 |
 |------|--------|--------|----------|
-| **legends** | 91 | 644,670 | 可玩英雄、NPC、角色技能、背景故事 |
+| **legends** | 28 | 约 10.9 万 | PC 可玩英雄的玩法概览与技能 |
 | **weapons** | 82 | 538,237 | 突击步枪、冲锋枪、霰弹枪、狙击枪、手枪、配件 |
 | **maps** | 64 | 245,211 | Kings Canyon、World's Edge、Olympus 等地图及 POI |
-| **lore** | 62 | 945,795 | 角色传记、剧情章节、动画短片、漫画 |
 | **events** | 129 | 327,007 | 收集活动、主题活动、赛季通行证 |
 | **game_modes** | 37 | 132,037 | 大逃杀、竞技场、双排、三排、Mixtape |
 | **gameplay** | 24 | 173,576 | 游戏机制、装备、护甲、Hop-Up、弹药 |
@@ -54,60 +55,42 @@ rag-data/
 
 ```markdown
 ---
-title: "Wraith"
+title: "恶灵"
+title_en: "Wraith"
 topic: legends
-categories: ["Apex Legends", "Apex Legends Legends", "Female Legends", ...]
+language: zh-CN
+categories: ["Apex英雄", "PC端", "玩法资料"]
 source: https://apexlegends.fandom.com/wiki/Wraith
 ---
 
-# Wraith
+# 恶灵（Wraith）
 
-Wraith is a Skirmisher Legend. She is unlocked by default.
-...
-```
-
-### JSONL 文件（rag_corpus.jsonl）
-
-每行一个 JSON 对象，可直接导入 LangChain、LlamaIndex 等 RAG 框架：
-
-```json
-{
-  "title": "Wraith",
-  "topic": "legends",
-  "categories": ["Apex Legends", "Apex Legends Legends", ...],
-  "text": "Wraith is a Skirmisher Legend...",
-  "source_url": "https://apexlegends.fandom.com/wiki/Wraith"
-}
-```
-
-### 索引文件（index.json）
-
-全量元数据索引，包含每个页面的标题、主题、分类、字符数、文件路径：
-
-```json
-[{
-  "title": "Wraith",
-  "topic": "legends",
-  "categories": ["Apex Legends", "Apex Legends Legends", ...],
-  "text_length": 21332,
-  "file": "data/legends/Wraith.md"
-}, ...]
+## 技能
+### 进入虚空（Into the Void）
+描述 | 通过安全的虚空空间快速位移，规避所有伤害。
 ```
 
 ## 使用方式
 
-### 导入 RAG 框架
+### 整理与翻译
 
-```python
-# LangChain
-from langchain_community.document_loaders import JSONLoader
-loader = JSONLoader("data/rag_corpus.jsonl", ...)
-docs = loader.load()
+```powershell
+# 从原始抓取结果中只保留 PC 英雄玩法信息
+python scripts/curate_pc_legend_data.py --apply
 
-# LlamaIndex
-from llama_index.core import SimpleDirectoryReader
-docs = SimpleDirectoryReader("data/legends/").load_data()
+# 使用百炼文本模型转换为简体中文；已完成文件会自动跳过
+$env:DASHSCOPE_API_KEY = "your-key"
+python scripts/translate_legend_data_zh.py
+
+# 旧数据曾缺失玩法概览时，从原始 Git 版本确定性恢复
+python scripts/restore_legend_gameplay_zh.py --apply
+
+# 检查 28 张名单和 zh-CN 门禁，不写数据库
+python scripts/import_rag_data.py --dry-run
 ```
+
+`import_rag_data.py` 默认只读取 `data/legends`。名单不完整、混入非 PC 英雄或任一
+文件未声明 `language: zh-CN` 时，导入会直接拒绝执行。
 
 ### 重新采集
 

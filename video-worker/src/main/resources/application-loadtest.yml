@@ -1,0 +1,43 @@
+# 压测配置必须与 dev profile 一起启用：--spring.profiles.active=dev,loadtest
+ai:
+  # 禁止真实大模型调用，避免产生 Token 费用。
+  provider: mock
+  mock:
+    # 600 倍缩时：2~4 分钟 -> 0.2~0.4 秒，8~12 分钟 -> 0.8~1.2 秒，
+    # 24~30 分钟 -> 2.4~3 秒。
+    short-ratio: ${LOAD_TEST_AI_SHORT_RATIO:60}
+    medium-ratio: ${LOAD_TEST_AI_MEDIUM_RATIO:30}
+    short-min-ms: ${LOAD_TEST_AI_SHORT_MIN_MS:200}
+    short-max-ms: ${LOAD_TEST_AI_SHORT_MAX_MS:400}
+    medium-min-ms: ${LOAD_TEST_AI_MEDIUM_MIN_MS:800}
+    medium-max-ms: ${LOAD_TEST_AI_MEDIUM_MAX_MS:1200}
+    long-min-ms: ${LOAD_TEST_AI_LONG_MIN_MS:2400}
+    long-max-ms: ${LOAD_TEST_AI_LONG_MAX_MS:3000}
+    presigned-url-expire-hours: 1
+
+spring:
+  kafka:
+    consumer:
+      max-poll-records: ${KAFKA_CONSUMER_MAX_POLL_RECORDS:1}
+      properties:
+        # 生产配置 40 分钟按 600 倍缩时后约为 4 秒。
+        "[max.poll.interval.ms]": ${KAFKA_CONSUMER_MAX_POLL_INTERVAL_MS:4000}
+
+videoai:
+  # 压测异步任务链路时关闭 RAG 外部 Embedding，防止产生额外模型调用。
+  rag:
+    enabled: false
+
+  outbox:
+    dispatch-batch-size: ${VIDEOAI_OUTBOX_DISPATCH_BATCH_SIZE:50}
+    dispatch-interval-ms: ${VIDEOAI_OUTBOX_DISPATCH_INTERVAL_MS:1000}
+    recovery-interval-ms: ${VIDEOAI_OUTBOX_RECOVERY_INTERVAL_MS:60000}
+    callback-threads: ${VIDEOAI_OUTBOX_CALLBACK_THREADS:10}
+    send-timeout-ms: ${VIDEOAI_OUTBOX_SEND_TIMEOUT_MS:10000}
+
+  worker:
+    concurrency: ${VIDEOAI_WORKER_CONCURRENCY:3}
+
+logging:
+  level:
+    com.videoai.infra.mysql.mapper: info

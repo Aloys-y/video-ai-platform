@@ -1,0 +1,12 @@
+transformers==4.57.1
+accelerate==1.7.0
+peft==0.17.1
+bitsandbytes==0.48.0
+qwen-vl-utils==0.0.14
+datasets==3.6.0
+av==12.3.0
+safetensors==0.6.2
+tensorboard==2.20.0
+opencv-python-headless==4.12.0.88
+jsonschema==4.25.1
+PyYAML==6.0.2

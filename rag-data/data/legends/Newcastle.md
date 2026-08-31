@@ -1,142 +1,128 @@
 ---
-title: "Newcastle"
+title: "纽卡斯尔"
+title_en: "Newcastle"
 topic: legends
-categories: ["Apex Legends", "Apex Legends Legends", "Legends", "Locked legends", "Male Legends", "Pages with broken file links"]
+language: zh-CN
+categories: ["Apex英雄", "PC端", "玩法资料"]
 source: https://apexlegends.fandom.com/wiki/Newcastle
 ---
 
-# Newcastle
+# 纽卡斯尔（Newcastle）
 
-“ | Defender of the weak, the innocent, and-- Who am I kidding? I've got everyone's back.
-Newcastle
+## 玩法概览
+职业 | 支援型
+战术技能 | 移动护盾（Mobile Shield）
+被动技能 | 抢救伤员（Retrieve the Wounded）
+终极技能 | 城堡之墙（Castle Wall）
+被动特性 | 强化躯体（Fortified）
 
-Heroic Defender
-Details
-Real Name | Jackson Williams
-Alias | Lamont Craig[1]
-Gender | Male
-Age | 41
-Home World | Gridiron
-Gameplay
-Class | Support
-Tactical Ability | Mobile Shield
-Passive Ability | Retrieve the Wounded
-Ultimate Ability | Castle Wall
-Passive Perk | Fortified
-Real-world Info
-Voice Actor | Gabe Kunda[2]
-Newcastleis aSupportLegend. He was introduced inSeason 13and is locked from the base game. He can be unlocked using digital currency: either12,000 or750.
-## Abilities
-### Mobile Shield
-| Tactical | Q///
-Mobile Shield
-Description | Throw a drone that projects a moveable energy shield.
-Cooldown | 15 seconds- Info- Interactions- Tips- Throws a drone that projects a large shield in front of it.Maximum throw distance is 25m; it will then travel to the reticleIf the drone hits an enemy, it will deal 20 damage.- Lasts 20 seconds unless destroyed. A loud hum can be heard when the drone is about to fade out.- Press the tactical button again to target a new location for it to float to, without changing shield's orientationMobile Shield's movement speed is equivalent to double the crouch speed with weapons out (or walk ADS with a shotgun). When it falls off an edge, it falls slowly at the rate of 1 m/sDoing so within 5m radius of the drone, and turning up to 90 degrees (oriented relative to the drone), will also reorients the front toward the marker on the ground, in addition to move the drone to the marker- The shield consists of an upper half and lower half. Each half has 500 health, and can be destroyed separately.- Newcastle and his squadmates cannot damage a friendly shield, nor shoot through it.- Cuts off line of sight forWattson'sPerimeter Securityfences, deactivating them.- Due to the fact that the shield is slow in movement, consider the general vincinity of where you will fight.- Due to above, consider its overall cooldown time as 35 seconds instead.- The Mobile shield's effective range is anywhere you have line of sight.Deployment provide users a safe space to confirm enemy's precise location- If your fighting area is small, consider throwing the shield close to you (so it will deploy soon), then redirect it to your destination.- As the shield works from either faces, when escaping from a fight with enemies firing from behind, throw it in front of you close to your feet, and then redirect toward your running direction.
-### Retrieve the Wounded
-| Passive | 
-Retrieve the Wounded
-Description | Drag downed allies as you revive and protect them with your Revive Shield.
-Cooldown | ?- Info- Interactions- Arenas- Tips- Player does not have to hold down the "use" button to perform the revive.Pressing "use" once will start the revive process and pressing "use" again will cancel it.- The health of the Revive Shield is dependent on the level of Newcastle'sKnockdown Shield:Level 1: 200Level 2: 300Level 3/Level 4: 500- The Knockdown Shield starts to regenerate after 1 secondGenerate 1HP of shield every ~0.25 seconds.  (1 HP per tick)- WhenSeer'sFocus of Attentionhits the reviving player, it cancels the revive.- If Newcastle is silenced byFocus of Attention, then he can no longer shield-and-drag teammates, and instead will manually revive teammates.- Cannot utilize Wraith's portal while reviving- Conducting the following actions while reviving will automatically disengage the revive:FallingUsing Gravity CannonUsingOctane'sLaunch PadUsingHorizon'sGravity Lift- Even with the Gold Knockdown Shield purchased, the durability of the Revive Shield remains at 200.- Since you do not need to hold down the "use" button, you have extra finger dexterity to move around, and even redirect your mobile shield if you had it out.That being said, you do not need to move while reviving.- Always look at the surronding, and reorient your shield as needed - both of them, as you can also use and move your mobile shield.- Note that using the passive to revive has a loud audio cue, in addition to being visibleA way to stealth the revive is to drop the knockdown shield before using it; however, the sound of revive still remain.- While you cannot use Wraith's portal while reviving, you can still drag your teammate. Thus it is still viable to drag and "revive" your teammate to a wraith's portal for safety.
-### Castle Wall
-| Ultimate | Z/+/+/+
-Castle Wall
-Description | Leap to an ally or target area and slam down, creating a fortified stronghold.
-Charge time | 2 minutes- Info- Interactions- Tips- Target an area, which Newcastle will leap to. Upon landing, a large wall will be constructed facing the direction Newcastle is looking.Leaping has a maximum range of 35 meters.Can choose to target a squadmate or squadmate'sDeath Boxto land on, which extends the range to 75 meters.You can turn around mid-leap to orient the wall differently.Knockback will occur when landed near the enemy.- Maximum 1 wall; the old wall is taken down when Newcastle lands and makes a wall.- The wall is made of 9 segments, each with 750 health.The segments in the middle and the ends are much larger than the other six.Newcastle can take down segments of his wall by pressingH//.Each part of the wall can be destroyed with 2 melee attacks.The short segments, when destroyed by attacks, will also bring down the other short segments near them- The outward facing side is electrified for 30 seconds, stunning and dealing 20 damage to enemies who attempt to climb over it.- If Newcastle uses the ultimate, but for some reason does not land and make the wall (including being downed), 70% of the charge is refunded.- As of Season 21, When the wall is electrified, projectiles coming in from the front of the wall will be intercepted like a Wattson Pylon. Ordinance used by team from behind the wall will not be intercepted and will work as intended.- Castle Wall is susceptible to friendly damage from both Newcastle and his allies.- If Newcastle targets a squadmate to land on, the flight path will adjust to account for their movement, even if they use an ability likeBurglar's Best Friendwhich teleports them. However, if the squadmate teleports more than 75 meters away, the jump is simply canceled.- The Castle Wall can destroyConduit'sFile:Energy Barricade Mines.svgEnergy Barricade Minesif constructed on top.- You don't need direct line of sight to target a squadmate to land on. As long as there's a viable flight path, you can jump to them.You can also target squadmates who are far above you.
-### Fortified
-| Perk | 
-Fortified
-Description | Incoming damage reduced by 15%. Not slowed by bullets.
-Cooldown | ?- Info- Tips- Take 15% less damage from every attack, except headshots.- Don't overestimate this ability, 15% less generally translates to surviving 1 more shot.
-### Legend Upgrades
-Main article:Legend Upgrades
-Legend Upgrades are special perks introduced inSeason 20to all Battle Royale modes. These add upgrades to a Legend's abilities as you level up your Evo Armor. Only one option may be chosen per level-up for a maximum of two perks total.
-Level 2 Upgrades- Thick Shield:Mobile Shield+250HP.- Mobile Support:IncreaseMobile Shieldspeed.Level 3 Upgrades- Miracle Worker:Revives allies with HP regen.- Stronghold:IncreaseCastle WallHP and energized duration.
-## Lore
-Main article:Newcastle (character)
-“ | Lamont Craig wasn’t like other dads in the neighborhood. Sure, he dropped the kids off at school and acted out multiple voices every night for Story Time with his toddler. But Lamont had secrets—the first being his real name, Jackson Williams.A top soldier for the IMC, Jackson went AWOL when he ignored direct orders to fight what he believed was a losing battle. He knew he would never be safe from the remnants of the IMC--and neither would his sister, Anita, as long as she was with him. So when he was presumed dead in a ship explosion, he used that opportunity to leave his life behind, even if it meant leaving her behind too.Years later, "Lamont" moved to an idyllic little town called Harris Valley, where he fell in love and got married. Harris Valley was so peaceful that they didn’t need law enforcement. All they needed was their knight, Newcastle. But the knight had secrets of his own: Newcastle had sold off the town to pay off his debts, and thugs from a gang called the Forgotten Families came to collect. They killed Newcastle when he couldn’t pay, unaware that Lamont was watching. He defeated them using his military acumen, but the Forgotten Families had plenty of reinforcements.So Lamont came up with a dangerous solution. With Newcastle’s armor, he could take on his identity and do what Newcastle could not: get into the Apex Games. With prize money like that, he could definitely pay off the debts. But not without the risk of being discovered by his little sister, the Apex Legend, Bangalore.
-## Cosmetic items
-### Skins
-There are a total of 55 Legend skins for Newcastle; 1Iconic, 10Legendary, 11Epic, 17Rare, and 16Common.
-- Iconic- Legendary- Epic- Rare- Common- Sector 7 Savior- Complex Rebirth1,200- Green Mosaic1,200- Starbound Savior1,200- Valiant Defender1,200- Heroic Command3,000[story 1]- Mane Event- Cosmic Protector[story 1]- Shoreline Savior- Chaperone- AntiheroAntiheroStory of Newcastle:Note:- Daemon Hunter400- Fiber Optics400- Hack the System400- Heat Sync400- User Friendly400- FirewallLevel 1- Stone SkiesMay 2022- Jade Fortress- Griffin Guard- Gilded Guardian- Gold Guard Level 1Gold GuardLevel 1- Alpha Royal60- Arachnophobia60- Bloodline60- Dire Wolf60- Disruptor60- Formal Finery60- Labyrinth60- Prowess60- Racing Stripes60- Snakeskin60- Super Rad60- Unholy Alliance60- Volcanic60- Wallflower60- Wishbone60- Golden GuardOnly available in theSaviors Pack- Temple Guard Season 19Temple GuardSeason 19- OriginalDefault- Amethyst30- Arctic30- Cardinal30- Clearwater30- Evergreen30- Flamingo30- Hydro30- Limelight30- Mandarin30- Midnight30- Orchid30- Rage30- Sahara30- Skyward30- Yellowjacket30
-### Finishers
-- https://apexlegends.fandom.com/wiki/File:Execution_Newcastle_Crushing_It.mp4Crushing ItDefault
-- https://apexlegends.fandom.com/wiki/File:Execution_Newcastle_Franchise_Player.mp4Franchise Player1,200
-- https://apexlegends.fandom.com/wiki/File:Execution_Newcastle_Exclusive_Finisher_on_Bangalore.mp4(Unnamed finisher)Default
-### Badges
-See:Newcastle/Badges
-### Emotes
-- Ground Pound-1,200
-- Rhythm Machine-600
-- Working the Angles
-- Keeping It Loose
-- Standing Guard- Default
-### Skydive Emotes
-- https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Newcastle_One,_Two,_Three.mp4One, Two, ThreeLevel 2
-- https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Newcastle_Air_Defense.mp4Air DefenseLevel 91
-### Banner Frames
-- Legendary- Epic- Rare- Common- Broken Promises1,200- Golden Age1,200- Last Stand1,200- Stacked Defense1,200- To Family1,200- The Hot SeatLevel 42- Boogie DownLevel 97- Cold Specimen- Day At The Office- Corrupted Conscience- Divine BridgeLevel 43- Abandoned Past60- Astonishing Tale60- Guardian's Mark60- Strapped In60- The Great Guardian60- CellularMay 2022- Scarab DreamsSeason 19- Protect and GuardDefault- Castle Call30- First Deploy30- Hidden Hero30- Unbreakable30
-### Banner Poses
-- Epic- Rare- Common- Apex Assemble400- Gimme Some400- Lean on Me400- Stylish Arrival400- Ultimate Throwdown400- Brace for Impact60- Family Matters60- Heavy Crown60- Heavy Toll60- I See You!60- Play for the Endzone60- Profile Style60- Rescue Me60- Respect60- No SweatDefault
-### Holosprays
-Main article:Holospray
-- Wham!1,200
-- Defense!400
-- Flex400
-- Got Your Back400
-- Hometown Hero400
-- I Bring Justice And Wins!400
-- Need A Protector?400
-- No Matter What, I'll Be Here400
-- Run It400
-- Time To School Y'all400
-- Duty. Fidelity. Honor.3,000
-- You Can't Choose Your FamilyLevel 43
-- Beast Mode
-- World's Best DefenderLevel 41
-### Music Packs
-Main article:Music Pack
-- NewcastleLevel 77
-### Transitions
-Main article:Transition
-- Selfish MistakesLevel 67
-## Voice lines
-See:Newcastle/Voice Lines
-## History
-Patch notes
-January 09, 2024 PatchCastle Wall: impact will now destroy Conduit’sEnergy Barricademines.Mobile Shield: can now be destroyed by enemyCryptoDrone EMP.Delayed balance adjustments from the season 19.0 patch are now fully integrated.August 09, 2022 PatchRetrieve the WoundedIncreased move speed during revive by 25%.Reduced turn slow while reviving by 50%.Increased White Knockdown shield health from 150 -> 200.Increase Blue Knockdown shield health from 250 -> 300.Mobile ShieldIncreased hp from 350 -> 500Doubled max movement speed.Castle WallAdded turn slow to electrical barrier effects and increased the severity of the slow effect to movement.May 10, 2022 PatchIntroduced.
-## Development
-- According to former writer Tom Casiello, Jackson was originally intended to be a Legend known as Downfall, who was an anarchist and a protester, had bomb-throwing abilities, and would have came out in 2020 or 2021. This also would have put him in direct conflict with his pro-military sister,Bangalore. However, releasing such a Legend at the height of Black Lives Matter protests would have been disastrous and the idea was abandoned. Furthermore, Downfall got shelved when his designer leftApex Legends.[3]
-- Newcastle's modern kit is based on a prototype Legend named Axiom. This character was designed based on a "defensive push," containing the mobile shield but having more of a "breach-and-clear" playstyle. Axiom was scrapped out of belief that their kit would be too selfish.[4]
-## Teasers
-- Jackson Williams was introduced early on as a background character, being the missing brother of Bangalore.
-- Newcastle was first mentioned in aSeason 4teaser.
-- On April 22, 2022, the Apex Legends Twitter account posted an image of Bangalore reviewing Jackson's autopsy report.[5]
-- On April 23, 2022, the Apex Legends Twitter account posted an image of Bangalore viewing her empty dropship quarters, preparing to return to Gridiron.[6]
-- On April 24, 2022, the Apex Legends Twitter account posted an image of various Legends preparing for Bangalore's farewell party.[7]
-- On April 25, 2022, theSeason 13 Launch Trailerwas released, which confirm Jackson being Newcastle, the Legend for Season 13.
-- On April 27, 2022, the Apex Legends Twitter account posted an image of Newcastle's workbench.
-- On April 28, 2022, "Hero" was released.
-- On May 2, 2022, theSeason 13 Gameplay Trailerwas released.
-- On May 5, 2022, Newcastle'sCharacter Trailerwas released.
-### Datamined and Leaked Data
-Newcastle was never heard from again until a leak that happened duringSeason 12, where he appears along the other Legends in the Legends menu. A massive leak on March 22, 2022 showed Newcastle's full model, abilities, and some of his cosmetic items. The only difference between leaked version and the release version is the Mobile Shield is unbreakable in the leaked version.
-DuringThe Williams Sendoff, A line in the Korean Subtitle utilized "Newcastle" in places where "Jackson" would have been for other language.[8]
-## Trivia
-- Newcastle's Mobile Shield is similar to the shields used by somegruntsinTitanfall 2's campaign, as well as to theHard Coverboost; both use a similar forehand throw animation.
-- Newcastle is the only Legend with afinisherthat is exclusively used against a particular legend, that beingBangalore.This also makes Newcastle the only Legend with two default finishers.
-- A previous version of his official bio on the EA webpage implied the main reason he left the IMC is due to epiphany of IMC's war crimes, emphasizing on him being on the side of "bad guys"[9]; this was brought up by some players[10]and was eventually corrected to him going AWOL, disobeying orders in order to save the crew on his ship, on the English version of the webpage. Other language's version of Jackson Bios, such as those in Chinese, retain the translation of the old write up.[11]
-## Gallery
-- Official Newcastle artwork
-- Newcastle with his helmet off.
-- Jackson Williams alive in 2727.
-- Jackson and Bangalore share a Red Velvet cake on Hestia II.
-- Jackson's alleged autopsy.
-- Newcastle confronting the beast on Storm point.
-- Concept art of theStarbound Saviorskin.
-- Concept art of theValiant Defenderskin.[12]
-- Concept art for theMane Eventskin.[13]
-- Concept art for theShoreline Saviorskin.[14]
-- Concept art of Newcastle's appearance inHero.
-- Concept art by Cristina Ferez.[15]
-Videos
-## References
+## 技能
+### 移动护盾（Mobile Shield）
+| 战术技能 | Q///
+移动护盾（Mobile Shield）
+描述 | 投掷一架无人机，投射一面可移动的能量护盾。
+冷却时间 | 15 秒  
+- 信息  
+- 互动说明  
+- 使用技巧  
+- 投掷一架无人机，使其在前方展开一面大型护盾。  
+最大投掷距离为 25 米；随后它将自动飞向准星所指位置。  
+若无人机击中敌人，将造成 20 点伤害。  
+- 护盾持续 20 秒，除非被摧毁。护盾即将消失时会发出明显的嗡鸣声。  
+- 再次按下战术技能键，可重新指定无人机漂浮至新位置，且不改变护盾朝向。  
+移动护盾的移动速度等于持武器蹲伏移速的两倍（或持霰弹枪瞄准射击时的步行移速）。  
+当其从边缘坠落时，将以 1 米/秒的速度缓慢下落。  
+- 在无人机 5 米范围内，并朝其方向转动最多 90 度（以无人机为参照），除将无人机移向地面标记点外，亦会使护盾正面转向该标记点。  
+- 护盾由上半部与下半部组成，每部分各有 500 点生命值，可被分别摧毁。  
+- 纽卡斯尔及其小队成员无法对友方护盾造成伤害，也无法穿透护盾射击。  
+- 护盾会遮挡沃特森（Wattson）的“外围安全（Perimeter Security）”电网，使其失效。  
+- 由于护盾移动速度较慢，请预判你将要交战的大致区域。  
+- 基于上述原因，应将该技能的整体冷却时间视作 35 秒。  
+- 移动护盾的有效部署范围即为你拥有视野的任意位置。  
+部署后可为使用者提供安全空间，以确认敌人的精确位置。  
+- 若交战区域较小，可考虑将护盾投掷在靠近自身的位置（以便快速展开），再将其重定向至目标位置。  
+- 由于护盾双面均有效，在被后方敌人火力压制而撤退时，可将护盾投掷于自己脚前，再将其重定向至你的奔跑方向。
+
+### 抢救伤员（Retrieve the Wounded）
+| 被动技能 |  
+抢救伤员（Retrieve the Wounded）  
+描述 | 在扶起倒地队友的同时拖拽他们，并用“复苏护盾（Revive Shield）”保护他们。  
+冷却时间 | ？  
+- 信息  
+- 互动说明  
+- 场景适配  
+- 使用技巧  
+- 玩家无需长按“使用（Use）”键即可执行扶起操作。  
+单次按下“使用”键即可启动扶起流程；再次按下则取消扶起。  
+- “复苏护盾”的生命值取决于纽卡斯尔“击倒护盾（Knockdown Shield）”的等级：  
+等级 1：200  
+等级 2：300  
+等级 3 / 等级 4：500  
+- “击倒护盾”在倒地 1 秒后开始再生，每约 0.25 秒恢复 1 点护盾值（每次刷新恢复 1 HP）。  
+- 当希尔（Seer）的“聚光凝视（Focus of Attention）”命中正在扶起队友的玩家时，扶起动作将被中断。  
+- 若纽卡斯尔被“聚光凝视”沉默，则他将无法边护盾边拖拽队友，只能手动扶起队友。  
+- 扶起过程中无法使用恶灵（Wraith）的传送门。  
+- 扶起过程中执行以下任一操作将自动中止扶起：  
+坠落  
+使用重力炮（Gravity Cannon）  
+使用动力小子（Octane）的跳板（Launch Pad）  
+使用地平线（Horizon）的重力升降（Gravity Lift）  
+- 即使已购买金色“击倒护盾”，“复苏护盾”的耐久度仍固定为 200。  
+- 由于无需长按“使用”键，你可腾出手指自由移动，甚至在已部署移动护盾的情况下对其重定向。  
+话虽如此，扶起过程中并不强制要求移动。  
+- 务必时刻观察四周环境，并根据需要重新调整两个护盾的朝向——你仍可正常使用并移动移动护盾。  
+- 注意：使用该被动技能扶起队友时会发出明显音效，且动作本身也十分显眼。  
+一种隐蔽扶起的方法是先放下“击倒护盾”再执行扶起；但扶起音效依然存在。  
+- 尽管扶起过程中无法使用恶灵（Wraith）的传送门，你仍可拖拽队友。因此，将队友拖至恶灵传送门处进行“扶起”以确保安全，仍是可行策略。
+
+### 城堡之墙（Castle Wall）
+| 终极技能 | Z/+/+/+  
+城堡之墙（Castle Wall）  
+描述 | 向一名队友或目标区域跃进并猛击地面，构筑一座坚固的堡垒。  
+充能时间 | 2 分钟  
+- 信息  
+- 互动说明  
+- 使用技巧  
+- 选定一个区域，纽卡斯尔将跃向该处。落地时，将沿其面向方向构筑一堵大型墙体。  
+跳跃最大距离为 35 米。  
+可选择以一名队友或其“死亡盒子（Death Box）”为目标进行着陆，此时跳跃距离上限提升至 75 米。  
+你可在空中转身，以调整墙体朝向。  
+落地点附近若有敌人，将触发击退效果。  
+- 最多同时存在 1 面墙体；当纽卡斯尔再次落地构筑新墙时，旧墙将被移除。  
+- 墙体由 9 个区段构成，每个区段拥有 750 点生命值。  
+中间区段与两端区段明显大于其余六个区段。  
+纽卡斯尔可通过按下 H// 键拆除自己墙体的任意区段。  
+每个区段均可通过 2 次近战攻击摧毁。  
+短区段若遭攻击摧毁，亦会连带摧毁邻近的其他短区段。  
+- 墙体朝外一侧将在 30 秒内通电，任何试图攀越的敌人都将被眩晕并受到 20 点伤害。  
+- 若纽卡斯尔释放终极技能，却因某些原因未能成功落地建墙（包括被击倒），将返还 70% 的充能。  
+- 自第 21 赛季起，当墙体通电时，来自墙体正面的弹道将被拦截，效果类似沃特森（Wattson）的“能量塔（Pylon）”。  
+但队友从墙体后方投掷的投掷物不会被拦截，功能正常。  
+- “城堡之墙”会受到纽卡斯尔及其队友的友军伤害。  
+- 若纽卡斯尔以队友为目标进行跳跃，飞行路径将实时追踪该队友的移动，即使其使用了如“窃贼挚友（Burglar's Best Friend）”等传送类技能亦然。  
+但若该队友传送距离超过 75 米，则跳跃将直接取消。  
+- “城堡之墙”若构筑于导线管（Conduit）的“能量路障地雷（Energy Barricade Mines）”之上，可将其摧毁。  
+- 你无需拥有对队友的直接视野即可将其设为目标。只要存在可行的飞行路径，即可跃向该队友。  
+你亦可选择位于你正上方远处的队友作为目标。
+
+### 强化躯体（Fortified）
+| 天赋技能 |  
+强化躯体（Fortified）  
+描述 | 承受的伤害降低 15%；不会被子弹减速。  
+冷却时间 | ？  
+- 信息  
+- 使用技巧  
+- 所有攻击（头部命中除外）造成的伤害均减少 15%。  
+- 切勿高估此能力——15% 减伤通常仅意味着多承受 1 发子弹。
+
+### 英雄升级（Legend Upgrades）
+主条目：英雄升级（Legend Upgrades）  
+英雄升级（Legend Upgrades）是第 20 赛季起在所有大逃杀模式中引入的特殊天赋，随玩家进化护甲（Evo Armor）等级提升，为英雄技能提供强化。每次升级仅可选择一项升级，总计最多选择两项。
+
+2 级升级选项  
+- 厚实护盾（Thick Shield）：移动护盾（Mobile Shield）+250 护盾值。  
+- 移动支援（Mobile Support）：提升移动护盾（Mobile Shield）移动速度。  
+
+3 级升级选项  
+- 奇迹医者（Miracle Worker）：扶起队友时为其附加生命值回复效果。  
+- 堡垒强化（Stronghold）：提升城堡之墙（Castle Wall）的生命值及通电持续时间。

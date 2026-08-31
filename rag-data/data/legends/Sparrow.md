@@ -1,82 +1,42 @@
 ---
-title: "Sparrow"
+title: "飞雀"
+title_en: "Sparrow"
 topic: legends
-categories: ["Apex Legends", "Apex Legends Legends", "Legends", "Male Legends"]
+language: zh-CN
+categories: ["Apex英雄", "PC端", "玩法资料"]
 source: https://apexlegends.fandom.com/wiki/Sparrow
 ---
 
-# Sparrow
+# 飞雀（Sparrow）
 
-Main | Character | Cosmetics | Voice Lines
-“ | "?"
-Sparrow
+## 玩法概览
+职业 | 侦察型
+战术技能 | 追踪飞镖（Tracker Dart）
+被动技能 | 二段跳（Double Jump）
+终极技能 | 毒刺箭（Stinger Bolt）
 
-Agile Archer
-Details
-Real Name | Enea Davide Guarino
-Gender | Male
-Age | 20
-Home World | Psamathe
-Gameplay
-Class | Recon
-Tactical Ability | Tracker Dart
-Passive Ability | Double Jump
-Ultimate Ability | Stinger Bolt
-Real-world Info
-Voice Actor | Loris Scarpa
-Sparrowis aReconLegend. He was introduced inSeason 25and is locked from the base game. He can be unlocked using digital currency: either12,000 or750.
-## Abilities
-| Tactical | Q///
-Tracker Dart
-Description | Shoots a tracker from the gauntlet to reveal enemies who walk within its line of sight. These darts can also activate Survey Beacons from a distance.
-Cooldown | 33s seconds- Info- Interactions- Tips- ?- ?- ?
-| Passive | 
-Double Jump
-Description | Allows the character to jump again while in the air. Jumping while climbing will launch Sparrow up the wall. The character can carry additional arrows and explosive arrows for the Bocek.
-Cooldown | ?- Info- Interactions- Tips- ?- ?- ?
-| Ultimate | Z/+/+/+
-Stinger Bolt
-Description | Shoots a large arrow that anchors where it lands. After charging up, it will shock anyone within its range, causing damage and slowing down opponents it hits.
-Charge time | ? minutes- Info- Interactions- Tips- ?- ?- ?
-### Legend Upgrades
-Main article:Legend Upgrades
-Legend Upgrades are special perks introduced inSeason 20to all Battle Royale modes. These add upgrades to a Legend's abilities as you level up your Evo Armor. Only one option may be chosen per level-up for a maximum of two perks total.
-Level 2 Upgrades- Hunt Target:Sparrow will get a speed boost when running towards a marked enemy.- Extra Traps:Gain an additional Tactical charge and +2 traps in world.Level 3 Upgrades- Life Siphon:Sparrow’s health and shields will be recovered if enemies are damaged by his ultimate.- Alternate Mode:Ultimate now has 3 charges that fire fewer pulses in a smaller radios
-## Lore
-Main article:Sparrow (character)
-“ | Enea was born into the most widely respected bounty hunter clan in all the Outlands, the Clessidra Rossa. These hunters serve as the most efficient law enforcement contractors, known for their unparalleled archery skills and their dogmatic moral code. They train their youth in the ways of the order, making even the teens more dangerous than many lawless assassins.From an early age, Enea showed an innate aptitude for the trade far surpassing that of his peers. His skills and confidence are seen as a blessing and a curse to the group, because every trait that would make him a great potential leader is also seen as a liability by the old guard. Enea had been the clear successor of the head of the order, but he refused to see the world in such binary terms, and as he grew older his family felt increasingly concerned over his resistance to their views. Being raised by such a tightly-wound group made him restless, often leading him to make reckless decisions.
-One particularly reckless action of Enea’s created a rift his family could not see a way back from, and it became clear that Enea and his family would never see eye to eye on Clessidra Rossa’s black-and-white approach to life. Unable to convince his family that some situations don’t have an obvious right and wrong, Enea was shunned from his family and the Clessidra Rossa.
-Enea is heartbroken about leaving his family, but is determined to figure out how to have it all—both a life on his own terms and his family’s acceptance. While bounty hunting on his own to support himself, an unexpected bystander recruited him for the Apex Games—The perfect playground to flex his skills and have fun at the same time. In his heart, Enea is hopeful that the publicity of his successes will be a path to gaining back the respect of his family.
-## Cosmetic items
-### Skins
-There are a total of 40 Legend skins for Sparrow; 5Legendary, 5Epic, 15Rareand 15Common.
-- Legendary- Epic- Rare- Common- Romeo1,200- Malocchio1,200- D’oro1,200- Aperitivo1,200- Honor and Victory1,8002,400
-### Finishers
-Main article:Finisher
-### Badges
-See:Sparrow/Badges
-### Emotes
-Main article:Emote
-### Skydive Emotes
-Main article:Skydive Emote
-### Banner Frames
-- Legendary- Epic- Rare- Common
-### Banner Poses
-- Epic- Rare- CommonNote:
-### Holosprays
-Main article:Holo-Spray
-### Music Packs
-Main article:Music Pack
-### Transitions
-Main article:Transition
-## Voice lines
-See:Sparrow/Voice lines
-## History
-## Trivia
-- Sparrow has a fear of clowns.
-- Sparrow dislikes (or, more aptly hates), pineapple on pizza.
-- Sparrow has a crush onLoba.
-## Gallery
-- Sparrow official artwork
-Merchandise
-## References
+## 技能
+| 战术技能 | Q///
+追踪飞镖（Tracker Dart）
+描述 | 从护腕射出一枚追踪飞镖，可揭示处于其视野范围内的敌人。这些飞镖还可远程激活侦察信标（Survey Beacon）。
+冷却时间 | 33 秒 — 信息 — 互动 — 技巧 — ? — ? — ?
+| 被动技能 | 
+二段跳（Double Jump）
+描述 | 允许角色在空中再次跳跃。攀爬时跳跃可使飞雀沿墙面向上弹射。角色可额外携带普通箭矢与爆炸箭矢，供博切克弓（Bocek）使用。
+冷却时间 | ? — 信息 — 互动 — 技巧 — ? — ? — ?
+| 终极技能 | Z / + / + / +
+毒刺箭（Stinger Bolt）
+描述 | 射出一支大型箭矢，箭矢命中处将形成锚点。蓄力完成后，该锚点会对范围内所有敌人施加电击，造成伤害并减缓被命中的对手。
+蓄力时间 | ? 分钟 — 信息 — 互动 — 技巧 — ? — ? — ?
+
+### 英雄升级（Legend Upgrades）
+主条目：英雄升级（Legend Upgrades）  
+英雄升级是第 20 赛季起为所有大逃杀模式新增的特殊增益效果。随着玩家进化护甲（Evo Armor）等级提升，英雄技能将获得相应强化。每次升级仅可选择一项升级选项，总计最多可选择两项增益。
+
+2 级升级选项  
+- 追猎目标（Hunt Target）：飞雀朝已被标记的敌人奔跑时，将获得移速加成。  
+- 额外陷阱（Extra Traps）：战术技能充能次数 +1，且世界中可部署的陷阱数量 +2。
+
+3 级升级选项  
+- 生命虹吸（Life Siphon）：飞雀的终极技能对敌人造成伤害时，将为其恢复生命值与护盾值。  
+- 替代模式（Alternate Mode）：终极技能现在拥有 3 次充能，但每次释放的脉冲次数减少，作用半径缩小。

@@ -1,0 +1,11 @@
+# 压测配置必须与 dev profile 一起启用：--spring.profiles.active=dev,loadtest
+videoai:
+  load-test:
+    token: ${VIDEOAI_LOAD_TEST_TOKEN:change-me-before-load-test}
+  # 合成任务只验证异步执行链路，不调用外部 Embedding。
+  rag:
+    enabled: false
+
+logging:
+  level:
+    com.videoai.infra.mysql.mapper: info

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  * 1. 手动 ack：处理成功后才提交 offset，保证消息不丢失
  * 2. 消费者组：同一组内负载均衡，不同组广播
  * 3. 幂等消费：TaskProcessor 通过状态机校验实现幂等
- * 4. 异常处理：catch 后 ack，避免阻塞后续消息；失败任务由重试机制处理
+ * 4. AI 调用失败：任务落为 FAILED 后 ack，等待用户手动重新分析
  */
 @Slf4j
 @Component
@@ -37,7 +37,7 @@ public class TaskConsumer {
     )
     public void consume(TaskMessage message, Acknowledgment ack) {
         String taskId = message.getTaskId();
-        log.info("Received task message: taskId={}, businessRetryNo={}, userId={}",
+        log.info("Received task message: taskId={}, executionNo={}, userId={}",
                 taskId, message.getBusinessRetryNo(), message.getUserId());
 
         try {

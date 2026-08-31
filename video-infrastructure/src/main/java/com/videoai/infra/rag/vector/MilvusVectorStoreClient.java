@@ -7,6 +7,7 @@ import com.videoai.infra.rag.model.VectorSearchResult;
 import io.milvus.client.MilvusServiceClient;
 import io.milvus.grpc.DataType;
 import io.milvus.grpc.MutationResult;
+import io.milvus.grpc.QueryResults;
 import io.milvus.grpc.SearchResults;
 import io.milvus.param.ConnectParam;
 import io.milvus.param.IndexType;
@@ -19,10 +20,12 @@ import io.milvus.param.collection.HasCollectionParam;
 import io.milvus.param.collection.LoadCollectionParam;
 import io.milvus.param.dml.DeleteParam;
 import io.milvus.param.dml.InsertParam;
+import io.milvus.param.dml.QueryParam;
 import io.milvus.param.dml.SearchParam;
 import io.milvus.param.dml.UpsertParam;
 import io.milvus.param.index.CreateIndexParam;
 import io.milvus.response.SearchResultsWrapper;
+import io.milvus.response.QueryResultsWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -84,113 +87,126 @@ public class MilvusVectorStoreClient implements VectorStoreClient {
 
     @Override
     public void ensureCollection() {
-        String collectionName = milvusProperties.getCollection();
-        String dbName = milvusProperties.getDatabase();
-
-        // Fast path: collection already verified
         if (collectionEnsured.get()) {
-            R<Boolean> hasColl = client.hasCollection(HasCollectionParam.newBuilder()
-                    .withDatabaseName(dbName)
-                    .withCollectionName(collectionName)
-                    .build());
-            if (hasColl.getData() != null && hasColl.getData()) {
-                return;
-            }
-            // Collection was dropped externally — reset and recreate
-            collectionEnsured.set(false);
-            log.warn("Milvus collection disappeared, will recreate: {}", collectionName);
-        }
-
-        if (!collectionEnsured.compareAndSet(false, true)) {
             return;
         }
 
-        try {
-
-            // Create collection
-            FieldType idField = FieldType.newBuilder()
-                    .withName(FIELD_ID)
-                    .withDataType(DataType.VarChar)
-                    .withMaxLength(128)
-                    .withPrimaryKey(true)
-                    .build();
-
-            List<FieldType> scalarFields = Arrays.asList(
-                    idField,
-                    FieldType.newBuilder().withName(FIELD_KB_CODE).withDataType(DataType.VarChar).withMaxLength(64).build(),
-                    FieldType.newBuilder().withName(FIELD_VERSION_TAG).withDataType(DataType.VarChar).withMaxLength(64).build(),
-                    FieldType.newBuilder().withName(FIELD_CARD_CODE).withDataType(DataType.VarChar).withMaxLength(64).build(),
-                    FieldType.newBuilder().withName(FIELD_CATEGORY).withDataType(DataType.VarChar).withMaxLength(32).build(),
-                    FieldType.newBuilder().withName(FIELD_SUBJECT_CODE).withDataType(DataType.VarChar).withMaxLength(64).build(),
-                    FieldType.newBuilder().withName(FIELD_ENABLED).withDataType(DataType.Int64).build(),
-                    FieldType.newBuilder().withName(FIELD_TIMELESS).withDataType(DataType.Int64).build(),
-                    FieldType.newBuilder().withName(FIELD_CHUNK_NO).withDataType(DataType.Int64).build(),
-                    FieldType.newBuilder().withName(FIELD_TITLE).withDataType(DataType.VarChar).withMaxLength(255).build(),
-                    FieldType.newBuilder().withName(FIELD_HEADING_PATH).withDataType(DataType.VarChar).withMaxLength(512).build(),
-                    FieldType.newBuilder().withName(FIELD_CONTENT_TEXT).withDataType(DataType.VarChar).withMaxLength(8192).build()
-            );
-
-            FieldType vectorField = FieldType.newBuilder()
-                    .withName(FIELD_EMBEDDING)
-                    .withDataType(DataType.FloatVector)
-                    .withDimension(dimension)
-                    .build();
-
-            CreateCollectionParam createParam = CreateCollectionParam.newBuilder()
-                    .withDatabaseName(dbName)
-                    .withCollectionName(collectionName)
-                    .withFieldTypes(new ArrayList<FieldType>() {{
-                        addAll(scalarFields);
-                        add(vectorField);
-                    }})
-                    .withEnableDynamicField(false)
-                    .build();
-
-            R<RpcStatus> createResult = client.createCollection(createParam);
-            if (createResult.getStatus() != 0) {
-                throw new IllegalStateException("Failed to create Milvus collection: " + createResult.getMessage());
+        // 初始化期间必须串行等待。旧实现先把 collectionEnsured CAS 为 true，
+        // 其他线程会在集合尚未创建/加载完成时提前返回并发起搜索。
+        synchronized (collectionEnsured) {
+            if (collectionEnsured.get()) {
+                return;
             }
-            log.info("Milvus collection created: {}", collectionName);
 
-            // Create index
-            MetricType metricType = "IP".equalsIgnoreCase(milvusProperties.getMetricType()) ? MetricType.IP : MetricType.COSINE;
-            IndexType indexType = resolveIndexType(milvusProperties.getIndexType());
+            String collectionName = milvusProperties.getCollection();
+            String dbName = milvusProperties.getDatabase();
+            try {
+                if (collectionExists(dbName, collectionName)) {
+                    loadCollection(dbName, collectionName);
+                    collectionEnsured.set(true);
+                    log.info("Milvus collection verified and loaded: {}", collectionName);
+                    return;
+                }
 
-            CreateIndexParam indexParam = CreateIndexParam.newBuilder()
-                    .withDatabaseName(dbName)
-                    .withCollectionName(collectionName)
-                    .withFieldName(FIELD_EMBEDDING)
-                    .withIndexType(indexType)
-                    .withMetricType(metricType)
-                    .withExtraParam("{\"M\":" + milvusProperties.getHnswM()
-                            + ",\"efConstruction\":" + milvusProperties.getHnswEfConstruction() + "}")
-                    .build();
+                // Create collection
+                FieldType idField = FieldType.newBuilder()
+                        .withName(FIELD_ID)
+                        .withDataType(DataType.VarChar)
+                        .withMaxLength(128)
+                        .withPrimaryKey(true)
+                        .build();
 
-            R<RpcStatus> indexResult = client.createIndex(indexParam);
-            if (indexResult.getStatus() != 0) {
-                throw new IllegalStateException("Failed to create Milvus index: " + indexResult.getMessage());
+                List<FieldType> scalarFields = Arrays.asList(
+                        idField,
+                        FieldType.newBuilder().withName(FIELD_KB_CODE).withDataType(DataType.VarChar).withMaxLength(64).build(),
+                        FieldType.newBuilder().withName(FIELD_VERSION_TAG).withDataType(DataType.VarChar).withMaxLength(64).build(),
+                        FieldType.newBuilder().withName(FIELD_CARD_CODE).withDataType(DataType.VarChar).withMaxLength(64).build(),
+                        FieldType.newBuilder().withName(FIELD_CATEGORY).withDataType(DataType.VarChar).withMaxLength(32).build(),
+                        FieldType.newBuilder().withName(FIELD_SUBJECT_CODE).withDataType(DataType.VarChar).withMaxLength(64).build(),
+                        FieldType.newBuilder().withName(FIELD_ENABLED).withDataType(DataType.Int64).build(),
+                        FieldType.newBuilder().withName(FIELD_TIMELESS).withDataType(DataType.Int64).build(),
+                        FieldType.newBuilder().withName(FIELD_CHUNK_NO).withDataType(DataType.Int64).build(),
+                        FieldType.newBuilder().withName(FIELD_TITLE).withDataType(DataType.VarChar).withMaxLength(255).build(),
+                        FieldType.newBuilder().withName(FIELD_HEADING_PATH).withDataType(DataType.VarChar).withMaxLength(512).build(),
+                        FieldType.newBuilder().withName(FIELD_CONTENT_TEXT).withDataType(DataType.VarChar).withMaxLength(8192).build()
+                );
+
+                FieldType vectorField = FieldType.newBuilder()
+                        .withName(FIELD_EMBEDDING)
+                        .withDataType(DataType.FloatVector)
+                        .withDimension(dimension)
+                        .build();
+
+                List<FieldType> fields = new ArrayList<>(scalarFields);
+                fields.add(vectorField);
+                CreateCollectionParam createParam = CreateCollectionParam.newBuilder()
+                        .withDatabaseName(dbName)
+                        .withCollectionName(collectionName)
+                        .withFieldTypes(fields)
+                        .withEnableDynamicField(false)
+                        .build();
+
+                R<RpcStatus> createResult = client.createCollection(createParam);
+                if (createResult.getStatus() != 0) {
+                    throw new IllegalStateException("Failed to create Milvus collection: " + createResult.getMessage());
+                }
+                log.info("Milvus collection created: {}", collectionName);
+
+                // Create index
+                MetricType metricType = "IP".equalsIgnoreCase(milvusProperties.getMetricType()) ? MetricType.IP : MetricType.COSINE;
+                IndexType indexType = resolveIndexType(milvusProperties.getIndexType());
+
+                CreateIndexParam indexParam = CreateIndexParam.newBuilder()
+                        .withDatabaseName(dbName)
+                        .withCollectionName(collectionName)
+                        .withFieldName(FIELD_EMBEDDING)
+                        .withIndexType(indexType)
+                        .withMetricType(metricType)
+                        .withExtraParam("{\"M\":" + milvusProperties.getHnswM()
+                                + ",\"efConstruction\":" + milvusProperties.getHnswEfConstruction() + "}")
+                        .build();
+
+                R<RpcStatus> indexResult = client.createIndex(indexParam);
+                if (indexResult.getStatus() != 0) {
+                    throw new IllegalStateException("Failed to create Milvus index: " + indexResult.getMessage());
+                }
+                log.info("Milvus index created for collection: {}", collectionName);
+
+                loadCollection(dbName, collectionName);
+                collectionEnsured.set(true);
+            } catch (Exception e) {
+                collectionEnsured.set(false);
+                log.warn("Milvus collection initialization failed, will retry: {}", e.getMessage());
+                throw e;
             }
-            log.info("Milvus index created for collection: {}", collectionName);
-
-            // Load collection (sync mode, wait until loaded)
-            LoadCollectionParam loadParam = LoadCollectionParam.newBuilder()
-                    .withDatabaseName(dbName)
-                    .withCollectionName(collectionName)
-                    .withSyncLoad(true)
-                    .withSyncLoadWaitingInterval(500L)
-                    .withSyncLoadWaitingTimeout(60L)
-                    .build();
-
-            R<RpcStatus> loadResult = client.loadCollection(loadParam);
-            if (loadResult.getStatus() != 0) {
-                throw new IllegalStateException("Failed to load Milvus collection: " + loadResult.getMessage());
-            }
-            log.info("Milvus collection loaded: {}", collectionName);
-        } catch (Exception e) {
-            collectionEnsured.set(false);
-            log.warn("Milvus collection initialization failed, will retry: {}", e.getMessage());
-            throw e;
         }
+    }
+
+    private boolean collectionExists(String dbName, String collectionName) {
+        R<Boolean> result = client.hasCollection(HasCollectionParam.newBuilder()
+                .withDatabaseName(dbName)
+                .withCollectionName(collectionName)
+                .build());
+        if (result.getStatus() != 0) {
+            throw new IllegalStateException("Failed to check Milvus collection: " + result.getMessage());
+        }
+        return Boolean.TRUE.equals(result.getData());
+    }
+
+    private void loadCollection(String dbName, String collectionName) {
+        LoadCollectionParam loadParam = LoadCollectionParam.newBuilder()
+                .withDatabaseName(dbName)
+                .withCollectionName(collectionName)
+                .withSyncLoad(true)
+                .withSyncLoadWaitingInterval(500L)
+                .withSyncLoadWaitingTimeout(60L)
+                .build();
+
+        R<RpcStatus> loadResult = client.loadCollection(loadParam);
+        if (loadResult.getStatus() != 0) {
+            throw new IllegalStateException("Failed to load Milvus collection: " + loadResult.getMessage());
+        }
+        log.info("Milvus collection loaded: {}", collectionName);
     }
 
     @Override
@@ -311,6 +327,49 @@ public class MilvusVectorStoreClient implements VectorStoreClient {
                     .build());
         }
         return results;
+    }
+
+    @Override
+    public Map<String, Long> countByCard(String filterExpression) {
+        ensureCollection();
+
+        final long pageSize = 4096L;
+        final long maxAuditRows = 100_000L;
+        long offset = 0L;
+        Map<String, Long> counts = new LinkedHashMap<>();
+
+        while (offset < maxAuditRows) {
+            QueryParam queryParam = QueryParam.newBuilder()
+                    .withDatabaseName(milvusProperties.getDatabase())
+                    .withCollectionName(milvusProperties.getCollection())
+                    .withExpr(filterExpression)
+                    .withOutFields(List.of(FIELD_CARD_CODE))
+                    .withOffset(offset)
+                    .withLimit(pageSize)
+                    .build();
+
+            R<QueryResults> response = client.query(queryParam);
+            if (response.getStatus() != 0) {
+                throw new IllegalStateException("Milvus metadata query failed: " + response.getMessage());
+            }
+
+            QueryResultsWrapper wrapper = new QueryResultsWrapper(response.getData());
+            List<QueryResultsWrapper.RowRecord> rows = wrapper.getRowRecords();
+            for (QueryResultsWrapper.RowRecord row : rows) {
+                Object value = row.getFieldValues().get(FIELD_CARD_CODE);
+                String cardCode = value == null ? "" : String.valueOf(value);
+                if (!cardCode.isBlank()) {
+                    counts.merge(cardCode, 1L, Long::sum);
+                }
+            }
+
+            if (rows.size() < pageSize) {
+                return counts;
+            }
+            offset += rows.size();
+        }
+
+        throw new IllegalStateException("Milvus audit exceeded safety limit: " + maxAuditRows);
     }
 
     private IndexType resolveIndexType(String name) {

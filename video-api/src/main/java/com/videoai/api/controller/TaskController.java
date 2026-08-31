@@ -65,7 +65,7 @@ public class TaskController {
     }
 
     /**
-     * 重试任务（仅FAILED/DEAD状态可重试）
+     * 用户手动重新分析失败任务
      */
     @PostMapping("/{taskId}/retry")
     public ApiResponse<AnalysisTask> retryTask(@PathVariable("taskId") String taskId) {

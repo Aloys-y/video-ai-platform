@@ -14,8 +14,8 @@ import lombok.Getter;
  *
  * 状态机设计：
  * PENDING -> QUEUED -> PROCESSING -> COMPLETED
- *                             \-> RETRYING -> QUEUED/PROCESSING
- *                             \-> FAILED/DEAD
+ *                             \-> FAILED
+ * FAILED --用户手动重新分析--> PENDING
  */
 @Getter
 @AllArgsConstructor
@@ -44,12 +44,12 @@ public enum TaskStatus {
     COMPLETED("COMPLETED", "处理成功", 3),
 
     /**
-     * 处理失败 - 等待重试
+     * 处理失败 - 等待用户手动重新分析
      */
     FAILED("FAILED", "处理失败", 4),
 
     /**
-     * 重试中 - 从失败恢复
+     * 历史兼容状态，新流程不再写入
      */
     RETRYING("RETRYING", "等待重试", 5),
 
@@ -59,7 +59,7 @@ public enum TaskStatus {
     CANCELLED("CANCELLED", "已取消", 6),
 
     /**
-     * 最终失败 - 重试次数耗尽
+     * 历史兼容状态，新流程不再写入
      */
     DEAD("DEAD", "最终失败", 7);
 
@@ -79,12 +79,11 @@ public enum TaskStatus {
     private final int order;
 
     /**
-     * 判断是否为终态
-     * 面试点：为什么需要判断终态？
-     * 终态的任务不能再被修改，避免无效操作
+     * 判断当前是否已经停止执行。
+     * FAILED 虽可由用户手动重新提交，但在用户操作前属于稳定状态。
      */
     public boolean isFinalState() {
-        return this == COMPLETED || this == CANCELLED || this == DEAD;
+        return this == COMPLETED || this == FAILED || this == CANCELLED || this == DEAD;
     }
 
     /**
@@ -99,11 +98,11 @@ public enum TaskStatus {
         return switch (this) {
             case PENDING -> target == QUEUED || target == CANCELLED;
             case QUEUED -> target == PROCESSING || target == CANCELLED;
-            case PROCESSING -> target == COMPLETED || target == FAILED || target == RETRYING
-                    || target == DEAD || target == CANCELLED;
-            case FAILED -> target == RETRYING || target == DEAD || target == PENDING;
-            case RETRYING -> target == QUEUED || target == PROCESSING || target == DEAD || target == CANCELLED;
-            case COMPLETED, CANCELLED, DEAD -> false; // 终态不可转换
+            case PROCESSING -> target == COMPLETED || target == FAILED || target == CANCELLED;
+            case FAILED -> target == PENDING || target == CANCELLED;
+            case RETRYING -> target == FAILED || target == CANCELLED; // 兼容升级前遗留任务
+            case DEAD -> target == PENDING || target == CANCELLED; // 允许历史任务手动重新分析
+            case COMPLETED, CANCELLED -> false;
         };
     }
 

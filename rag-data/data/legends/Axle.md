@@ -1,47 +1,66 @@
 ---
-title: "Axle"
+title: "艾瑟儿"
+title_en: "Axle"
 topic: legends
-categories: ["Apex Legends", "Apex Legends Legends", "Female Legends", "Legends", "Unfinished pages"]
+language: zh-CN
+categories: ["Apex英雄", "PC端", "玩法资料"]
 source: https://apexlegends.fandom.com/wiki/Axle
 ---
 
-# Axle
+# 艾瑟儿（Axle）
 
-Main | Character | Cosmetics | Voice Lines
-Axle
+## 玩法概览
+职业 | 游击型
+战术技能 | 氮气门（Nitro Gate）
+被动技能 | 漂移（Drift）
+终极技能 | 启动（Kickstart）
 
-Combat Racer
-Details
-Real Name | Isa Wegner
-Gender | Female
-Age | 28
-Home World | Salvo
-Gameplay
-Class | Skirmisher
-Tactical Ability | Nitro Gate
-Passive Ability | Drift
-Ultimate Ability | Kickstart
-Real-world Info
-Voice Actor | Andrea Martina[1]
-Added | May 05, 2026
-“ | Every loss takes a piece of you. Until only the strongest parts remain.
-Axleis aSkirmisherLegendwho was introduced inSeason 29. She could be played for free at the start of the season, and can be unlocked using digital currency: either12,000Legend Tokensor750Apex Coins.
-She is a Legend who can rush into fights quickly with herNitro Gatetactical, using the speed boost to move quickly towards enemies or cover. Her ultimate,Kickstart, can be used to launch enemies into the air, making them easy pickings to shoot while also limiting their mid-air movement. HerDriftpassive gives her increased speed and increased movement control while sliding.
-## Abilities
-### Nitro Gate
-| Tactical | Q///
-Nitro Gate
-Description | Deploy a speed gate that sends users into a boosted slide.
-Cooldown | 25 seconds- Info- Tips- Throws down a gate that sticks to horizontal surfaces. Any player that steps on it is given a massive speed boost and is forced into a slide. The slide can be cancelled prematurely at any point.Speed boost velocity is 750.Forced slide lasts for 0.25 seconds minimum and 5 seconds maximum. The slide is also cancelled if the slide velocity reaches >100.Also affects downed players.- Stepping on the gate also cleanses any slowing effects, similarly toOctane'sStim.- Gate has 150 health.- Up to 3 can exist in the world at once per player.- Axle can deal damage to her own Nitro Gates.- Downed players receive the exact same speed boost and slide effect, allowing them to cover a great amount of distance at high speeds, use this to move your downed teammates to a better position.- Similarly toOctane'sLaunch Pad, you can use the gate to displace anyone hiding behind a door by throwing it next to the door.- You can useHemlok's Breach Charge to destroy your own Nitro Gate the second you step on it to prevent enemy players from using it to chase you, note that your own Breach Charge damages you as well.
-### Drift
-| Passive | 
-Drift
-Description | Increased speed and control while sliding.
-Cooldown | ?- Info- Tips- Improved slide control and duration. Also decreased cool-down.- Sliding ShooterUpgrade:Has a limit of 50% of the weapon's current magazine size.
-### Kickstart
-| Ultimate | Z/+/+/+
-Kickstart
-Description | Deploy an enemy-seeking drone that displaces targets on impact.
-Charge time | 1.5 minutes- Info- Tips- Deploys a drone that flies forward. It will attempt to scale surfaces vertically. If it cannot scale the surface it simply hits the surface and detonates.Cannot be deployed if the player is too close to a wall.- Drone has 200 health.- Drone moves at 650 velocity.- Drone has a maximum lifetime of 15 seconds.- The drone has a vision radius of 10 meters and has a vision field of view of 80 degrees. If any enemy player is seen by the drone, the drone starts chasing the enemy player. Chased players are highlighted to you and allies.Drone's velocity is reduced to 450 during a chase. Velocity gradually decreases when the drone gets closer to the target player.Drone gives up chasing after 10 seconds.Drone starts to detonate when within 1.5 meters of the target player. Detonation takes 1.4 seconds.Detonation causes an explosion 2.5 meters in radius. The explosion deals 25 damage, stuns for 1.5 seconds, highlights the affected players to you and allies for 2.5 seconds and sends the affected players high into the air.
-### Upgrades
-## References
+## 技能
+### 氮气门（Nitro Gate）
+| 战术技能 | Q///
+氮气门（Nitro Gate）
+描述 | 部署一道速度门，使经过的玩家进入加速滑铲状态。
+冷却时间 | 25 秒  
+- 信息  
+- 提示  
+- 向水平表面投掷一道可附着的速度门。任何踩上该门的玩家都会获得极高的速度加成，并被强制进入滑铲状态。该滑铲可在任意时刻提前取消。  
+- 速度加成的移动速度为 750。  
+- 强制滑铲最短持续 0.25 秒，最长持续 5 秒；若滑铲速度超过 100，滑铲也会立即终止。  
+- 同样会影响倒地状态的玩家。  
+- 踩上该门还会清除所有减速效果，效果类似于动力小子（Octane）的“肾上腺素”（Stim）。  
+- 速度门拥有 150 点生命值。  
+- 每名玩家最多同时在地图中部署 3 道速度门。  
+- 艾瑟儿（Axle）可对自己部署的氮气门造成伤害。  
+- 倒地玩家会获得完全相同的速度加成与滑铲效果，使其能以极高速度移动极远距离；请善用此特性将倒地队友转移至更安全的位置。  
+- 类似于动力小子（Octane）的“弹跳板”（Launch Pad），你可将速度门投掷在门旁，以此驱散藏身于门后的敌人。  
+- 你可以使用赫姆洛克（Hemlok）的“破障手雷”（Breach Charge）在自己踩上速度门的瞬间将其摧毁，从而阻止敌方玩家利用它追击你；请注意：你自己的破障手雷也会对你造成伤害。
+
+### 漂移（Drift）
+| 被动技能 |  
+漂移（Drift）  
+描述 | 滑铲时提升移动速度与操控性。  
+冷却时间 | ？  
+- 信息  
+- 提示  
+- 改进了滑铲操控性与持续时间，并缩短了冷却时间。  
+- 滑铲射击升级（Sliding Shooter Upgrade）：最多消耗当前武器弹匣容量 50% 的子弹。
+
+### 启动（Kickstart）
+| 终极技能 | Z/+/+/+  
+启动（Kickstart）  
+描述 | 部署一枚追踪敌人的无人机，命中后将目标击退。  
+充能时间 | 1.5 分钟  
+- 信息  
+- 提示  
+- 部署一枚向前飞行的无人机；它会尝试垂直攀爬表面。若无法攀爬，则直接撞击表面并引爆。  
+- 若玩家距离墙壁过近，则无法部署该技能。  
+- 无人机拥有 200 点生命值。  
+- 无人机飞行速度为 650。  
+- 无人机最长存活时间为 15 秒。  
+- 无人机拥有 10 米的视野半径与 80 度的视野角度。若无人机发现任意敌方玩家，便会开始追逐该玩家；被追逐的玩家将对你及你的队友高亮显示。  
+- 追逐期间，无人机速度降低至 450；且随着其不断接近目标玩家，速度会逐步下降。  
+- 若追逐持续达 10 秒，无人机将放弃追逐。  
+- 当无人机接近目标玩家至 1.5 米范围内时，将开始引爆；引爆过程耗时 1.4 秒。  
+- 爆炸范围为半径 2.5 米；造成 25 点伤害，使受影响玩家眩晕 1.5 秒，高亮显示受影响玩家 2.5 秒，并将他们击飞至高空。
+
+### 升级

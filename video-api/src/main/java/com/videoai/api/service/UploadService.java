@@ -327,16 +327,15 @@ public class UploadService {
     }
 
     /**
-     * 查询某上传会话的非终态任务（PENDING/QUEUED/PROCESSING/FAILED/RETRYING）
-     * 用于幂等控制：已有在处理中的任务时不再创建新的
+     * 查询某上传会话尚未取消或完成的任务。
+     * FAILED 任务仍然复用原 taskId，由用户通过重试接口手动重新分析。
      */
     private AnalysisTask findNonFinalTaskByUploadId(String uploadId) {
         LambdaQueryWrapper<AnalysisTask> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(AnalysisTask::getUploadId, uploadId)
                .notIn(AnalysisTask::getStatus,
                        TaskStatus.COMPLETED.getCode(),
-                       TaskStatus.CANCELLED.getCode(),
-                       TaskStatus.DEAD.getCode())
+                       TaskStatus.CANCELLED.getCode())
                .orderByDesc(AnalysisTask::getCreatedAt)
                .last("LIMIT 1");
         return analysisTaskMapper.selectOne(wrapper);
@@ -369,7 +368,6 @@ public class UploadService {
         task.setStatusEnum(TaskStatus.PENDING);
         task.setProgress(0);
         task.setRetryCount(0);
-        task.setMaxRetry(3);
 
         analysisTaskMapper.insert(task);
         taskOutboxService.createExecuteOutbox(task, 0, java.time.LocalDateTime.now());

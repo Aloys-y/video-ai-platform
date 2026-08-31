@@ -54,9 +54,7 @@ public class TaskService {
         }
 
         // 2. 查数据库
-        LambdaQueryWrapper<AnalysisTask> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(AnalysisTask::getTaskId, taskId);
-        AnalysisTask task = analysisTaskMapper.selectOne(wrapper);
+        AnalysisTask task = queryTaskFromDatabase(taskId);
 
         if (task == null) {
             throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
@@ -125,11 +123,12 @@ public class TaskService {
     }
 
     /**
-     * 重试任务（仅FAILED/DEAD状态）
+     * 用户手动重新分析（仅 FAILED 或历史 DEAD 状态）。
+     * 每次递增执行代次并创建新的 Outbox，旧 Outbox 保留用于审计和隔离迟到消息。
      */
     @Transactional
     public AnalysisTask retryTask(String taskId, Long userId) {
-        int rows = analysisTaskMapper.resetForRetry(taskId, userId);
+        int rows = analysisTaskMapper.resetForManualRetry(taskId, userId);
         if (rows == 0) {
             AnalysisTask task = getTask(taskId);
             if (!task.getUserId().equals(userId)) {
@@ -137,17 +136,27 @@ public class TaskService {
             }
             TaskStatus status = task.getStatusEnum();
             if (status != TaskStatus.FAILED && status != TaskStatus.DEAD) {
-                throw new BusinessException(ErrorCode.TASK_STATUS_ERROR, "只有失败或已终止的任务可以重试");
+                throw new BusinessException(ErrorCode.TASK_STATUS_ERROR, "只有失败的任务可以重新分析");
             }
             throw new BusinessException(ErrorCode.TASK_STATUS_ERROR);
         }
 
         evictTaskCache(taskId);
-        taskOutboxService.deleteByTaskId(taskId);
-        AnalysisTask task = getTask(taskId);
-        taskOutboxService.createExecuteOutbox(task, 0, java.time.LocalDateTime.now());
-        log.info("Task retry reset and outbox recreated: taskId={}", taskId);
+        // 事务提交前不通过 getTask 写 Redis，避免 Outbox 插入失败回滚后缓存仍显示 PENDING。
+        AnalysisTask task = queryTaskFromDatabase(taskId);
+        if (task == null) {
+            throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
+        }
+        int executionNo = task.getRetryCount() == null ? 0 : task.getRetryCount();
+        taskOutboxService.createExecuteOutbox(task, executionNo, java.time.LocalDateTime.now());
+        log.info("Task manually resubmitted: taskId={}, executionNo={}", taskId, executionNo);
         return task;
+    }
+
+    private AnalysisTask queryTaskFromDatabase(String taskId) {
+        LambdaQueryWrapper<AnalysisTask> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(AnalysisTask::getTaskId, taskId);
+        return analysisTaskMapper.selectOne(wrapper);
     }
 
     /**

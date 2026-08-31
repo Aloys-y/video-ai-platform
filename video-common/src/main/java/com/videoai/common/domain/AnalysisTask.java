@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
  *    - 解耦上传和分析的生命周期
  *
  * 2. 为什么要记录retry_count？
- *    - 控制重试次数，避免无限重试
- *    - 监控告警：频繁重试说明有问题
+ *    - 作为单调递增的执行代次，隔离迟到或重复的 Kafka 消息
+ *    - 记录用户手动重新分析的次数
  *
  * 3. 为什么用JSON存储result？
  *    - AI返回结果是结构化的，灵活变化
@@ -80,18 +80,13 @@ public class AnalysisTask {
      */
     private Integer progress;
 
-    // ==================== 重试机制 ====================
+    // ==================== 执行控制 ====================
 
     /**
-     * 已重试次数
+     * 执行代次：首次执行为0，每次用户手动重新分析后递增。
+     * 字段名为兼容现有数据库保留 retry_count。
      */
     private Integer retryCount;
-
-    /**
-     * 最大重试次数
-     * 默认3次，可配置
-     */
-    private Integer maxRetry;
 
     /**
      * 错误信息
@@ -99,15 +94,6 @@ public class AnalysisTask {
      */
     private String errorMessage;
 
-    /**
-     * 下一次允许重试时间
-     */
-    private LocalDateTime nextRetryAt;
-
-    /**
-     * 上一次进入重试时间
-     */
-    private LocalDateTime lastRetryAt;
 
     // ==================== AI分析结果 ====================
 
@@ -175,26 +161,6 @@ public class AnalysisTask {
      */
     public void setStatusEnum(TaskStatus status) {
         this.status = status.getCode();
-    }
-
-    /**
-     * 是否可以重试
-     */
-    public boolean canRetry() {
-        if (retryCount == null || maxRetry == null) {
-            return false;
-        }
-        return retryCount < maxRetry;
-    }
-
-    /**
-     * 增加重试次数
-     */
-    public void incrementRetry() {
-        if (retryCount == null) {
-            retryCount = 0;
-        }
-        retryCount++;
     }
 
     /**

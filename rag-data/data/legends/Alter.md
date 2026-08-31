@@ -1,56 +1,118 @@
 ---
-title: "Alter"
+title: "变幻"
+title_en: "Alter"
 topic: legends
-categories: ["Apex Legends", "Apex Legends Legends", "Female Legends", "Legends", "Pages with broken file links"]
+language: zh-CN
+categories: ["Apex英雄", "PC端", "玩法资料"]
 source: https://apexlegends.fandom.com/wiki/Alter
 ---
 
-# Alter
+# 变幻（Alter）
 
-Main | Character | Cosmetics | Voice Lines
-Alter
+## 玩法概览
+职业 | 游击型
+战术技能 | 虚空通道（Void Passage）
+被动技能 | 裂隙馈赠（Gift from the Rift）
+终极技能 | 虚空枢纽（Void Nexus）
 
-Void Breacher
-Details
-Real Name | Ying Ling Lui
-Gender | Female
-Age | Unknown
-Home World | Unknown
-Gameplay
-Class | Skirmisher
-Tactical Ability | Void Passage
-Passive Ability | Gift from the Rift
-Ultimate Ability | Void Nexus
-Real-world Info
-Voice Actor | Crystal Yu
-“ | You'll break your neck trying to keep an eye on me.
-File:Alter Icon.svgAlteris aSkirmisherLegend. She was introduced inSeason 21and is locked from the base game. She can be unlocked using digital currency: either12,000 or750.
-## Abilities
-### Gift from the Rift
-| passive | 
-Gift from the Rift
-Description | Can remotely interact with a deathbox to claim one item. Cannot be a shield core.
-Cooldown | ?- Info- Tips- You can see any deathboxes within 75 meters of you through the environment, highlighted with the color of the highest rarity item within them.- You can look inside any visible deathboxes and seize one item that isn't a shield core.- This passive disables on a deathbox only once you seize the item, meaning you can still loot a deathbox manually and then still have access to one of its items remotely.- If Alter opens a deathbox using her passive and then gets in range of the deathbox interact prompt (around 2 meters), her passive will switch to the normal deathbox UI without closing it's inventory, allowing her to loot the deathbox normally.This also means that Alter can get in range of the deathbox while it's behind a wall or an object and still loot it fully.This can be useful for example, when you want to swap your shield core for a new one and running towards a deathbox since it allows you to display the inventory earlier.- If a deathbox that wasn't there shows up it's quite likely there are enemies nearby that deathbox, since it's a fresh kill. If you can't hear more shooting the enemies are possibly looting which may allow you to get the drop on them.- You can use your passive to look inside a deathbox and see if someone is currently looting it.- You can use your passive to look inside a fallen teammates deathbox in order to grab their banner.
-### Void Passage
-| Tactical | Q///
-Void Passage
-Description | Creates a portal passageway through a surface
-Cooldown | 30 seconds- Info- Interactions- Tips- Bugs- Places a set of two portals on either side of a surface, wall, or object creating a gate that allows you to pass through said obstacle.- Has an activation time of 1 second before the gate opens.- Lasts 15 seconds before closing.- The maximum depth of the gate is 30 meters.- Travel through the gate is instantaneous regardless of depth.- The maximum range for placing the gate is 45 meters.- The player using the gate is transported to the Void, becoming immune to all damage excluding the ring.The player remains in the void for 1 second after exiting the gate.During this time you cannot travel through the gate again and can be seen only through void particles being displayed at your rough location.You also cannot travel through the gate again if you have not stopped touching the gate's hitbox after arriving at the other end.- If the gate is placed on a ceiling or at the bottom of a sloped surface leaning at an angle greater than around 40 degrees, the bottom portal will create a string of void energy that you can interact with and ride up to the portal.The depth placement indicator on the HUD has an icon that lights up and shows the player if the portal they're placing will create a void string.For the whole travel up the string you are transported to the Void, and do not show void particles at you location.In order for the string to appear the floor below the bottom portal cannot be more than 27 meters away.- There is a warning indicator for an enemy gate being placed nearby, similar to the warning for thrown ordnance.- Wraithcan travel through the Void Passage while placing herDimensional Riftwhich allows her to create a longer-lasting portal through terrain that will work normally, transporting the player along her travel path through the object.  This does not work withAsh'sPhase Breach.However, you cannot enter a Void Passage while usingWraith'sInto the Void.- You cannot flyCrypto'sSurveillance Dronethrough a Void Passage.- Mirage'sPsyche Outclones cannot go through a Void Passage.- Vantagecannot useEcho Relocationto guide Echo through a Void Passage.- Additionally, nothing can be thrown, shot, or casted through a Void Passage.- The gate opens after a slight delay, so place it while you're a pretty short distance from the wall so that you can use it by the time you reach it.- If breaching a room containing enemies, make sure to position yourself right up against the surface you intend to breach to minimise the time between the portal opening and you appearing on the other side. This allows you to get the jump on enemies by maximising the element of surprise.- While inside the Void, your body is displayed only with Void particles at your rough location. It could be a good idea to crouch while inside the Void before reappearing, or slide through the passage on the entry side, in order to trick enemies into aiming at where your body would be when you are standing.- If you start entering a Void Passage through a void string while crouched, and time a jump input as you're entering the gate, you will be launched significantly higher vertically upon exit than you'd when not using this method.Doesn't always place on the surface directly parallel with the surface you placed it on if there are a lot of surfaces adjacent to where the exit would be, not sure if it's specifically a bug but it makes exiting slightly unpredictable so you might not be facing the direction you want.
-### Void Nexus
-| Ultimate | Z/+/+/+
-Void Nexus
-Description | Create a regroup point that all allies can remotely interact with to open a phase tunnel back to that location.
-Charge time | 3 minutes- Info- Interactions- Tips- Alter throws a device that she and her allies can interact with through obstacles to teleport back to its location.The device can be interacted with even by knocked allies.When knocked, you can travel to the Void Nexus even without looking at it by pressing the character action button (default H key/D-pad down).- You can teleport knocked allies to Nexus by interacting with it- Lasts unlimited time- Has a range of 200 meters in which you can activate the teleport action.- Each player on Alter's team, including herself can teleport to the Nexus only once per 60 secondsThe teleport prompt needs to be held down for 0.5 seconds before beginning activation.The teleport action takes 3 seconds during which you activate a handheld device and are slowed down. This duration is reduced to 2 seconds for knocked players.- Travel to the Nexus takes up to 4 seconds depending on the distance and terrain obstructing it.During the travel the user is transported to the Void.- After initiating the teleport you leave behind a residual rift.The rift opens after 8 seconds and can be taken by any player to follow the user's path to the Nexus.The rift lasts 8 seconds after opening up.If any enemy enters a rift, Alter is warned about this by a message on the HUD.This warning is also displayed for any player near the Nexus if the person currently traveling to it is not allied to them.- After arriving at the Nexus the user leaves the Void instantly and has their weapon holstered.- The rift left behind by the user does not open immediately meaning an enemy cannot follow you right away. This allows you some time to recover or escape from the location of the Nexus.- Since you can use the Nexus even when knocked, it allows you to escape tough situations that would normally result in inevitable death.Due to this functionality, the Nexus can be utilized greatly in rushes, providing a mostly safe way for downed or nearly-downed teammates to escape and recover.
-### Legend Upgrades
-Main article:Legend Upgrades
-Legend Upgrades are special perks introduced inSeason 20to all Battle Royale modes. These add upgrades to a Legend's abilities as you level up your Evo Armor. Only one option may be chosen per level-up for a maximum of two perks total.
-Level 2 Upgrades- Eye to Another World:Gain access to Survey Beacons, gain threat vision when aiming down sights.- Friends:Access support bins, improved revive and deathboxes have MRBs.Level 3 Upgrades- Staring into The Void:Scan on Void Passage Portals extended to 15s.- Void Breacher:Traveling through a Void Passage gives allies improved move speed and weapon handling.
-## History
-Patch notes
-## Development
-## Teasers
-- On May 1st, 2024, theSeason 21 Launch Trailerwas released, which confirmed Alter being released for Season 21.
-### Datamined and Leaked Data
-## Trivia
-## Gallery
-## References
+## 技能
+### 裂隙馈赠（Gift from the Rift）
+| 被动技能 | 
+裂隙馈赠（Gift from the Rift）  
+描述 | 可远程与死亡箱交互，从中拾取一件物品。该物品不能是护盾核心。  
+冷却时间 | 无  
+
+- **资讯**  
+- **提示**  
+  - 你可在环境中看到自身周围 75 米范围内的所有死亡箱，其高亮颜色对应箱内最高稀有度物品的颜色。  
+  - 你可以查看任意可见死亡箱的内部，并远程拾取其中一件非护盾核心的物品。  
+  - 此被动技能仅在你远程拾取某件物品后，对该死亡箱暂时失效；这意味着你仍可手动靠近并打开该死亡箱，再额外远程获取其中一件物品。  
+  - 若变幻使用被动技能开启一个死亡箱，随后又进入该死亡箱的标准交互距离（约 2 米），其被动界面将无缝切换为常规死亡箱界面（不关闭已打开的物品栏），使你能正常完成全部拾取操作。  
+    这也意味着：即使死亡箱位于墙体或障碍物后方，只要你能进入其交互距离，即可完整拾取其中所有物品。  
+    举例而言，当你希望用新护盾核心替换当前护盾核心并正朝死亡箱奔跑时，此机制可让你更早调出物品栏界面。  
+  - 若一个此前不存在的死亡箱突然出现，附近极可能有敌人——因为这是刚发生的击杀。若此时未听见进一步枪声，敌人很可能正在拾取，这为你创造了突袭机会。  
+  - 你可以利用被动技能查看某个死亡箱内部，判断是否正有敌人在其中拾取。  
+  - 你可以利用被动技能查看倒地队友的死亡箱，以拾取其旗帜。
+
+### 虚空通道（Void Passage）
+| 战术技能 | Q  
+虚空通道（Void Passage）  
+描述 | 在表面、墙体或物体上创建一组双向传送门通道。  
+冷却时间 | 30 秒  
+
+- **资讯**  
+- **交互说明**  
+- **提示**  
+- **已知问题**  
+  - 在表面、墙体或物体两侧各放置一个传送门，形成一道可穿过的门扉，允许你穿越该障碍物。  
+  - 门扉开启前有 1 秒激活延迟。  
+  - 门扉持续 15 秒后自动关闭。  
+  - 门扉最大纵深为 30 米。  
+  - 穿越门扉的移动为瞬时完成，不受纵深影响。  
+  - 放置门扉的最大距离为 45 米。  
+  - 使用门扉的玩家将被传送至虚空，期间对除毒圈外的所有伤害免疫。  
+  - 玩家在离开门扉后，仍将在虚空中停留 1 秒。  
+    此期间你无法再次穿越该门扉，且仅能通过你大致位置处浮现的虚空粒子被敌人察觉。  
+    若你在抵达另一端后尚未完全脱离门扉碰撞体，则同样无法再次穿越该门扉。  
+  - 若门扉被放置于天花板，或置于倾角大于约 40 度的斜坡底部，则下方传送门将生成一条可供交互并攀爬的虚空能量链。  
+    HUD 中的深度放置指示器会点亮图标，提示你当前放置的传送门是否会生成虚空能量链。  
+    沿整条能量链上升过程中，你始终处于虚空状态，且你所在位置不会显示虚空粒子。  
+    要使能量链成功生成，下方地面与底部传送门之间的垂直距离不得超过 27 米。  
+  - 当附近有敌方玩家放置传送门时，会出现类似投掷型投射物的警告提示。  
+  - 恶灵（Wraith）可在施放「维度裂隙（Dimensional Rift）」的同时穿越「虚空通道」，从而创造出一个持续时间更长、功能正常的地形穿透传送门，该门将沿恶灵的移动路径传送玩家。  
+    此机制不适用于艾许（Ash）的「相位裂隙（Phase Breach）」。  
+    然而，你无法在恶灵施放「遁入虚空（Into the Void）」期间进入「虚空通道」。  
+  - 你无法操控密客（Crypto）的「侦察无人机（Surveillance Drone）」穿越「虚空通道」。  
+  - 幻象（Mirage）的「幻影诱饵（Psyche Out）」克隆体无法穿越「虚空通道」。  
+  - 万蒂奇（Vantage）无法使用「回声重定位（Echo Relocation）」引导回声（Echo）穿越「虚空通道」。  
+  - 此外，任何物品均不可被投掷、射击或施放穿过「虚空通道」。  
+  - 门扉开启存在轻微延迟，因此建议在距离墙体较近时放置，以便抵达时立即使用。  
+  - 若需突入藏有敌人的房间，请紧贴目标墙面放置门扉，以最大限度缩短门扉开启至你现身于另一侧的时间，从而最大化突袭效果。  
+  - 在虚空内部，你的身体仅以大致位置处的虚空粒子形式显现。  
+    建议在重返现实前蹲下，或在入口侧滑铲穿越门扉，以此误导敌人瞄准你站立时本应出现的位置。  
+  - 若你以蹲姿开始沿虚空能量链进入「虚空通道」，并在进入门扉瞬间精准输入跳跃指令，你将在出口处获得显著更高的垂直弹射高度（相比常规方式）。  
+  - 若出口附近存在大量相邻表面，传送门未必严格平行于你最初瞄准的表面放置——尚不确定是否属明确 Bug，但会导致出口方向略显不可预测，你可能不会面朝预期方向。
+
+### 虚空枢纽（Void Nexus）
+| 终极技能 | Z/+/+/+  
+虚空枢纽（Void Nexus）  
+描述 | 创建一个集结点，所有队友均可远程与其交互，开启一条返回该位置的相位隧道。  
+充能时间 | 3 分钟  
+
+- **资讯**  
+- **交互说明**  
+- **提示**  
+  - 变幻投掷一个装置，她与所有队友均可隔着障碍物与其交互，以传送回其所在位置。  
+    即使处于击倒状态的队友也可与该装置交互。  
+    击倒状态下，你无需直视该装置，只需按下角色动作键（默认 H 键 / D-pad 向下）即可传送至「虚空枢纽」。  
+  - 通过与「虚空枢纽」交互，你可将击倒状态的队友传送至该位置。  
+  - 「虚空枢纽」永久存在，无时间限制。  
+  - 传送激活范围为 200 米。  
+  - 包括变幻本人在内的每名队伍成员，每 60 秒仅可向「虚空枢纽」传送一次。  
+    传送提示需持续按住 0.5 秒方可启动。  
+    传送过程耗时 3 秒：期间你需手持设备进行操作，且移动速度降低。  
+    击倒状态玩家的传送耗时缩短为 2 秒。  
+  - 传送至「虚空枢纽」的耗时最长可达 4 秒，具体取决于距离与地形遮挡情况。  
+    传送全程中，使用者将被传送至虚空。  
+  - 启动传送后，你身后会留下一道残余裂隙。  
+    该裂隙于 8 秒后开启，任何玩家均可进入，沿你的传送路径前往「虚空枢纽」。  
+    裂隙开启后持续存在 8 秒。  
+    若有敌人进入裂隙，变幻的 H.U.D. 将收到提示信息。  
+    此提示同样会在「虚空枢纽」附近任何玩家的 H.U.D. 上显示——前提是当前正传送至该枢纽的玩家并非其队友。  
+  - 抵达「虚空枢纽」后，使用者将立即脱离虚空，且武器自动收起。  
+  - 使用者留下的裂隙不会立即开启，因此敌人无法立刻跟随你。  
+    这为你争取了恢复或撤离「虚空枢纽」位置的宝贵时间。  
+  - 由于你即使处于击倒状态亦可使用「虚空枢纽」，因此它能助你摆脱通常必死无疑的险境。  
+    凭借这一特性，「虚空枢纽」在冲锋战术中极具价值，为倒地或濒死队友提供了一种相对安全的脱身与恢复途径。
+
+### 英雄升级（Legend Upgrades）
+主条目：英雄升级（Legend Upgrades）  
+英雄升级（Legend Upgrades）是第 20 赛季为所有大逃杀模式引入的特殊增益效果。随着你的进化护甲（Evo Armor）等级提升，英雄技能将获得相应强化。每次升级仅可选择一项增益，总计最多选择两项。
+
+2 级升级选项  
+- 异界之瞳（Eye to Another World）：解锁侦查信标（Survey Beacons）；瞄准镜开镜时获得威胁视野（Threat Vision）。  
+- 挚友（Friends）：可访问支援补给箱（Support Bins）；救援效率提升；死亡箱内含更多医疗包（MRBs）。  
+
+3 级升级选项  
+- 凝视虚空（Staring into The Void）：「虚空通道（Void Passage）」传送门扫描持续时间延长至 15 秒。  
+- 虚空破障者（Void Breacher）：穿越「虚空通道（Void Passage）」后，为队友提供移速与武器操控性增益。

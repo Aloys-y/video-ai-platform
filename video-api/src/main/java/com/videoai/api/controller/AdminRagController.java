@@ -20,10 +20,13 @@ import com.videoai.common.rag.PromptEnvelope;
 import com.videoai.common.rag.RagContext;
 import com.videoai.infra.mysql.mapper.TaskRagContextMapper;
 import com.videoai.infra.rag.config.RagProperties;
+import com.videoai.infra.rag.config.MilvusProperties;
 import com.videoai.rag.service.ApexPromptTemplateService;
 import com.videoai.rag.service.KnowledgeBaseService;
 import com.videoai.rag.service.KnowledgeCardService;
 import com.videoai.rag.service.KnowledgeIndexJobService;
+import com.videoai.rag.service.LegendKnowledgeAuditService;
+import com.videoai.rag.service.LegendShadowIndexService;
 import com.videoai.rag.service.KnowledgeRetrievalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -56,10 +59,13 @@ public class AdminRagController {
     private final KnowledgeCardService knowledgeCardService;
     private final KnowledgeBaseService knowledgeBaseService;
     private final KnowledgeIndexJobService knowledgeIndexJobService;
+    private final LegendKnowledgeAuditService legendKnowledgeAuditService;
+    private final LegendShadowIndexService legendShadowIndexService;
     private final KnowledgeRetrievalService knowledgeRetrievalService;
     private final ApexPromptTemplateService apexPromptTemplateService;
     private final TaskRagContextMapper taskRagContextMapper;
     private final RagProperties ragProperties;
+    private final MilvusProperties milvusProperties;
 
     @Operation(summary = "Create knowledge card")
     @PostMapping("/knowledge/cards")
@@ -228,14 +234,45 @@ public class AdminRagController {
                 .queryText(request.getQuery())
                 .expandedQuery(context.getQueryText())
                 .versionTag(context.getVersionTag())
+                .collectionName(milvusProperties.getCollection())
                 .topK(ragProperties.getTopK())
+                .finalTopK(ragProperties.getFinalTopK())
+                .maxChunksPerCard(ragProperties.getMaxChunksPerCard())
+                .maxContextChars(ragProperties.getMaxContextChars())
                 .minScore(ragProperties.getMinScore())
+                .legendPcGameplayFilterEnabled(ragProperties.isLegendPcGameplayFilterEnabled())
+                .legendAliasEnhancementEnabled(ragProperties.isLegendAliasEnhancementEnabled())
                 .hitCount(context.getHits() != null ? context.getHits().size() : 0)
+                .contextChars(context.getContextText() != null ? context.getContextText().length() : 0)
                 .latencyMs(context.getLatencyMs())
                 .contextPreview(contextPreview)
                 .promptPreview(envelope.buildFullPrompt())
                 .hits(context.getHits())
                 .build());
+    }
+
+    @Operation(summary = "Audit LEGEND knowledge coverage",
+            description = "Compare every LEGEND card's MySQL chunks and Milvus vectors without modifying data")
+    @GetMapping("/knowledge/audit/legends")
+    public ApiResponse<com.videoai.common.dto.response.LegendKnowledgeAuditResponse> auditLegends() {
+        assertAdmin();
+        return ApiResponse.success(legendKnowledgeAuditService.audit());
+    }
+
+    @Operation(summary = "Build isolated LEGEND shadow index",
+            description = "Chunk and embed PC gameplay LEGEND cards into the configured non-baseline collection without modifying MySQL chunks")
+    @PostMapping("/knowledge/experiments/legend-shadow-index")
+    public ApiResponse<java.util.Map<String, Object>> buildLegendShadowIndex() {
+        assertAdmin();
+        return ApiResponse.success(legendShadowIndexService.build());
+    }
+
+    @Operation(summary = "Promote isolated LEGEND shadow index",
+            description = "Complete missing shadow vectors and synchronize V2 chunks to MySQL while preserving the baseline collection")
+    @PostMapping("/knowledge/experiments/legend-shadow-index/promote")
+    public ApiResponse<java.util.Map<String, Object>> promoteLegendShadowIndex() {
+        assertAdmin();
+        return ApiResponse.success(legendShadowIndexService.promote());
     }
 
     @Operation(summary = "Get task RAG context", description = "Inspect the retrieval snapshot associated with one analysis task")

@@ -1,151 +1,110 @@
 ---
-title: "Valkyrie"
+title: "瓦尔基里"
+title_en: "Valkyrie"
 topic: legends
-categories: ["Apex Legends", "Apex Legends Legends", "Female Legends", "LGBTQ+ legends", "Legends", "Locked legends"]
+language: zh-CN
+categories: ["Apex英雄", "PC端", "玩法资料"]
 source: https://apexlegends.fandom.com/wiki/Valkyrie
 ---
 
-# Valkyrie
+# 瓦尔基里（Valkyrie）
 
-“ | I kept my mom in the dark about a lot of things. I guess . . . everything. It sounds bad, but it was safer if she didn’t know. Even when it was time to go, I just said we were moving somewhere better—and hey, that part was true. Angel City was a ghost town. The farm’s turbines and hydro generators would break down eventually. So . . . I packed her up and flew her halfway across the galaxy, away from everything she’d ever known, to dump her on some planet she’d never even heard of. (Nice job, Kairi. Real good kid you turned out to be.)Then I found Kuben Blisk. And . . . I didn’t kill him. I made the right choice. Knowing I could have—that was enough. But I knew it wasn’t really over until I told mom the truth. The next day, she made me tea, we sat down in her new living room, and I told her—everything. I could barely look at her. Honestly, I kinda expected her to disown me.
-Then she looked me dead in the eye and said, “わざわざここまで来て奴のグラスを撃っただけか？フン。目玉の一つでも持って帰るべきだったな。” Translation: You came all the way here and all you did was shoot his cup? Should have brought back at least an eye or something.Turns out mom’s smarter than I gave her credit for. Maybe she always was.
-Valkyrie
+## 玩法概览
+职业 | 侦察型
+战术技能 | 导弹齐射（Missile Swarm）
+被动技能 | VTOL 喷气推进器（VTOL Jets）
+终极技能 | 升空俯冲（Skyward Dive）
 
-Winged Avenger
-Details
-Real Name | Kairi Imahara (今原カイリ)
-Gender | Female
-Age | 31
-Home World | Angelia
-Gameplay
-Class | Recon
-Tactical Ability | Missile Swarm
-Passive Ability | VTOL Jets
-Ultimate Ability | Skyward Dive
-Real-world Info
-Voice Actor | Erika Ishii[1]
-Valkyrieis aRecon Legend. She was introduced inSeason 9and is locked from the base game. She can be unlocked using digital currency; either12,000 or750.
-An aerial-based Legend, Valkyrie’s passiveVTOL Jetsallow her to fly for a few seconds, and she automatically marks enemies while skydiving. Her tactical,Missile Swarm, launches a group of missiles that damage and stun enemies. Her ultimate,Skyward Dive, launches Valkyrie and her teammates into the sky to skydive towards the ground.
-## Abilities
-### Missile Swarm
-| Tactical | Q///
-Missile Swarm
-Description | Fire a swarm of mini-rockets that damage and disorient the enemy.
-Cooldown | 30 seconds- Info- Interactions- Tips- Bugs- Launches 12 missiles in a 4x3 array, dealing damage and slowing enemies' movement for 2 seconds.If a Legend gets hit, the first missile deals 25 damage and every subsequent missile deals 3.Missiles explode in 1.25m radius.- Needs ample vertical clearance to use, meaning the player cannot use it on interior spaces with low ceilings.- Minimum target distance (same elevation) is 12 meters; Maximum target distance is 100 meters horizontally, regardless of elevation difference between target and Valkyrie.When within valid range, the crosshair aligns with the closest row's middle rocket.- Can be used whileVTOL Jetsis active.- Use while inVTOL Jetsto get clear shots for maximum efficiency.- When enemy is hiding behind a boulder, aim the reticle at zone between the closest base-edge and the top of the boulder; as the targeting columns extend away from the reticle, it will decrease the chance of missile overshooting your target.- The stun time is long enough to cancelVTOL Jetsand prepare to shoot a target, which makes this a very effective tool for ambushes.- The markers for where the missiles will impact are visible in theFiring Rangeeven if she’s not in the player's realm.- Using this ability to down an enemy from any distance, even an enemy right in front of the player, can award the Long ShotBadge.
-### VTOL Jets
-| Passive | HOLDSpace//
-VTOL Jets
-Description | Press the jump key while in the air to engage jetpack. You can switch between hold and toggle mode in the options menu.
-Cooldown | ?- Info- Interactions- Tips- BugsVTOL Jets- While in the air, press Jump again to engage VTOL Jets.- Using the Jets consumes fuel. The Fuel gauge is on the right side of the screen.Activating the VTOL Jets will consume about 14.25% of total fuel.Maximum duration is 5.3 secondsTemplate:Needs verification.Fuel will begin to refill 8 seconds after the last Jets' usage.Fully refueling from empty takes 10 seconds. (1 second will refill 10% of total fuel)- While using the Jets, Valkyrie cannot use any weapons except for herMissile Swarm.- Once the Jets are released, there is a 1-second delay (a hand animation will be played) before she can use her weapons.- Normal flight direction is upwards in the direction Valkyrie is facing.Hold ADS to conduct level flight.- Aerial boosting & strafing take a 20% debuff when hit by slowing effects.- Her passive as a Recon Legend highlights enemy's red while using her jetpackJet-Fighter HUD- Activates while skydiving or using her ultimate,Skyward Dive(in both launch and skydive).- Marks any enemies within 250 meters with a direct and uninterrupted line of sight to Valkyrie. The champion will be marked with "CH" and the kill leader will be marked with "KL".- Enemies are not notified by this scan, unlike Bloodhound and Crypto.- Squadmates attached to Valkyrie also benefit from these target callouts.VTOL Jets- After usingOctane'sLaunch Pad, VTOL Jets are unavailable until the double jump is used.- While flying through gravity cannons, use of VTOL Jetsaddto the horizontal momentum from the cannon.Jet-Fighter HUD- In the gameplay settings, there is an option to switch the control scheme between holding the jump button and pressing it once to toggle. Use whichever feels the most comfortable.- Due to VTOL jets, advanced bunny hop and wall jumping is more difficult, require more precise timing.- Treat the VTOL Jets as a double jump - short bursts to reach the roof of short buildings.- When activating the VTOL Jets, it consumes about 14.25% of total fuel, which only allows the player to do 7 bursts maximum with a full gauge; be careful when turning them on and off in the air.However, bursting the VTOL Jets provides a burst of speed and provides a slight dodge, at the cost of fuel.- VTOL Jets can be activated right before landing to eliminate fall stun.- Be careful when using VTOL Jets when flying through gravity cannon, as the jets add to the momentum, and thus can allow the player to overshoot the normal flight path.Jet-Fighter HUD- Due to the wide scanning range of Jet-Fighter HUD, purposely conducting skydives through the use of ultimate, jump tower, geyser, and even trident-ejections can help provide good intel of enemy location in a large area.Do note that while the scan is not revealed to unsuspecting enemies, alert players will hear the takeoff and notice the dive trail.- Jet-Fighter HUD are occasionally deactivated for teammates if either Valkyrie split off from the group during the jump, or if teammates split off from the Valkyrie jumpmaster.- Changing legends while in theFiring Rangeas soon as the VTOL Jets are deactivated or fuel runs out reduces gravity.Change back to Valkyrie will revert this bug.- Season 21 Bug - Passive Fuel will not recharge after use. A fix is set for the next update, and page will be updated the moment this bug is fixed.
-### Skyward Dive
-| Ultimate | Z/+/+/+
-Skyward Dive
-Description | Press once to prepare for launch. Teammates can interact with Valkyrie to join the launch. Press again to launch into the air and skydive.
-Charge time | 3 minutes- Info- Arenas- Tips- Upon usage, Valkyrie enters a setup animation that charges up over 2 seconds, after which she can press Fire to launch ~135m into the air in about 6.5 seconds (1.5 seconds slow climbing and 5.0 seconds fast climbing) and enter a skydive, similar to using aJump Tower. Squadmates can press Interact near Valkyrie to launch with her.Skyward Dive can be canceled during setup either by taking damage or manually by pressing the Ultimate button again. 75% of its charge is refunded when canceled.While in pre-launch, using ping will mark Valkyrie for her squad and display a "Let's fly!" notification in the kill feed.- Vertical clearance is required for flight.- The maximum height she will launch into the air is only ~50m inArenas.- Remember Skyward Dive could be used as an excellent recon ability, as her passive to scan for enemies works both during launch and skydiving. Itdoes nothave to be used to team relocation purposeCommunicate with teammates if intending to use it as a scan instead of relocation.- It is very beneficial to use this ifthe Ringis right behind the player, and the next Ring is a long way away.
-### Legend Upgrades
-Main article:Legend Upgrades
-Legend Upgrades are special perks introduced inSeason 20to all Battle Royale modes. These add upgrades to a Legend's abilities as you level up your Evo Armor. Only one option may be chosen per level-up for a maximum of two perks total.
-Level 2 Upgrades- Afterburners:15% higher launch withSkyward Dive.- Aerial Expert:ImprovedVTOL Jetshandling.Level 3 Upgrades- Full Coverage:ModifyMissile Swarmpattern from 4x3 to 3x5.- Fuel Tank:+25%VTOL Jetsfuel.
-## Lore
-Main article:Valkyrie (character)
-“ | Bold, brash, fiery and fierce, Kairi Imahara isn’t above greasing palms and bending the law. When she was a child, she stole a Titan. It belonged to her dad, a mercenary and formerApex PredatornamedViper. She wanted to be just like him when she grew up. But the next day he left on a mission and never returned.In some ways, she still followed in his footsteps: it wasn't a Titan, but her ship offered a decent, dubiously ethical living. During the day, she smuggled precious cargo, and at night, went shot for shot with the outlaws and mercs in the bars. But even though she had her ladies, her liquor, and her love of the sky, she was still obsessed with finding the man who’d put her father in harm’s way: his commander,Kuben Blisk.She tracked Blisk down to the Outlands, prepared to kill him. But he spoke of her father with respect, and challenged her to be better. She shot him anyway....but not to kill. Knowing she could get to him was enough. Well, that, and the Apex Games card she took from Blisk’s grasp served as a decent enough trophy. Using the intact flight core from Viper’s Northstar, she built a sleek new jetpack that honored her father’s memory. And that was when Kairi could finally soar on her own, and in a version of her dad’s Titan, that ended up being hers after all.
-## Cosmetic Items
-### Skins
-There are a total of 76 Legend skins for Valkyrie; 3Mythic, 1Iconic, 21Legendary, 14Epic, 21Rareand 16Common.
-- Mythic- Iconic- Legendary- Epic- Rare- Common- Apex InterceptorTier 1- Apex InterceptorTier 2- Apex InterceptorTier 3- Materia Girl- Titan Tested1,200- Military Grade1,200- Golden Opportunity1,200- Azure Blessing1,200- Slingshot1,200- Birthright[Story 1]- Omatsuri Fury- Aerial EvolutionLevel 25- Air ShowNeedsTitan Tested- Cloud Marauder- Blue Bomber- Air Orchid- Ultra LegendNeedsMilitary Grade- Higher LearningNeedsAzure Blessing- Fluorescent Tech- Frozen Blossom- Heartbreaker- Heartbeat HarmonizerLevel 50- Sky Sentinel- Fae Light- AscendantNote:Story of Valkyrie:- Blockchain Reaction400- Daemon Hunter400- Fiber Optics400- Hack the System400- Heat Sync400- Spatial Anomaly400- Aligned Vectors- Hypnotic Nightmare- Deep DiveApril 2022- Sky Drifter- First Class- Advanced ReignLevel 1- Ultra Sonic- Gingerbread- Collider60- Arachnophobia60- Backdraft60- Disruptor60- Fishsticks60- Ornamental Nature60- Throwback60- Unicornucopia60- Electric Synapse60- Scribblers60- Sweet 1660- Desert Scorpion60- Running Fatigues60- Midnight Charm60- In Bloom60- Intricate DetailLevel 53- Punk RocketMay 2021- Turquoise Sun- Callous CartographerSeason 12- Retro PopSeason 15- Crimson Hawk- OriginalDefault- Amethyst30- Arctic30- Cardinal30- Clearwater30- Evergreen30- Flamingo30- Hydro30- Limelight30- Mandarin30- Midnight30- Rage30- Sahara30- Skyward30- Vino30- Yellowjacket30
-### Finishers
-Main article:Finishers
-- https://apexlegends.fandom.com/wiki/File:Execution_Valkyrie_Turn_and_Burn.mp4Turn and BurnDefault
-- https://apexlegends.fandom.com/wiki/File:Execution_Valkyrie_Hard_Landing.mp4Hard Landing1,200
-- https://apexlegends.fandom.com/wiki/File:Execution_Valkyrie_Bladed_Barrage.mp4Bladed Barrage
-### Heirloom Set
-This set contains:
-- A Banner Pose:Angel's Arrival
-- A Melee weapon skin:Suzaku
-- An Intro Quip:"This little viper's got her mom's fangs."
-### Prestige Skin Set
-The set contains:
-- AMythicskin:Apex InterceptorTier 1: instantly earned.Tier 2: deal 30,000 damage with Valkyrie to obtain.Tier 3: deal 100,000 damage with Valkyrie to obtain.
-- AMythicskydive trail:Bladed Descent, instantly earned and usable with all Legends.
-- AMythicfinisher:Bladed Barrage, unlocked at Tier 3. Can only be used while any tier ofApex Interceptoris equipped.
-### Badges
-See:Valkyrie/Badges
-### Emotes
-Main article:Emote
-- In-Flight Meal-1,200
-- Party Crasher-1,200
-- Modern Day Cupid
-- Trust Fall-400
-- One Two Punch
-- Sky Shuffle
-- Take A Bow- Default
-### Skydive Emotes
-Main article:Skydive Emote
-- https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Valkyrie_Showing_Off.mp4Showing OffLevel 92
-- https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Valkyrie_Inflight_Entertainment.mp4Inflight Entertainment
-- https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Valkyrie_Laid_Back.mp4Laid BackLevel 96
-- https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Valkyrie_See_Ya!.mp4See Ya!Level 2
-### Banner Frames
-- Legendary- Epic- Rare- Common- Calm Waters1,200- Fire Within1,200- No Limit1,200- Spring Day1,200- Underground1,200- Cell Block400- Scorch the SkyLevel 80- Aerial AcrobaticsLevel 32- Combat Challenger- Nature's StarLevel 92- Blizzards and Blossoms- Stadium BeatsLevel 55- Sky High- Journey's EndLevel 88- Aerial Ascent- Snowy Skies- Bamboo Garden60- Blooming60- Final View60- Flow State60- Thrusters Primed60- Cockpit View60- Spoiled RichesSeason 12- In Too DeepApril 2022- Groove 730Season 15- Rookie CardDefault- Bloodline30- In The Pipe30- Interconnected30- Locked On30
-### Banner Poses
-- Mythic- Epic- Rare- Common- Angel's Arrival- A Father Found- Barrel Roll400- I'm Outta Here400- Let's Fly400- Runway400- Your Move400- After Hours60- Down Time60- Enemy Spotted60- Evasive Maneuvers60- Own the Sky60- Stand Your Ground60- Suit Up60- Vantage Point60- Winning Hand60- Onward and UpwardDefault
-### Holosprays
-Main article:Holospray
-- Rise to the Occasion1,200
-- A Toast To The Fallen400
-- Head In The Clouds400
-- Looking Fly400
-- Put In The Work400
-- Runs in the Family400
-- The Ghost of Viper400
-- Born to FlyLevel 09
-- Swat This!Level 34
-- You Chicken?
-- No One Looks UpLevel 83
-- You Cannot Stop the Cold
-- Good VibesLevel 57
-- Looks Like ReignLevel 35
-### Music Packs
-Main article:Music Pack
-- ValkyrieLevel 66
-### Transitions
-Main article:Transition
-- High Speed Interstellar Travel Ain't CheapLevel 32
-- KampaiLevel 45
-- The Ghost of ViperLevel 56
-- A Mercenary WifeLevel 76
-## Voice Lines
-See:Valkyrie/Voice lines
-## History
-Patch notes
-August 09, 2022 PatchVTOL Jets:Acceleration on activation decreased by about 8%.Fuel consumption on activation increased by 33%.Aerial boosting & strafing take a 20% debuff when hit by slowing effects.Added a third orange state to the fuel meter UI between green (>60%) and red (<30%).Jetfighter HUD: Mirage's Decoys will now be scanned when skydiving.Missile Swarm:Aim/turn slow removed.Move slow duration decreased from 2.5s -> 2.0s.Reducing the explosion radius from 175 -> 125.Skyward Dive:Height reduction of 25%.Launch time reduced from 5.5s -> 5.0s. Coupled with the height reduction, players in Valk ult now travel upward at a slightly slower speed.May 10, 2022 PatchSkyward Dive:No longer possible to spin in the air while launching.May 27, 2021 PatchMissile Swarm: hovering now consumes the same amount of fuel compared to not hovering when using the tactical.May 24, 2021 PatchSkyward Dive:Added a short input delay after using the ability to prevent players from accidentally activating - then immediately cancelling - the ability by accident.Fixed a bug that allowed the ability to be activated shortly after using aLaunch PadFixed an exploit that let players record stats in theFiring Rangewhile using Valkyrie.Reenabled for use in the Firing Range.May 12, 2021 PatchTemporarily disabled in theFiring Rangeto fix an exploit that was allowing players to rack up an infinite amount of kills for their stats.May 11, 2021 PatchVTOL Jets: No longer highlights dead players.May 04, 2021 PatchIntroduced.
-## Teasers
-- WhenSeason 6launched, apiece of Rampart artworkshows her repairing Viper's Northstar Titan. Three seasons later, this was revealed to be a teaser for Valkyrie.
-- On April 14, 2021, Apex Legendsposted a videoon their Twitter celebrating 100 million registered players. At the end of the video, Valkyrie can be seen flying.
-- On April 15, 2021, Apex Legendsposted a tweetof an image with the caption, "Searching the Stars." Most notably, there are manga volumes, a statue from Angel City, and otherTitanfallreferences.
-- On April 17, 2021,a second tweetwas posted with the caption, "Seeding the Soil."
-- On April 19, 2021, "Northstar" was released.
-- On April 22, 2021, theSeason 9 Launch Trailerwas released.
-- On April 26, 2021 theSeason 9 Gameplay Trailerwas released.
-## Trivia
-- Valkyrie's abilities are inspired by theNorthstarTitan fromTitanfall 2.
-- Valkyrie has a few voice lines that are similarly quoted by Viper, most notably her "Valkyrie sent you" and "Got you in the pipe" lines.
-- In voice lines when Valkyrie revives or re-spawns Rampart, she profusely begs Rampart to change the name of Sheila, due to it being the name of her ex-girlfriend.
-- Valkyrie was unlockable for free between February 22nd and March 1st, 2022, in celebration of the3rd AnniversaryofApex Legends.
-- The highest possible damage that can theoretically be dealt with a singleMissile Swarmis 3364, while playing in Duos.
-## Gallery
-Videos
-Images
-- A render of Valkyrie.
-- Concept art of Valkyrie.[2]
-- Concept art of Valkyrie.[2]
-- Concept art of Valkyrie forStories from the Outlands- Northstar.[2]
-- Concept art of Valkyrie'sBirthrightskin.[2]
-- Concept art of Valkyrie'sSlingshotskin.[3]
-- Concept art of Valkyrie'sCloud Marauderskin.[4]
-- Concept art of Valkyrie'sSky Orchidskin.[5]
-- Concept art of Valkyrie'sFrozen Blossomskin.[6]
-- Concept art for Valkyrie'sSuzaku.[7]
-Merchandise
-- Plush ofAir Orchidskin.
-## References
+## 技能
+### 导弹齐射（Missile Swarm）
+| 战术技能 | Q///
+导弹齐射（Missile Swarm）
+描述 | 发射一簇微型火箭，对敌人造成伤害并使其陷入混乱状态。
+冷却时间 | 30 秒  
+- 信息  
+- 相互作用  
+- 使用技巧  
+- 已知问题  
+- 共发射 12 枚导弹，呈 4×3 阵列，对敌人造成伤害，并使其移动速度降低 2 秒。  
+- 若命中一名传奇英雄，首枚导弹造成 25 点伤害，后续每枚导弹造成 3 点伤害。  
+- 导弹爆炸半径为 1.25 米。  
+- 需要充足的垂直空间才能使用，即玩家无法在层高较低的室内空间启用该技能。  
+- 最小目标距离（相同海拔高度）为 12 米；最大水平目标距离为 100 米，不受目标与瓦尔基里之间海拔差影响。  
+- 当处于有效射程内时，准星将自动对齐至最靠近目标行的中间一枚导弹落点。  
+- 可在 VTOL 喷气推进器（VTOL Jets）激活状态下使用。  
+- 在 VTOL 喷气推进器（VTOL Jets）开启期间使用本技能，可获得更清晰的射击角度，从而实现最高效率。  
+- 当敌人藏身于巨石后方时，应将准星瞄准巨石最靠近玩家一侧的底边与顶部之间的区域；由于导弹瞄准列自准星向外延伸，此举可降低导弹飞越目标的风险。  
+- 该技能造成的眩晕时间足够长，足以取消 VTOL 喷气推进器（VTOL Jets）并准备向目标开火，因此是伏击作战中极为有效的工具。  
+- 即使瓦尔基里未处于玩家当前所选传奇英雄中，其导弹落点标记仍可在训练场（Firing Range）中可见。  
+- 使用本技能从任意距离击倒敌人（包括正位于玩家前方的敌人），均可获得“远距离击杀”徽章（Long Shot Badge）。
+
+### VTOL 喷气推进器（VTOL Jets）
+| 被动技能 | 按住空格键（Space）//
+VTOL 喷气推进器（VTOL Jets）
+描述 | 在空中按跳跃键以启动喷气背包。你可在选项菜单中切换“按住”与“切换”两种操作模式。
+冷却时间 | ？  
+- 信息  
+- 相互作用  
+- 使用技巧  
+- 已知问题  
+VTOL 喷气推进器（VTOL Jets）  
+- 在空中再次按下跳跃键即可启动 VTOL 喷气推进器（VTOL Jets）。  
+- 使用喷气推进器将消耗燃料。燃料计量条显示于屏幕右侧。  
+- 启动 VTOL 喷气推进器（VTOL Jets）将消耗约总燃料的 14.25%。  
+- 最长持续时间为 5.3 秒（待验证）。  
+- 上次使用 VTOL 喷气推进器（VTOL Jets）结束后，燃料将在 8 秒后开始恢复。  
+- 从空油状态完全充满需耗时 10 秒（每秒恢复总燃料的 10%）。  
+- 使用 VTOL 喷气推进器（VTOL Jets）期间，瓦尔基里仅能使用“导弹齐射（Missile Swarm）”，无法使用其他任何武器。  
+- VTOL 喷气推进器（VTOL Jets）关闭后，存在 1 秒延迟（此时会播放手部动画），之后方可重新使用武器。  
+- 正常飞行方向为沿瓦尔基里当前朝向垂直向上。按住 ADS 键可进行水平飞行。  
+- 当受到减速效果影响时，空中加速与横向平移（strafing）将受到 20% 的性能削弱。  
+- 作为侦察型传奇英雄，她的被动技能会在使用喷气背包时高亮显示敌方单位（红色轮廓）。  
+Jet-Fighter HUD（喷气战机抬头显示器）  
+- 在跳伞或使用终极技能“升空俯冲（Skyward Dive）”（含起飞与跳伞全程）时自动激活。  
+- 对所有与瓦尔基里拥有直接、无遮挡视线且距离在 250 米以内的敌人进行标记：“CH”代表冠军（Champion），“KL”代表击杀领先者（Kill Leader）。  
+- 敌人不会因该扫描而收到提示，这与寻血猎犬（Bloodhound）和密客（Crypto）不同。  
+- 与瓦尔基里组队并处于其载具附着状态的队友亦可受益于这些目标标记。  
+VTOL 喷气推进器（VTOL Jets）  
+- 在使用动力小子（Octane）的“发射平台（Launch Pad）”后，VTOL 喷气推进器（VTOL Jets）将暂时不可用，直至完成一次二段跳。  
+- 飞越重力加农炮（gravity cannon）时启用 VTOL 喷气推进器（VTOL Jets），将叠加重力加农炮提供的水平动量。  
+Jet-Fighter HUD（喷气战机抬头显示器）  
+- 在游戏设置中，可选择将控制方案设为“按住跳跃键”或“按一次跳跃键切换”。请选择最适合你的操作方式。  
+- 因 VTOL 喷气推进器（VTOL Jets）的存在，高级兔子跳（bunny hop）与蹬墙跳（wall jumping）难度增加，需要更精准的时机把控。  
+- 将 VTOL 喷气推进器（VTOL Jets）视作一次二段跳——短促爆发即可跃上低矮建筑顶部。  
+- 启动 VTOL 喷气推进器（VTOL Jets）将消耗约总燃料的 14.25%，满燃料状态下最多仅支持 7 次短促爆发；请谨慎开关喷气推进器。  
+- 然而，短促爆发 VTOL 喷气推进器（VTOL Jets）可提供瞬时加速与轻微闪避效果，代价是消耗燃料。  
+- 可在即将落地前瞬间启动 VTOL 喷气推进器（VTOL Jets），以消除坠落僵直（fall stun）。  
+- 飞越重力加农炮（gravity cannon）时请慎用 VTOL 喷气推进器（VTOL Jets），因其会叠加动量，可能导致玩家飞越预定飞行路径。  
+Jet-Fighter HUD（喷气战机抬头显示器）  
+- 凭借 Jet-Fighter HUD（喷气战机抬头显示器）广阔的扫描范围，有意识地利用终极技能、跳塔（Jump Tower）、间歇泉（geyser）甚至三叉戟弹射（trident-ejection）进行跳伞，有助于在大范围内获取敌方位置情报。请注意：尽管该扫描不会向毫无防备的敌人暴露自身，但警觉的玩家仍可能听见起飞音效并注意到俯冲轨迹。  
+- 若瓦尔基里在跳伞过程中与队友分离，或队友在跳伞过程中脱离瓦尔基里（跳伞指挥官），Jet-Fighter HUD（喷气战机抬头显示器）有时会对队友失效。  
+- 在训练场（Firing Range）中，若刚停用 VTOL 喷气推进器（VTOL Jets）或燃料耗尽便立即切换传奇英雄，会导致重力异常。切换回瓦尔基里即可修复此问题。  
+- 第 21 赛季已知问题：被动技能燃料不会在使用后恢复。修复补丁已安排在下次更新中，本页面将在该问题修复后立即更新。
+
+### 升空俯冲（Skyward Dive）
+| 终极技能 | Z / + / + / +
+升空俯冲（Skyward Dive）
+描述 | 按一次键进入起飞准备状态。队友可与瓦尔基里互动以加入起飞。再次按键即可升空并进入跳伞状态。
+充能时间 | 3 分钟  
+- 信息  
+- 竞技场（Arenas）  
+- 使用技巧  
+- 使用时，瓦尔基里将进入一段持续约 2 秒的准备动画；完成后，她可按下射击键升空至约 135 米高度（其中 1.5 秒为缓慢爬升，5.0 秒为快速爬升），随后进入跳伞状态，效果类似于使用跳塔（Jump Tower）。队友可在瓦尔基里附近按下互动键以一同升空。  
+- “升空俯冲（Skyward Dive）”可在准备阶段被取消，方式包括受到伤害或再次按下终极技能键；取消后返还 75% 的充能进度。  
+- 在起飞准备阶段使用标记功能，将在小队界面中标记瓦尔基里自身，并于击杀信息栏中显示“让我们起飞！（Let's fly!）”通知。  
+- 飞行需具备足够的垂直空间。  
+- 在竞技场（Arenas）地图中，其最大升空高度仅约为 50 米。  
+- 请牢记，“升空俯冲（Skyward Dive）”可作为出色的侦察技能使用，因为其被动技能“Jet-Fighter HUD（喷气战机抬头显示器）”在起飞与跳伞全程均保持生效。它**并非必须**用于队伍转移目的。若计划将其用于侦察而非转移，请务必提前与队友沟通。  
+- 若毒圈（The Ring）正位于玩家身后，而下一圈距离极远，则使用本技能将极具战术价值。
+
+### 传奇升级（Legend Upgrades）
+主条目：传奇升级（Legend Upgrades）  
+传奇升级（Legend Upgrades）是第 20 赛季起在所有大逃杀模式中引入的特殊增益效果。随着你的进化护甲（Evo Armor）等级提升，这些升级将强化传奇英雄的技能。每次升级仅可选择一项增益，总计最多可选择两项增益。
+
+2 级升级  
+- 加力燃烧室（Afterburners）：“升空俯冲（Skyward Dive）”升空高度提升 15%。  
+- 空中专家（Aerial Expert）：优化 VTOL 喷气推进器（VTOL Jets）操控性。  
+
+3 级升级  
+- 全面覆盖（Full Coverage）：将“导弹齐射（Missile Swarm）”的发射阵列由 4×3 改为 3×5。  
+- 燃料箱（Fuel Tank）：VTOL 喷气推进器（VTOL Jets）燃料容量提升 25%。

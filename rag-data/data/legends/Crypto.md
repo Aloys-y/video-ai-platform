@@ -1,168 +1,47 @@
 ---
-title: "Crypto"
+title: "密客"
+title_en: "Crypto"
 topic: legends
-categories: ["Apex Legends", "Apex Legends Legends", "Legends", "Locked legends", "Male Legends"]
+language: zh-CN
+categories: ["Apex英雄", "PC端", "玩法资料"]
 source: https://apexlegends.fandom.com/wiki/Crypto
 ---
 
-# Crypto
+# 密客（Crypto）
 
-“ | You can only trust those who you know are liars. I used to think differently back when I was working as a simple computer engineer. A straight-edge job with no bumps - I would go in, do what I was asked, and leave. I rarely doubted the loyalty of those who worked alongside me, I didn't really care, until the contract came in... a service order from: Q.W. Initials. That's all I know of the person who took my life away from me. And that is why I am here now. That is why I did what I did to get into theGames.[1]
-Crypto
+## 玩法概览
+职业 | 侦察型
+战术技能 | 侦查无人机（Surveillance Drone）
+被动技能 | 神经链接（Neurolink）
+终极技能 | 无人机电磁脉冲（Drone EMP）
 
-Surveillance Expert
-Details
-Real Name | Tae Joon Park (박태준)
-Alias | Hyeon Kim (김현)
-Gender | Male
-Age | 24
-Home World | Gaea
-Weight | 130 lbs (59 kg)
-Height | 5'9" (175 cm)
-Gameplay
-Class | Recon
-Tactical Ability | Surveillance Drone
-Passive Ability | Neurolink
-Ultimate Ability | Drone EMP
-Real-world Info
-Voice Actor | Johnny Young
-Cryptois aRecon Legend. He was introduced inSeason 3and is locked from the base game. He can be unlocked using digital currency: either12,000 or750, or by buying theChampion Editiondownloadable content.
-ALegendwho takes to the skies, Crypto with hisSurveillance Drone, reveal enemies for Crypto and his squad usingNeurolink. If he finds that the enemies have already hunkered down, he can activate hisDrone EMPto destroy their defenses and slow them before he comes out of the shadows and makes his move with his squad.
-## Abilities
-### Surveillance Drone
-| Tactical | Q///
-Surveillance Drone
-Description | Deploy an aerial camera drone that can remotely interact withSurvey Beacons,Respawn Beacons, and ally Banner cards.
-Cooldown | 30 seconds- Info- Interactions- Tips- Bugs- Pressing the tactical button will launch the drone from Crypto ~25 m. Holding the tactical button will cause Crypto to go into drone view immediately.If the drone is thrown at a wall, it will turn around.- The drone can be deployed and flown up to 200 meters away from Crypto. If the drone is 240+ meters away from Crypto, it will automatically be recalled.Hold ADS to conduct level flight while looking around.When not being piloted manually, the drone is left parked in midair.Crypto is left stationary while piloting the drone. Taking damage while in drone view will force Crypto out of it.- Crypto can recall the drone at any time, EXCEPT when reviving a teammate who is down, as this will interrupt the revive on the downed teammate. The drone can, however, be recalled without interruption while shooting, healing, while knocked down, or executing other actions. The recall takes ~2 seconds.- The drone has 50 health, which gets recovered when recalled.- The drone can be used to open doors/Supply Bins/Care Packages, pick up squadmates' banner cards, and use bothSurvey Beacons andRespawn Beacons instantly. It must be within 7 meters to do these.If you haveVault Keyin your inventory. You can use the drone to open the Vault.- The drone can ping items as long as they are within 12 meters. Enemies can be pinged up to 125 meters.- Champion Banners seen through the drone's vision will show the number of enemy squads within a 200-meter radius of Crypto (not the drone).Crypto can warn teammates about the number of nearby squads by pinging these banners while in drone view.- While in drone view,weaponsautomatically reload, starting with the currently equipped weapon. Reloads take the same amount of time as they would normally.- The audio range from the drone is as follows:Drone Throw - 175m.Entering Drone - 175m.Exiting Drone - 175m.Recalling Drone - 100m.Piloting Drone - 110m.Idle Drone - 80m.- You can manually ping and use the ping wheel while in drone view. The following is everything that the Surveillance Drone can Ping:GearWeaponsAttachmentsRegenitemsAmmoGrenadesMap FeaturesEnemies- The drone cannot be damaged by Crypto or his squadmates. It will block shots fired at it.- Pathfinder'sGrappling Hookcan attach to the drone.- Fuse’sKnuckle Clustercan stick to the drone.- The drone cannot pass throughWraith'sDimensional Rift.Mad MaggiesRiot Drillcan go through the drone- If the perkOff the Gridis equipped Crypto will become fully invisible while controlling the drone.Cloak prevents and removes being highlighted by:The Motherlode,Beast of the Hunt,Black Hole,Warlord's Ire,Spotter's Lens,Sniper's Mark,Surveillance Drone,Neurolink,Nox Vision,Assassin's Instinct,Phase Breach,Void Passage,Void Nexus,Into the Void,Dimensional Rift,Smoke Launcher, Threat Vision and Digital Threat optics.- When cloaked getting scanned byEye of the Allfatherwill reveal your position.If cloak is used after already being scanned it removes the full body highlight but not the orange diamond.- Cloak won't remove the scan formJet-Fighter HUD. Being scanned won't cause you to flicker.- You will still leavetrackswhen moving while invisible.- Moving inside ofExhibitwhile invisible won't reveal your position.- When using cloak, being scanned byFocus of Attentionwill remove the invisibility.- When cloaked you will still be picked up by Seer'sHeart Seeker- While invisible, Crypto won't activateCaustic'sNox Gas Traps.- Prevents and removes locking on fromWhistler.- Prevents locking on fromRev Shellbut does not remove it if locked on prior to turning invisible.- Cloak won't disable jump jet trails when usingZiplines,Zip Rails,Gravity Cannons,Jump Towers,Evac TowersorJump pads.- Crypto is completely vulnerable while in drone view. Find a safe place to stay while operating the Surveillance Drone. You can crouch while entering drone view to force Crypto to stay in this stance while using it, making it easier to hide him.- Deploying the drone while sliding allows Crypto to keep sliding while the drone deploys. You can slide into cover and/or save time this way when moving into new areas via downward slopes.- Although your squad can see the drone's automaticNeurolinkpings, the range is very limited. Remember to manually ping the enemies you see that the drone doesn't automatically detect.- The drone's ability to see the number of nearby enemy squads is very powerful information. Communicate this information to your squad often to make decisions about when/where to move, which fights to take, and avoid being caught by surprise third parties after winning a fight.The 200-meter squad detection radius is approximately the same size as your minimap.- You can use the drone as a decoy to distract enemies while your squad is either flanking or escaping.- Because enemy drones appear with an orange aura, flying it outsideThe Ringwill cause it to visually blend in with the orange ring effect and its partial opacity, making it harder for enemies to spot. The drone does not take Ring damage.- If your squadmates have died, you can use the drone to safely retrieve your squadmates' banners. Try to fly the drone in from a different direction rather than directly from yourself to reduce the likelihood of being caught doing this. CarryingMobile Respawn Beacons in your survival slot is naturally more valuable for Crypto.- You can heal in the drone. To do this, hold your Tactical input to go into drone view, then as the screen goes white, input a healing item like a Battery or Medkit and you will heal your shields or health while being in drone view. This can also be performed with Ultimate Accelerants to get your EMP faster, and both the Rampage and Sentinel can be charged the same way. Pair w/ an aggressive EMP for best results.- The Surveillance Drone can sometimes take more shots to destroy than intended despite only having 50 health. This doesn't include weapons that can one-shot it.- Sometimes when the drone is hacking a Survey Beacon, the next ring is not revealed on the map unless you hack the beacon when facing its front, despite the hacking sound effect playing.- The drone cannot fit through certain windows.- Attempting to deploy the drone while crouching too close to a wall or cover can cause it to become stuck.- InArenas, one charge is used when the drone is deployed and another is used when it is destroyed. If all three charges are bought and the drone is destroyed, only one charge will be left.- The map in the drone view is incorrect.- There is a small window of actionable time between throwing out the drone and entering it when holding the ability button down, during which items can be used and will complete while piloting the drone.- Being knocked while drone is active will immediately recall drone (knocked while using EMP will cancel and consume the charge)
-### Neurolink
-| Passive | 
-Neurolink
-Description | Crypto and his teammates see what his Surveillance Drone detects up to a 30m distance.
-Cooldown | ?- Info- Interactions- Tips- Bugs- The drone will highlight doors, supply bins, care packages, traps, and enemies with a direct and uninterrupted line of sight within 30 meters. Enemies are more noticeably marked with a triangle.- Enemies highlighted by the drone will see 'DRONE DETECTED' on their HUD.- Players affected byNow You See Me...or using "Off the Grid" perk cannot be detected.- Mirage's decoys can be scanned but won't be highlighted as an enemy.- Enemies won't be highlighted ifGibraltar'sDome of Protectioncomes between them and the drone.- If Crypto is inside enemy or friendlyBangaloresmoke while in recon mode your screen will start to become fuzzy.- Enemies cannot be detected throughBangalore’ssmoke orCaustic’sgas.- TheDrone EMPand Neurolink can be used even when Crypto is not directly controlling the drone. This allows Crypto to actively stay in the fight while gathering information on what enemies are doing.- The Surveillance Drone is noisy and its automatic enemy detection will warn enemies of its presence. If you don't want them to know your squad is nearby, you can manually ping them from a distance.- Many maps have glass surfaces that the drone can detect enemies through. Park your drone on one side so that it can safely scan enemies on the other side.- If you're struggling to find enemy squads, flying around with the drone through buildings and covers and looking through glass might cause them to be spotted by the drone's enemy detection, even if you didn't notice them.- The drone may not highlight certain general things that are supposed to be highlighted.
-### Drone EMP
-| Ultimate | Z/+/+/+
-Drone EMP
-Description | Charge up an EMP from your drone. The blast deals 50 shield damage, slows players, and destroys traps.
-Charge time | 3 minutes- Info- Interactions- Tips- Bugs- Takes 3 seconds to charge before detonating. The drone can be destroyed before the detonation, cancelling it.- Affects all players (and Crypto himself) in a 30-meter radius, even through walls and other obstacles. Squadmates take no shield damage but are still slowed down.The slow lasts roughly 1-2 seconds.- Enemies hit by the EMP will have their minimaps disabled for 2 seconds. It is replaced with static and the words [SIGNAL JAMMED].- The EMP completely destroys the following:Gibraltar'sDome of ProtectionLifeline'sD.O.C. Heal DroneWattson'sPerimeter Securitynodes andInterception PylonInactiveCausticNox Gas TrapsMirage's decoys produced byPsyche OutandLife of the PartyLoba'sBlack Market BoutiqueRampart’sAmped Cover's amped partSeer'sExhibitNewcastle'sMobile ShieldEnemy Crypto'sSurveillance DroneCargo Bots- The EMP deals 100 damage toOctane'sLaunch Pad.- The EMP deals 50 damage to activeCausticNox Gas Traps.- The EMP deals 50 damage toBody ShieldsandEvo Shields, both when equipped and on the ground.- The EMP disablesTridentsfor 5 seconds,Rampart'sMobile Minigun "Sheila"when in placed mode for 17 seconds, and the electricity onNewcastle'sCastle Wall.- The EMP cancelsValkyrie'sSkyward Diveif it causes shield damage.- The radius of Drone EMP is the same asNeurolink'stracking radius. If an enemy is highlighted in orange, you know they'll be caught in the blast.- You can activate EMP from where you last left the drone, even when you are not in drone view. This way, you can set the drone in one spot, leave the drone view, prepare for an ambush, activate the EMP, and push immediately.- Keep in mind that you and your drone are still vulnerable to damage while EMP is charging.The drone is easier to spot while EMP is charging. Try to activate EMP with your drone in a safe spot or while flying it around to avoid it being destroyed.- EMP is very good for ending fights quickly and lessening the chances of your squad getting third partied.Using EMP on enemies who are fighting or escaping outsideThe Ringcan be effective as the slow effect can potentially be enough for the ring to knock or eliminate them.Using EMP on large groups of enemies can rack up damage for Crypto'sEvo Shieldvery quickly.Using EMP on single enemies can be worth doing to take them out of the fight temporarily, rather than letting their squad group up.Since squadmates do not take shield damage from EMP, a risky tactic in a pinch is to activate EMP even if Crypto and his squad will be caught in the blast, giving your team an opportunity to attack or escape while the enemy recovers.- It's very useful for Crypto to carry at least 1-2Ultimate Accelerants to quickly recharge EMP.- Offensive, agileLegendsmake good squadmates for Crypto, as they can easily hunt down enemies after an EMP.- OnKings Canyon, using aCharge Towerwhen your ultimate is fully charged, then activating the EMP exactly 2.5 seconds before the charge tower activates will remove the cooldown completely after every activation until the drone is destroyed. Note: you must have a teammate to do this.
-### Legend Upgrades
-Main article:Legend Upgrades
-Legend Upgrades are special perks introduced inSeason 20to all Battle Royale modes. These add upgrades to a Legend's abilities as you level up your Evo Armor. Only one option may be chosen per level-up for a maximum of two perks total.
-Level 2 Upgrades- Network Expansion:IncreaseNeurolinkandDrone EMPrange by 25%.- Off the Grid:Crypto cloaks when inDrone.Level 3 Upgrades- Satellite Imagery:Dronescan persists for 1.5 seconds. Short Scan after EMP- Hackathon:DoubleDronerecharge rate and gain a speed boost when it explodes (EMPor destroyed).
-## Lore
-Main article:Crypto (character)
-“ | Crypto specializes in secrets. A brilliant hacker and encryption expert, he uses aerial drones to spy on his opponents in the Apex Arena without being seen. He also has a secret of his own: he joined the Apex Games to find the people who framed him for murder.An orphan abandoned at a young age, Tae Joon escaped a life of squalor by becoming a computer engineer for the Mercenary Syndicate, along with his foster sister, Mila Alexander. One day, Tae Joon and Mila stumbled upon an algorithm that could predict the result of any Apex Games match, hidden away in the Games’ own computer systems. That caught the attention of the wrong people - the next day, Mila disappeared, and Tae Joon was forced to go into hiding after he was framed for her murder.He’s now joined the Games to clear his name, because sometimes the spotlight is the best place to hide. Along the way, he's uncovered hints of a conspiracy greater than even he predicted - and maybe greater than he can conquer alone.
-## Cosmetic Items
-### Skins
-There are a total of 79 Legend skins for Crypto; 1Iconic26Legendary, 11Epic, 25Rareand 16Common.
-- Iconic- Legendary- Epic- Rare- Common- HACKER: 1st Class- The Hired Gun1,200- Devil's Advocate1,200- The Masked Dancer1,200- Rising Phoenix1,200- Hype Beast1,200- Machine Language1,200- Deadly Byte- Totemic MightNeedsThe Masked Dancer- Hack Frost- Fuzzy LogicNeedsThe Hired Gun- Whitelisted- Seeker of Knowledge- Winters GraspNeedsRising Phoenix- Midnight Cipher2,500- Hallowed Spirit- Awoken Fury- Nomad Overseer- Inconspicuous[Story 1]- Masked StorytellerNeedsThe Masked Dancer- Roaring Guardian- Elf Made- Cryptic Conjurer- TechnocratLevel 25- [CLASSIFIED]- Darkwatcher- SerenityNote:Story of Crypto:- Daemon Hunter400- Hack the System400- Heat Sync400- Fiber Optics400- User Friendly400- Strength and Power400- Neon Winter- Hardened Circuitry- Patch Notes- Kernel PanicLevel 1- Cosmic Navigator- Bloodline60- Blooms60- Dark Web60- Fishsticks60- Fresh Paint60- High Frequency60- Lucky Charm60- Molten Core60- Mortal Coil60- Scribblers60- Self Organized60- Sizzle Reel60- Throwback60- Tie Dye60- Woodland Warfare60- Cyber AttackDecember 2019- Blue SteelLevel 01- Azure Gaze500- Arctic PlatesSeason 5- Cool Operator1,400- Sweet Synergy500- Broken Syntax- DragonskinJuly 2021- Blue DragonLevel 59- Caution PointSeason 13- OriginalDefault- Arctic30- Cardinal30- Clearwater30- Evergreen30- Flamingo30- Hydro30- Limelight30- Mandarin30- Midnight30- Orchid30- Rage30- Sahara30- Skyward30- Vino30- Yellowjacket30
-### Finishers
-Main article:Finisher
-- https://apexlegends.fandom.com/wiki/File:Execution_Crypto_Asset_Procurement.mp4Asset ProcurementDefault
-- https://apexlegends.fandom.com/wiki/File:Execution_Crypto_Drone_Scan.mp4Drone Scan1,200
-- https://apexlegends.fandom.com/wiki/File:Execution_Crypto_Fatal_Error.mp4Fatal Error
-### Heirloom Sets
-Main article:Heirloom
-#### Biwon Blade
-Crypto's first Heirloom Set.
-The set contains:
-- A Banner Pose:No Escape
-- A Melee weapon skin:Biwon Blade
-- AnIntro Quip:"I'll find you."
-#### Durumi Blade
-Crypto's second Heirloom Set.
-The set contains:
-- A Banner Frame:Tranquility
-- A Melee weapon skin:Durumi Blade
-- A Finisher:Fatal Error
-### Badges
-See:Crypto/Badges
-### Emotes
-Main article:Emote
-- Break It Down-1,200
-- Game Over-1,200
-- Swordplay-400
-- Tiny Dancer
-- Brain and Brawn
-- Stare Down- Level 10
-- Fistbump- Default
-### Skydive Emotes
-Main article:Skydive Emote
-- https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Crypto_Danger_Zone.mp4Danger ZoneLevel 46
-- https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Crypto_Hack_and_Slash.mp4Hack and Slash
-- https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Crypto_Kickin%27_It.mp4Kickin' It
-- https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Crypto_Circling_Back.mp4Circling BackLevel 83
-### Banner Frames
-- Mythic- Legendary- Epic- Rare- Common- Tranquility- Air Traffic Control1,200- Augmented Reality1,200- Ghost Dance1,200- Lift Off1,200- Test Pilot1,200- Remote Workstation400- Nuclear AirLevel 65- ExpeditionLevel 53- Lunar SmokeLevel 10- Scanning For LifeformsLevel 64- Digital InterventionLevel 11- Savage Empire- HeadliningLevel 18- Draconic Navigator- Summoning Fury- City Escape- Cord Cutter60- Cyber Ninja60- DDoS60- Reroute60- Wear and Tear60- Limitless60- GatedLevel 52- ShieldedSeason 5- Pop CultureSeason 13- Rookie CardDefault- Key Card30- Interconnected30- Mesh30- Warning30
-### Banner Poses
-- Mythic- Epic- Rare- Common- No Escape- Buddy System400- Charging D.O.C.400- Defragged400- Let Me Ride400- Creature of the Night- Decrypted- Eavesdrop60- Escape Artist60- Incognito60- Jailbroken60- Prekill60- Smooth Operator60- Wallflower60- IdleDefault
-### Holosprays
-Main article:Holospray
-- Access Denied1,200
-- Can't Talk. Busy.400
-- Cracked Your Securities400
-- I See You400
-- I Won't Be Stopped400
-- I'm Watching You!400
-- Let's Go Fight400
-- You're So Annoying400
-- I Will Become Stronger400
-- I'm Always WatchingLevel 66
-- Nothing I Can't HackLevel 88
-- Expand Your NetworkLevel 11
-- Under My Protection
-- Night GigLevel 19
-### Music Packs
-Main article:Music Pack
-- CryptoLevel 37
-### Transitions
-Main article:Transition
-- Streets of SuotamoLevel 07
-- Books and CoversLevel 71
-- Codename CryptoLevel 87
-- It Takes A LiarLevel 49
-- Destination UnkownLevel 23
-- A Change in CharacterLevel 65
-- The Definition of FamilyLevel 92
-## Voice lines
-See:Crypto/Voice lines
-## History
-Patch notes
-March 29, 2022 PatchFix for bug when Crypto's animation would glitch after using a finisher while in death protection.Fix for cases where Crypto can throw out multiple drones.February 08, 2022 PatchSurveillance DroneThe deployment of the Drone has received a rework:Pressing the Tactical button causes Crypto to send the Drone flying in a straight line in the direction of Crypto's view for a few seconds.If thrown to a wall (or other geo), the Drone will hit the wall and re-orient itself so that it's facing away from the wall.Crypto no longer immediately accesses Drone View after deploying his Drone in this way.Pressing and holding the [Tactical] button will launch the Drone forward in the same way, but then Crypto will immediately access Drone View.Added gamestate (e.g. Ring information, round timers), minimap, killfeed, team status, and ping information to the Drone's HUD.Repurposed the Drone HUD's old Crypto health/shield presentation into displaying the health of the Drone itself.Survey Beacon markers are now displayed in-world while piloting the Drone (same as when controlling Crypto himself).Reduced Drone health from 60 -> 50.The HUD marker for the Drone has been tweaked to increase visibility.The HUD marker for the Drone is now always displayed on-screen while the Drone is deployed (instead of only when the Drone was off-screen.NeurolinkIncreased the Neurolink detection FOV from 160 -> 240 degrees.Neurolink detection is now disabled while the Drone is being recalled.July 19, 2021 PatchFixed bugs with theDragonskinskin.June 29, 2021 PatchSurveillance Drone:(Undocumented) Can now see survey beacon icon in drone view.May 04, 2021 PatchSurveillance Drone:Can now scan and open care packages.Can no longer be used to "hijack" aRespawn Beaconthat's already in use.March 09, 2021 PatchSurveillance Drone:Crypto’s animation to bring out his drone is no longer skippable by throwing aHolo-Spray.Reloading theMastiff Shotgunand30-30 Repeaterwill no longer be faster while in Crypto’s drone.Crypto can no longer teleport to aReplicator.February 02, 2021 PatchSurveillance Drone: Removed the ability to stickArc Stars to friendly drones.January 05, 2021 PatchSurveillance Drone:Fixed an issue with Hack consuming twoVault Keysif two keys were in Crypto’s inventory.Fixed an issue with Hack getting stuck within theTridentwhen deployed as a passenger and the trident is on a ramp.November 18, 2020 PatchSurveillance Drone: Fixed an issue with being able to put Rampart’sEmplaced Minigun "Sheila"on the drone.November 04, 2020 PatchSurveillance Drone:Fixed an issue with the drone being able to drop items from Crypto’s inventory.Fixed an issue with the drone not being able to fit through certain windows.Fixed an issue with the drone marking friendly Mirage decoys as enemies.October 12, 2020 PatchDrone EMP: Fixed issue with being unable to use weapons for some time when this ability is triggered while not in drone mode.October 06, 2020 PatchSurveillance Drone:Can now open loot vaults if Crypto has aVault Keyin his inventory. It consumes the key as usual.Fixed an issue with the drone not detectingWattson'sPerimeter Securityfences.Fixed an audio issue withSurvey Beacons sometimes making very little sound when using it in the drone view.Fixed an issue with his drone not taking damage from directly below.September 03, 2020 PatchSurveillance Drone:Fixed an issue with the drone not detecting players while on aEmplaced Minigun "Sheila".Fixed an issue where while the drone is inCausticgas the whole server would hear the drone audio.August 18, 2020 PatchSurveillance Drone:Can now activateRespawn Beacons andSurvey Beacons. Doing so is instant instead of requiring prolonged use.Increased HP from 30 to 60.Increased hitbox size from cube of edge length 16 to cube of edge length 24.Fixed an issue with Crypto being able to use his drone while using Loba’sBlack Market Boutique.Fixed an issue where VFX shows false positive when hitting Crypto’s Drone.Did a geo pass to help prevent the drone from clipping into walls.Drone EMP:Now slows teammates.Fixed an issue with EMP not destroying Loba’sBlack Market Boutique.AddedReconPassivePerk: Crypto can now useSurvey Beacons.June 23, 2020 PatchSurveillance Drone:Now takes 1.5 seconds to start controlling (was 2.5 seconds).Fixed an issue with the drone flying without input if the player was sprinting with the double-tap to sprint option.Drone EMP: Now destroysWattson’sInterception PylonandLoba'sBlack Market Boutique.May 12, 2020 PatchSurveillance Drone: Crypto can now ping banners, while in drone view, to warn teammates of nearby squads.Drone EMPnow affectsDUMMIEin theFiring Range.April 07, 2020 PatchSurveillance Drone: Fix for cases where players would not receive assist credit when using the drone to scan enemies.March 03, 2020 PatchSurveillance Drone:Primary weapons will now automatically reload while in drone view.Fixed players getting assist credit when using the drone on a player who is downed.Fixed a bug where players could placeGibraltar'sDome of Protectionon the drone allowing the Dome to be mobile while in use.Updated character select headshot.February 04, 2020 PatchSurveillance Drone:Dome of Protectionno longer can stick to drone.Drone EMP: No longer destroys friendlyGibraltarDome of Protection.January 14, 2020 PatchSurveillance Drone:Increased health from 1 to 30.Fixed visual bug for when he first drops into game, the Drone UI reports that it is "recharging" (as if it has been destroyed pre-drop), but progress does not complete / progress.Drone EMP:No longer affects friendly traps or deployables.No longer slows teammates.November 05, 2019 PatchDrone EMP: Will now damage armor that players have dropped.Fixed a bug whereLifeline’sD.O.C. Heal Dronecouldn’t heal Crypto while he was in his drone.Fix for friendlyCausticgas kicking players out of his drone.October 01, 2019 PatchIntroduced.
-## Teasers
-- Crypto was teased for an entire season before his official reveal:Crypto's first appearance was in the trailer forSeason 2, where he was responsible for destroying the Repulsor tower.Crypto's logo appears in "Voidwalker" when analternate Wraithhacks into an abandonedIMCbase.Crypto was the source of several "glitches" inKings Canyon, including distorted lines from the announcer and hacked banner displays showing his attempts to get login information.Crypto appeared in an inaccessible room behind glass in Singh Labs, getting info on the space elevator atWorld's Edge. When a player got near, he and his drone would flee.
-- Crypto's logo appears on theNight LightProwler Burst PDWskin.
-## Trivia
-- Drone EMP causes the same minimap-disabling effect as Titanfall 2'sRadar Jammerboost.
-- Crypto's voice actor, Johnny Young, is an active streamer on Twitch, where he is known to do custom voice lines after the character he plays.
-- During the3rd Anniversarycollection event, two skins were released based on Crypto'sHype Beastskin -Lit WittforMirageandThunder KittyforWattson.
-- The inscription, "0's & 1's 4 Lif3" along with Crypto's logo is found within "Hack". The logo and inscription can be seen if "Hack" is deployed or when Crypto is selected in the beginning of the match.
-- Crypto's drone remote has the word "susukekki" on it which means "riddle" in Korean.
-- Crypto currently has had the longest wait for anHeirloomat 910 days.
-## Gallery
-Videos
-Images
-- A coded message from Crypto toMystik.
-- Concept art of Crypto.[2]
-- Concept art for the drone.[3]
-- Concept art for the drone's remote.[4]
-- An early design of Crypto can be seen in the background of thisPathfinderconcept art from thegame's launch.
-- Concept art for Crypto's room during theForever FamilyStories from the Outlands.
-- Crypto's logo, depicting a hacker's face covered by a hood designed in the pattern of a circuit board.
-- Crypto and Hack at Epicenter
-- Crypto's Map Room on King's Canyon.
-- Crypto's Character Selection Icon
-- The photo of his family that Crypto keeps inside hisBiwon Blade.
-- Concept art for Crypto'sThe Hired Gunskin.[5]
-- Concept art for Crypto'sHype Beastskin.
-[1]
-- Concept art for Crypto'sMachine Languageskin.[6]
-- Concept art for Crypto'sElf Madeskin.[7]
-- Concept art for Crypto'sBiwon Blade.[8]
--
--
-- Catalyst'sSuntarot card, depicting Crypto andWattson
-Merchandise
-- A Funko Pop of Crypto that was released in July 2022.
-- Action figure released by Jakks Pacific.
-- Pin depicting Hack.
-## References
+## 技能
+### 侦查无人机（Surveillance Drone）
+| 战术技能 | Q///
+侦查无人机
+描述 | 部署一架空中摄像无人机，可远程与侦察信标（Survey Beacon）、重生信标（Respawn Beacon）及队友的旗帜卡（Banner card）进行交互。
+冷却时间 | 30 秒- 信息- 交互- 技巧- 已知问题- 按下战术技能键会将无人机从密客处向前投掷约 25 米。长按战术技能键可使密客立即进入无人机视角。若无人机撞墙，它将自动调转方向。- 无人机可部署并飞行至距密客最远 200 米处。若无人机距离密客达 240 米或更远，将自动被召回。按住 ADS 键可进行平飞并环顾四周。当未被手动操控时，无人机会悬停于空中静止不动。密客在操控无人机期间将保持静止状态。在无人机视角中受到伤害，将强制密客退出该视角。- 密客可在任意时刻召回无人机，**但正在复活倒地队友时除外**——此时召回会中断对倒地队友的复活动作。然而，在射击、治疗、倒地或执行其他动作期间召回无人机则不会中断这些动作。召回过程耗时约 2 秒。- 无人机拥有 50 点生命值，召回后将恢复全部生命值。- 无人机可用于开启门/补给箱（Supply Bin）/空投补给（Care Package），拾取队友的旗帜卡，并即时使用侦察信标与重生信标。执行上述操作时，无人机必须处于目标 7 米范围内。若背包中持有“金库钥匙（Vault Key）”，你可使用无人机开启金库（Vault）。- 无人机可在 12 米范围内标记物品；敌人可在 125 米范围内被标记。- 通过无人机视角看到的冠军旗帜（Champion Banner）将显示距密客（**非无人机**）200 米半径内敌方小队的数量。密客可在无人机视角中标记这些旗帜，以此向队友预警附近敌方小队数量。- 在无人机视角中，武器将自动装填，优先装填当前所持武器。装填耗时与正常装填一致。- 无人机发出的音频传播范围如下：投掷无人机 — 175 米；进入无人机视角 — 175 米；退出无人机视角 — 175 米；召回无人机 — 100 米；操控无人机 — 110 米；无人机待机 — 80 米。- 你可在无人机视角中手动标记及使用标记轮盘（ping wheel）。以下为侦查无人机可标记的所有对象：装备、武器、配件、再生类物品、弹药、手雷、地图要素、敌人。- 无人机不会被密客或其队友造成伤害。它会阻挡射向它的子弹。- 探路者（Pathfinder）的抓钩（Grappling Hook）可钩住无人机。- 暴雷（Fuse）的指节集束弹（Knuckle Cluster）可黏附于无人机。- 无人机无法穿过恶灵（Wraith）的维度裂隙（Dimensional Rift）。- 疯玛吉（Mad Maggie）的暴乱钻头（Riot Drill）可穿透无人机。- 若已装配天赋“离线模式（Off the Grid）”，密客在操控无人机时将完全隐形。“隐形”可防止并移除以下效果的高亮标记：母矿（The Motherlode）、狩猎之兽（Beast of the Hunt）、黑洞（Black Hole）、军阀之怒（Warlord's Ire）、观察者透镜（Spotter's Lens）、狙击手标记（Sniper's Mark）、侦查无人机（Surveillance Drone）、神经链接（Neurolink）、诺克斯视觉（Nox Vision）、刺客本能（Assassin's Instinct）、相位裂隙（Phase Breach）、虚空通道（Void Passage）、虚空枢纽（Void Nexus）、遁入虚空（Into the Void）、维度裂隙（Dimensional Rift）、烟雾发射器（Smoke Launcher）、威胁视觉（Threat Vision）及数字威胁光学瞄具（Digital Threat optics）。- 隐形状态下若被“诸神之眼（Eye of the Allfather）”扫描，将暴露你的位置。若已在被扫描状态下启用隐形，则全身高亮标记会被移除，但橙色菱形标记不会消失。- 隐形不会移除喷气式战斗机 HUD（Jet-Fighter HUD）的扫描标记。被扫描时你不会闪烁。- 即便隐形，你移动时仍会留下足迹（tracks）。- 在展览室（Exhibit）内隐形移动不会暴露你的位置。- 使用隐形时若被“聚焦凝视（Focus of Attention）”扫描，将移除隐形效果。- 隐形状态下，你仍会被希尔（Seer）的“寻心者（Heart Seeker）”探测到。- 隐形状态下，密客不会触发腐蚀（Caustic）的诺克斯毒气陷阱（Nox Gas Traps）。- 可防止并移除哨兵（Whistler）的锁定。- 可防止复仇炮弹（Rev Shell）锁定，但若在隐形前已被锁定，则不会解除该锁定。- 隐形不会禁用使用滑索（Ziplines）、滑轨（Zip Rails）、重力炮（Gravity Cannons）、跳跃塔（Jump Towers）、撤离塔（Evac Towers）或跳跃垫（Jump pads）时产生的喷射轨迹。- 密客在无人机视角中完全脆弱。操控侦查无人机时，请寻找安全位置藏身。你可在进入无人机视角时蹲下，以强制密客保持蹲姿，便于隐藏。- 滑铲中部署无人机，可使密客在无人机部署期间持续滑铲。借此方式，你可在沿斜坡向下移动进入新区域时滑入掩体，或节省时间。- 尽管队友可见无人机自动触发的神经链接（Neurolink）标记，但其有效范围极小。请务必手动标记那些无人机未能自动探测到的敌人。- 无人机侦测附近敌方小队数量的能力极具战略价值。请频繁将此信息告知队友，以便决策何时/何地移动、是否接战，以及避免在获胜后遭第三方突袭。“200 米小队侦测半径”大致相当于小地图尺寸。- 你可将无人机用作诱饵，在队友侧翼包抄或撤退时分散敌人注意力。- 由于敌方无人机呈现橙色光晕，将其飞出圈外（The Ring）时，其外观将与橙色圈效及部分透明度融合，使敌人更难发现。无人机不会承受圈伤。- 若队友阵亡，你可使用无人机安全拾取其旗帜。尝试从不同于你自身位置的方向飞入拾取，以降低被发现的风险。在生存栏位携带移动重生信标（Mobile Respawn Beacon）对密客而言天然更具价值。- 你可在无人机视角中进行治疗。具体操作：长按战术技能键进入无人机视角，待屏幕变白瞬间，使用治疗物品（如电池（Battery）或医疗包（Medkit）），即可在无人机视角中恢复护盾或生命值。此法同样适用于终极加速剂（Ultimate Accelerants）以更快充能 EMP，亦可为狂怒（Rampage）与哨兵（Sentinel）充能。搭配激进型 EMP 效果最佳。- 侦查无人机有时虽仅拥有 50 点生命值，却需比预期更多枪击才能摧毁（不包括可一击摧毁它的武器）。- 有时当无人机正在骇入侦察信标时，地图上不会显示下一圈位置，除非你正对信标正面进行骇入（尽管骇入音效仍会播放）。- 无人机无法穿过某些窗户。- 若在过于靠近墙壁或掩体处蹲下并尝试部署无人机，可能导致其卡住。- 在竞技场（Arenas）模式中，部署无人机消耗 1 次充能，无人机被摧毁再消耗 1 次充能。若购买全部 3 次充能且无人机被摧毁，则仅剩 1 次充能。- 无人机视角中的地图显示有误。- 长按技能键投掷无人机后、进入无人机视角前存在一个短暂可操作窗口；在此窗口内使用的物品将在你操控无人机期间完成生效。- 无人机激活期间若被击倒，将立即召回无人机（使用 EMP 期间被击倒将取消并消耗该次充能）。
+
+### 神经链接（Neurolink）
+| 被动技能 | 
+神经链接（Neurolink）
+描述 | 密客及其队友可看见侦查无人机在 30 米范围内探测到的内容。
+冷却时间 | ？- 信息- 交互- 技巧- 已知问题- 无人机将在 30 米内、具备直接且无遮挡视线的情况下，高亮标记门、补给箱、空投补给、陷阱及敌人。敌人将以三角形图标更显著地标记。- 被无人机高亮的敌人将在其 H.U.D. 上显示“DRONE DETECTED”（无人机已探测）。- 受“现在看见我……（Now You See Me...）”影响的玩家或启用“离线模式（Off the Grid）”天赋的玩家无法被探测。- 幻象（Mirage）的诱饵可被扫描，但不会作为敌人高亮。- 若直布罗陀（Gibraltar）的防护穹顶（Dome of Protection）位于敌人与无人机之间，敌人将不会被高亮。- 若密客在侦察模式下身处敌方或友方班加罗尔（Bangalore）烟雾中，你的屏幕将开始变得模糊。- 敌人无法透过班加罗尔（Bangalore）烟雾或腐蚀（Caustic）毒气被探测。- 无人机 EMP 与神经链接（Neurolink）即使在密客未直接操控无人机时亦可使用。这使得密客可在收集敌情信息的同时持续参与战斗。- 侦查无人机噪音较大，其自动敌人探测功能会向敌人警示其存在。若你不希望敌人察觉你小队临近，可从远处手动标记他们。- 许多地图存在玻璃表面，无人机可透过其探测敌人。将无人机停驻于玻璃一侧，即可安全扫描另一侧的敌人。- 若你难以发现敌方小队，可驾驶无人机穿行于建筑与掩体间，并透过玻璃观察——即便你未主动察觉，其敌人探测功能也可能暴露敌人。- 无人机可能无法高亮某些本应被高亮的常规对象。
+
+### 无人机电磁脉冲（Drone EMP）
+| 终极技能 | Z/+/+/+
+无人机电磁脉冲（Drone EMP）
+描述 | 为你的无人机充能并释放电磁脉冲。爆炸造成 50 点护盾伤害，减缓玩家移动，并摧毁陷阱。
+充能时间 | 3 分钟- 信息- 交互- 技巧- 已知问题- 充能需 3 秒后引爆。无人机在引爆前被摧毁将取消该技能。- 影响半径 30 米内所有玩家（包括密客自身），无视墙体及其他障碍物。队友不受护盾伤害，但仍会被减缓。减速持续约 1–2 秒。- 被 EMP 命中的敌人，其小地图将被禁用 2 秒，画面被雪花噪点覆盖并显示文字 [SIGNAL JAMMED]（信号干扰）。- EMP 将彻底摧毁以下对象：直布罗陀（Gibraltar）的防护穹顶（Dome of Protection）、命脉（Lifeline）的 D.O.C. 治疗无人机（D.O.C. Heal Drone）、沃特森（Wattson）的外围防御节点（Perimeter Security nodes）与拦截炮台（Interception Pylon）、处于非激活状态的腐蚀（Caustic）诺克斯毒气陷阱（Nox Gas Traps）、幻象（Mirage）由“精神错乱（Psyche Out）”与“派对人生（Life of the Party）”生成的诱饵、罗芭（Loba）的黑市精品店（Black Market Boutique）、兰伯特（Rampart）的强化掩体（Amped Cover）的强化部分、希尔（Seer）的展览室（Exhibit）、纽卡斯尔（Newcastle）的移动护盾（Mobile Shield）、敌方密客（Crypto）的侦查无人机（Surveillance Drone）、运输机器人（Cargo Bots）。- EMP 对动力小子（Octane）的起跳平台（Launch Pad）造成 100 点伤害。- EMP 对处于激活状态的腐蚀（Caustic）诺克斯毒气陷阱（Nox Gas Traps）造成 50 点伤害。- EMP 对躯体护盾（Body Shields）与进化护盾（Evo Shields）——无论其是否被装备或置于地面——均造成 50 点伤害。- EMP 将使三叉戟（Tridents）失效 5 秒，使兰伯特（Rampart）的移动式迷你机枪“希拉（Sheila）”在放置模式下失效 17 秒，并使纽卡斯尔（Newcastle）的城堡之墙（Castle Wall）断电。- 若 EMP 造成护盾伤害，将取消瓦尔基里（Valkyrie）的升空俯冲（Skyward Dive）。- 无人机 EMP 的作用半径与神经链接（Neurolink）的追踪半径相同。若某敌人呈橙色高亮，则你可确认其将被爆炸波及。- 你可在上次离开无人机的位置激活 EMP，即使你当前并未处于无人机视角中。借此方式，你可将无人机置于某处，退出无人机视角，准备伏击，随后激活 EMP 并立即推进。- 请注意：EMP 充能期间，你与无人机仍易受伤害。充能中的无人机更易被发现。请尽量在安全位置或飞行过程中激活 EMP，以防其被摧毁。- EMP 极适合快速终结战斗，并降低小队遭第三方突袭的风险。对圈外正在交战或逃逸的敌人使用 EMP 效果显著——减速效果可能足以令圈伤将其击倒或淘汰。对大量敌人使用 EMP 可迅速为密客的进化护盾（Evo Shield）累积伤害。对单个敌人使用 EMP 亦值得考虑，可暂时使其脱离战斗，而非任其小队集结。由于队友不会因 EMP 承受护盾伤害，一种高风险战术是在紧急情况下，即使密客与队友均处于爆炸范围内也激活 EMP，借此为团队创造进攻或撤退机会，待敌人恢复后再行动。- 密客携带至少 1–2 个终极加速剂（Ultimate Accelerants）以快速重充 EMP 极为实用。- 进攻性强、机动性高的传奇英雄（Legends）是密客的理想队友，因其可在 EMP 后轻松追击敌人。- 在国王峡谷（Kings Canyon）地图中，当终极技能充满时使用充能塔（Charge Tower），并在充能塔激活前恰好 2.5 秒激活 EMP，可于每次激活后完全移除 EMP 冷却时间（直至无人机被摧毁）。注意：此操作需有队友协助。
+
+### 传奇升级（Legend Upgrades）
+主条目：传奇升级（Legend Upgrades）  
+传奇升级是第 20 赛季为所有大逃杀模式引入的特殊天赋。随着你的进化护甲（Evo Armor）等级提升，这些升级将增强传奇英雄（Legend）的技能。每次升级仅可选择一项天赋，总计最多选择两项。
+
+2 级升级  
+- 网络扩展（Network Expansion）：提升神经链接（Neurolink）与无人机电磁脉冲（Drone EMP）作用范围 25%。  
+- 离线模式（Off the Grid）：密客在操控无人机（Drone）时进入隐形状态。  
+
+3 级升级  
+- 卫星成像（Satellite Imagery）：无人机（Drone）在 EMP 爆炸后可额外存续 1.5 秒；短程扫描（Short Scan）将在 EMP 后触发。  
+- 黑客马拉松（Hackathon）：无人机（Drone）充能速率翻倍，并在其爆炸（EMP 或被摧毁）时获得移速加成。
