@@ -30,9 +30,8 @@ videoai:
 
   outbox:
     dispatch-batch-size: ${VIDEOAI_OUTBOX_DISPATCH_BATCH_SIZE:50}
-    dispatch-interval-ms: ${VIDEOAI_OUTBOX_DISPATCH_INTERVAL_MS:3000}
+    dispatch-interval-ms: ${VIDEOAI_OUTBOX_DISPATCH_INTERVAL_MS:1000}
     recovery-interval-ms: ${VIDEOAI_OUTBOX_RECOVERY_INTERVAL_MS:60000}
-    max-in-flight: ${VIDEOAI_OUTBOX_MAX_IN_FLIGHT:10}
     callback-threads: ${VIDEOAI_OUTBOX_CALLBACK_THREADS:10}
     send-timeout-ms: ${VIDEOAI_OUTBOX_SEND_TIMEOUT_MS:10000}
 

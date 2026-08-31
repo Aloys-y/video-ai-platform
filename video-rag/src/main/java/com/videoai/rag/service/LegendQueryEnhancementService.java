@@ -11,7 +11,7 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * 将已确认的中文英雄名、玩家俗称和技能俗称解析为英文知识库实体。
+ * 将已确认的中文英雄名、玩家俗称和技能俗称解析为中文知识库规范实体。
  * 规则保持小而明确：只有先命中英雄别名，才解析该英雄名下的技能，避免把“烟”“扫描”等通用词误扩展。
  */
 @Service
@@ -19,54 +19,56 @@ import java.util.Set;
 public class LegendQueryEnhancementService {
 
     private static final List<LegendRule> RULES = List.of(
-            rule("Alter", aliases("变幻")),
-            rule("Ash", aliases("艾许", "艾什"), ability("Arc Snare", "电弧绊索")),
-            rule("Ballistic", aliases("弹道")),
-            rule("Bloodhound", aliases("寻血猎犬", "猎犬", "狗子"),
-                    ability("Eye of the Allfather", "扫描", "上帝之眼"),
-                    ability("Beast of the Hunt", "狩猎野兽")),
-            rule("Catalyst", aliases("催化姬")),
-            rule("Caustic", aliases("腐蚀"),
-                    ability("Nox Gas Trap", "毒气罐", "毒罐"),
-                    ability("Nox Gas Grenade", "毒气手雷")),
-            rule("Conduit", aliases("导线管")),
-            rule("Crypto", aliases("密客"),
-                    ability("Surveillance Drone", "无人机"),
-                    ability("Drone EMP", "emp", "电磁脉冲")),
-            rule("Fuse", aliases("暴雷")),
-            rule("Gibraltar", aliases("直布罗陀", "胖胖"),
-                    ability("Dome of Protection", "罩子", "穹顶护盾", "泡泡盾"),
-                    ability("Defensive Bombardment", "防御性轰炸")),
-            rule("Horizon", aliases("地平线"),
-                    ability("Gravity Lift", "重力升降机"),
-                    ability("Black Hole", "黑洞")),
-            rule("Lifeline", aliases("命脉", "奶妈"),
-                    ability("Combat Revive", "拉队友", "救队友", "战斗复苏"),
-                    ability("D.O.C. Heal Drone", "治疗无人机", "医疗无人机")),
-            rule("Loba", aliases("罗芭"),
-                    ability("Burglar's Best Friend", "手镯", "瞬移手镯"),
-                    ability("Black Market Boutique", "黑市")),
-            rule("Mad Maggie", aliases("疯玛吉")),
-            rule("Mirage", aliases("幻象"), ability("Psyche Out", "分身", "诱饵")),
-            rule("Newcastle", aliases("纽卡斯尔")),
-            rule("Octane", aliases("动力小子"),
-                    ability("Stim", "兴奋剂", "打针"),
-                    ability("Launch Pad", "跳板")),
-            rule("Pathfinder", aliases("探路者", "机器人"),
-                    ability("Grappling Hook", "钩锁", "抓钩"),
-                    ability("Zipline Gun", "滑索")),
-            rule("Rampart", aliases("兰伯特")),
-            rule("Revenant", aliases("亡灵"), ability("Shadow Pounce", "暗影突袭")),
-            rule("Seer", aliases("希尔")),
-            rule("Sparrow", aliases("飞雀")),
-            rule("Valkyrie", aliases("瓦尔基里", "瓦鸡"),
-                    ability("Missile Swarm", "导弹", "飞弹蜂群"),
-                    ability("Skyward Dive", "天际俯冲", "飞天")),
-            rule("Vantage", aliases("万蒂奇")),
-            rule("Wattson", aliases("沃特森")),
-            rule("Wraith", aliases("恶灵", "相位女"),
-                    ability("Into the Void", "相位", "踏入虚空"),
-                    ability("Dimensional Rift", "传送门", "维度裂隙"))
+            rule("变幻", aliases("变幻")),
+            rule("艾许", aliases("艾许", "艾什"), ability("弧形拘束器", "电弧绊索", "弧形拘束器")),
+            rule("艾瑟儿", aliases("艾瑟儿", "艾瑟尔")),
+            rule("弹道", aliases("弹道")),
+            rule("班加罗尔", aliases("班加罗尔", "班加"), ability("烟雾发射器", "烟雾", "烟墙")),
+            rule("寻血猎犬", aliases("寻血猎犬", "猎犬", "狗子"),
+                    ability("众父之眼", "扫描", "上帝之眼", "众父之眼"),
+                    ability("狩猎之兽", "狩猎野兽", "狩猎之兽")),
+            rule("催化姬", aliases("催化姬")),
+            rule("腐蚀", aliases("腐蚀"),
+                    ability("诺克斯毒气陷阱", "毒气罐", "毒罐"),
+                    ability("诺克斯毒气手雷", "毒气手雷")),
+            rule("导线管", aliases("导线管")),
+            rule("密客", aliases("密客"),
+                    ability("侦查无人机", "无人机"),
+                    ability("无人机电磁脉冲", "电磁脉冲")),
+            rule("暴雷", aliases("暴雷")),
+            rule("直布罗陀", aliases("直布罗陀", "胖胖"),
+                    ability("防护穹顶", "罩子", "穹顶护盾", "泡泡盾"),
+                    ability("防御轰炸", "防御性轰炸")),
+            rule("地平线", aliases("地平线"),
+                    ability("重力升降台", "重力升降机", "重力升降台"),
+                    ability("黑洞", "黑洞")),
+            rule("命脉", aliases("命脉", "奶妈"),
+                    ability("战斗复活", "拉队友", "救队友", "战斗复苏", "战斗复活"),
+                    ability("治疗无人机", "治疗无人机", "医疗无人机")),
+            rule("罗芭", aliases("罗芭"),
+                    ability("盗贼的挚友", "手镯", "瞬移手镯"),
+                    ability("黑市精品店", "黑市")),
+            rule("疯玛吉", aliases("疯玛吉")),
+            rule("幻象", aliases("幻象"), ability("心理战", "分身", "诱饵")),
+            rule("纽卡斯尔", aliases("纽卡斯尔")),
+            rule("动力小子", aliases("动力小子"),
+                    ability("肾上腺刺激", "兴奋剂", "打针"),
+                    ability("弹射跳板", "跳板")),
+            rule("探路者", aliases("探路者", "机器人"),
+                    ability("钩锁", "钩锁", "抓钩"),
+                    ability("滑索枪", "滑索")),
+            rule("兰伯特", aliases("兰伯特")),
+            rule("亡灵", aliases("亡灵"), ability("暗影扑击", "暗影突袭", "暗影扑击")),
+            rule("希尔", aliases("希尔")),
+            rule("飞雀", aliases("飞雀")),
+            rule("瓦尔基里", aliases("瓦尔基里", "瓦鸡"),
+                    ability("导弹齐射", "导弹", "飞弹蜂群", "导弹齐射"),
+                    ability("升空俯冲", "天际俯冲", "飞天", "升空俯冲")),
+            rule("万蒂奇", aliases("万蒂奇")),
+            rule("沃特森", aliases("沃特森")),
+            rule("恶灵", aliases("恶灵", "相位女"),
+                    ability("进入虚空", "相位", "踏入虚空", "进入虚空"),
+                    ability("维度裂隙", "传送门", "维度裂隙"))
     );
 
     private final RagProperties ragProperties;
@@ -95,12 +97,12 @@ public class LegendQueryEnhancementService {
         }
 
         StringBuilder enhanced = new StringBuilder(query)
-                .append("\nResolved Apex Legend: ")
+                .append("\n已解析英雄：")
                 .append(String.join(", ", entities));
         if (!abilities.isEmpty()) {
-            enhanced.append(". Resolved ability: ").append(String.join(", ", abilities));
+            enhanced.append("。已解析技能：").append(String.join(", ", abilities));
         }
-        return enhanced.append('.').toString();
+        return enhanced.append('。').toString();
     }
 
     private boolean containsAny(String query, List<String> aliases) {

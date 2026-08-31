@@ -99,7 +99,7 @@ class KnowledgeRetrievalServiceTest {
     }
 
     @Test
-    void shouldFilterMobileLoreAndAuxiliaryLegendCardsWhenEnabled() {
+    void shouldRestrictRetrievalToCuratedLegendCategoryWhenEnabled() {
         properties.setLegendPcGameplayFilterEnabled(true);
         when(vectorStoreClient.search(eq(List.of(0.1F, 0.2F)), eq(12), anyString()))
                 .thenReturn(List.of());
@@ -110,10 +110,7 @@ class KnowledgeRetrievalServiceTest {
         verify(vectorStoreClient).search(eq(List.of(0.1F, 0.2F)), eq(12), filterCaptor.capture());
         String filter = filterCaptor.getValue();
         org.junit.jupiter.api.Assertions.assertTrue(filter.contains("category == \"LEGEND\""));
-        org.junit.jupiter.api.Assertions.assertTrue(filter.contains("card_code not in"));
-        org.junit.jupiter.api.Assertions.assertTrue(filter.contains("\"wraith-mobile\""));
-        org.junit.jupiter.api.Assertions.assertTrue(filter.contains("\"wraith-id\""));
-        org.junit.jupiter.api.Assertions.assertTrue(filter.contains("\"ballistic-character\""));
+        org.junit.jupiter.api.Assertions.assertFalse(filter.contains("card_code not in"));
     }
 
     private VectorSearchResult result(String id, String cardCode, double score) {

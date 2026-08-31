@@ -1,106 +1,134 @@
 ---
-title: "Conduit"
+title: "导线管"
+title_en: "Conduit"
 topic: legends
-categories: ["Apex Legends", "Apex Legends Legends", "Female Legends", "Legends", "Locked legends", "Pages with script errors"]
+language: zh-CN
+categories: ["Apex英雄", "PC端", "玩法资料"]
 source: https://apexlegends.fandom.com/wiki/Conduit
 ---
 
-# Conduit
+# 导线管（Conduit）
 
-Conduit
+## 玩法概览
+职业 | 支援型
+战术技能 | 辐射传输（Radiant Transfer）
+被动技能 | 救世疾驰（Savior's Speed）
+终极技能 | 能量路障（Energy Barricade）
 
-Shield Healer
-Details
-Real Name | Rowenna Valentina Coffey Divina
-Gender | Female
-Age | 27
-Home World | Nexus
-Gameplay
-Class | Support
-Tactical Ability | Radiant Transfer
-Passive Ability | Savior's Speed
-Ultimate Ability | Energy Barricade
-Real-world Info
-Voice Actor | Frankie Kevich[1]
-“ | No sacrifice, no victory.
-Conduitis aSupportLegend. She was introduced inSeason 19and is locked from the base game.  She can be unlocked using digital currency: either12,000 or750.
-She is a legend who can quickly help and protect her allies in a rush aswell as stopping enemy aggression. Conduit's tactical abilityRadiant Transfertemporarily replenishes her teammate's and her own shields, even at a distance. Her ultimateEnergy Barricadecan be used to deploy devices that damage and slow down enemies, fending hostiles off of her allies. And her passive abilitySavior's Speedmakes Conduit go faster when she head towards teammates out of her range.
-## Abilities
-### Radiant Transfer
-| Tactical | Q///
-Radiant Transfer
-Description | Send a surge of energy to a teammate and yourself, temporarily regenerating shields when in danger.
-Cooldown | 21 seconds- Info- TipsThe transfer has a range of 50 meters.- The transfer can go through walls, as long as you are in range.- You are in range when you see a "shield" icon hover on top of your allies. Shield icon has 4 states:White: Allies have full shieldGreen: Allies have full temporary shieldYellow: Allies have more than 50% shield, but not full.Red: Allies have less than 50% shield.This ability has three subtle phases:- Phase 1: Regenerating ShieldsDuring this phase, damaged and broken shields are reinforced with temporary shields.This phase lasts for 10 seconds.Each tick, temporary shields are granted so long as the total shield health isn't full.While the target's total shield health is full, more temporary shields aren't granted. These wasted hitpoints can't be regained later.Over the duration, up to 60 hitpoints to herself worth of temporary shields are granted.The temporary shields are granted at a rate roughly equivalent to 7.5 hitpoints worth of shields per second, or 10 hitpoints every 1.35 seconds.- Phase 2: Temporary Shields HoldDuring this phase, any temporary shields that were granted during phase 1 remain, but no new temporary shields are granted.This phase lasts for 20 seconds.- Phase 3: Temporary Shields DecayAny remaining temporary shields begin to decay twice as fast as they are gained in Phase 1 all temporary shields are gone.This phase lasts until all temporary shields decay, which could take up to 4 seconds with the maximum amount of temporary shields.Note that:- This ability is always applied to Conduit when used, but can also be applied to one of her allies, provided that they are in range and Conduit is hovering over them when the ability is activated.The range of this ability is 50 meters.- The ability has a cooldown of 30 seconds from when the ability is used intially.The actual timer doesn't show up until a few seconds after Phase 1 ends.Due to the duration of the temporary shields and the cooldown of the ability, the tactical can be used again just as the old temporary shields expire, provided that they have not been destroyed first.- If recovering shields would cause your total shields to exceed the maximum that your evo shield can provide, excess temporary shields are LOST.- Temporary shields act like normal shields, except that they ALWAYS take damage first before normal shields - even if they are recovered after gaining temporary shields.- This ability can provide you with a second-wind to continue or re-engage a fight after losing some or all of your shields.- If your shields are cracked, you can use this as an opportunity to take cover and use a shield cell or syringe.Doing so will give you an opportunity to gain some extra hitpoint restoration while the temporary shields build before re-engaging while giving your opponents minimal time to regenerate their hitpoints.- Using a shield battery or phoenix kit will completely restore your shields and therefore cause this effect to end immediately. Try to do this only when you aren't able to make use of the temporary shields.This might occur because the temporary shields are about to time out, or because you have lost some of the temporary shields in a re-engagement and need to recover back to full shields for yet another skirmish.- You can use Radiant Transfer while using a healing item. This can be useful if you backed up for some heal and still need to help your allies.- Radiant transfer is crucial in fights. Make sure to use it wisely as the cooldown is significantly long compared to other abilities.Watch out if your teammate is going to get shot before using her tactical ability as any damage to them will immediately stop regenerating their shields.
-### Savior's Speed
-| Passive | 
-Savior's Speed
-Description | Sprint faster towards allies that are out of range of your tactical.
-Cooldown | ?- Info- Tips- While active, Conduit gains boost to her sprint speed, as long as the following conditions are met:Conduit must be sprinting; walking or sliding won't allow the passive to trigger.Conduit must have one or more allies outside of her tactical range, which is 50 meters long.Conduit must run directly towerd her ally. If she runs with a strafing movement, the speed boost will cancel.Conduit must be facing such an ally for at least 3(?) seconds within a 60(?) degree viewing cone.The icon on top of the ally need to be shown as "speed up" icon instead of "shield" icon, with a fill-in ring surronding it. When the ring is fully filled, the passive will be activated.- Some movements count as "running", such as (may not be exhaustive) :Being propelled by a grav-cannonRiding a zip-lineRiding a Trident- The effect ends when any of the conditions aren't met for more than 3(?) seconds.- This effect has no cooldown.- The speed boost is 30%.- This passive can persist indefinitely as long as it's conditions are met. Use this continued boost of speed to close the distance between you and your team members after looting, to catch up to legends with movement-based abilities, and to reposition or engage enemies in a fight.- Conduit's passive ties her tactical and ultimate together.Her passive allows her to reach your teammate faster to replenish their shield and to deploy her ultimate to fight against aggression from the enemy.- Because of the semi-indefinite speed boost, it makes Conduit a good runner to get important things such as evo caches or a teammate's banner (rip) while still being able to return to her teammates quickly.That being said, it is still safer to run to an available replicator since she is aSupportLegend.
-### Energy Barricade
-| Ultimate | Z/+/+/+
-Energy Barricade
-Description | Deploy an array of shield jamming devices which damage and slow enemies.
-Charge time | 2.5 minutes- Info- Tips- When the ability is activated, a delivery device is lobbed forward from Conduit.When the delivery device reaches its destination, it deploys an array of seven shield jammers in a line.The middle jammer is always dropped straight down, while the six other jammers land to the left and right of the middle one.The jammers can bounce off of walls and other surfaces.If the jammers don't bounce, they are deployed such that their area of effects slight overlap, forming a continuous line of effect.- When the jammers land, they take 4 seconds to prime.- Once primed, the active jammers last for 45 seconds before disappearing or until destroyed.- Each active jammer hovers slightly above the ground, and creates a visible zone of effect in a sphere around the node.The radius of the spheres are approximately 10 meters (Radius can be increased by 20% with the Bigger Jam Perk)- Enemies within range of an active jammer take 10 damage per second and are slowed by 15%, resetting every second.Despite the in-game description of the ability, the effect of jammers aren't stronger (or weaker) against shields than health.- Each jammer has 200 hitpoints- The shield jammers can bounce off of walls and other surfaces, causing the areas of effect to overlap. This can be used to force enemies to destroy multiple shield jammers to clear an area, to endure the damage and slow, or to avoid the area altogether.- Shield jammers can block bullets and can be used as cover in a fight.- Even though her shield jammers can control an area, it is recommended to use this ability in this way mostly for the endgame.If you want to use shield jammers to control an area specifically, it might be better used either indoors or small spaces.- Her ultimate is designed (as to her kit and role) to stop aggression from enemies coming to you or your teammate's way.
-### Legend Upgrades
-Main article:Legend Upgrades
-Legend Upgrades are special perks introduced inSeason 20to all Battle Royale modes. These add upgrades to a Legend's abilities as you level up your Evo Armor. Only one option may be chosen per level-up for a maximum of two perks total.
-Level 2 Upgrades- Battpack:+1 Shield Battery stack limit.- Bigger Jam:+10%Energy Barricadejammer damage radius.Level 3 Upgrades- Split Charge:+1Radiant Transfercharge; half shield regen duration.- Radiant Transfer:+10mRadiant Transferrange.
-## Lore
-Main article:Conduit (character)
-“ | On her rebuilt homeworld of Nexus, Rowenna Valentina Coffey Divina chose joy, her ever-present smile offering hope amidst the rubble of a government coup. There, the remnants of a fallen Monarch Titan became a symbol of sacrifice, inspiring heroic tales of Legends that Rowenna spun for her siblings. Her sense of humor would be her family’s shield against the harshness of reality, and a secret weapon in Rowenna’s own quest to be an Apex Legend.But when tragedy struck her oldest sister Diwa, Rowenna took her family’s fate into her own hands. She snuck into the restricted battlefields, salvaging the Titan's radioactive battery. From it, Rowenna forged a combat rig, harnessing its lethal energy to fight in local tournaments. Every victory helped support her loved ones and brought her closer to becoming a Legend, but at a grave cost:The battery’s fallout was slowly killing her.It didn’t matter. To achieve her dream, it was a price Rowenna was ready to pay. Her success led neutral Nexus to its first invitation to the Apex Games, forcing a heated confrontation with Diwa, who recognized the armor’s fatal origin. But Rowenna had made her choice.Now, as Conduit, she steps onto the battlefield. Equal parts fan and gladiator, fueled by the Monarch Titan's battery and her own quest to give her family a better life.For Rowenna, an early death is inevitable, but right now–it’s Conduit’s chance for a day in the sun.
-## Cosmetic items
-### Skins
-There are a total of 42 Legend skins for Conduit; 1Iconic, 10Legendary, 7Epic, 15Rare, and 16Common.
-- Iconic- Legendary- Epic- Rare- Common- Gundam Aerial- Gilded Radiance1,200- Long Gone1,200- No Shade1,200- Royal Obsidian1,200- Player One- Tactical Trendsetter- Undying Optimism- Corrupted Guardian- Lionhearted- Fluorescent Guardian- Daemon Hunter400- Fiber Optics400- Hack the System400- Heat Sync400- User Friendly400- Prism Powered- Wasteland Wanderer- Alpha Royal60- Arachnophobia60- Bloodline60- Dire Wolf60- Disruptor60- Formal Finery60- Labyrinth60- Prowess60- Racing Stripes60- Snakeskin60- Super Rad60- Unholy Alliance60- Volcanic60- Wallflower60- Wishbone60- OriginalDefault- Amethyst30- Arctic30- Cardinal30- Clearwater30- Evergreen30- Flamingo30- Hydro30- Limelight30- Mandarin30- Midnight30- Orchid30- Rage30- Sahara30- Skyward30- Yellowjacket30
-### Finishers
-Main article:Finisher
-### Badges
-See:Conduit/Badges
-### Emotes
-Main article:Emote
-- Personal Growth-1,200
-- Cool Beats-400
-- Dramatic End
-- Shot To The Beats- Default
-### Skydive Emotes
-Main article:Skydive Emote
-- https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Conduit_The_Nexus_Flip.mp4The Nexus FlipLevel 2
-- https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Conduit_Quick_Scan.mp4Quick ScanLevel 98
-### Banner Frames
-- Legendary- Epic- Rare- Common- Family Style1,200- Homesick1,200- Protector1,200- Salvaged1,200- Sunset Back Home1,200- Ancient VillageLevel 75- Barrier Breaker60- In The Veins60- Pixel Perfection60- Stream Setup60- Taste of Home60- Halo-HaloDefault- Broadcast30- Energetic30- Game Plan30- Restricted Area30
-### Banner Poses
-- Epic- Rare- Common- Evasive Autograph400- Highlight Reel400- Monarch's Blessing400- Rise and Shine400- Showdown400- https://apexlegends.fandom.com/wiki/File:Legendary_Transformation_Conduit.mp4Legendary Transformation- Get Pumped60- Helping Hand60- Into The Fray60- Pleasant Perch60- Picture Perfect60- Ring Light60- Shadow Boxing60- Sweet Fragrance60- Trick Shooter60- MustaDefault
-### Holosprays
-Main article:Holosprays
-- What A Play!1,200
-- A Deadly Combo400
-- Heart of a Titan400
-- Laban Lang400
-- MVP400
-- My Favorite Play400
-- My Squad400
-- Ready For Anything400
-- Tignan Mo!400
-- Time To Shine400
-- Don't Hold BackLevel 74
-- Collecting Wins
-- One Point To Me
-- Perfect!! Cool! Marvelous!!!
-### Music Packs
-Main article:Music Pack
-### Transitions
-Main article:Transition
-## Voice lines
-See:Conduit/Voice Lines,Conduit/Voice lines JP
-## History
-Patch notes
-May 29, 2026 Hotfix PatchRadiant TransferHealing per second reduced from 15/s --> 10/sHealing effect increased from 6s --> 8sOverall shields given to teammates reduced from 90 --> 80Overall shields given to Conduit reduced from 60 --> 56Instant Barrier duration increased from 4s --> 6s(Overall, Radiant Transfer now heals more slowly and gives less total shields)May 5, 2026 PatchRadiant TransferSplit Charge has been incorporated into her base kit, granting two chargesDecreased Regen Duration from 9s to 6sDecreased Regen from 20/s to 15/sCooldown Increased from 26s --> 27sRemoved cooldown start delayThe cooldown will now always begin after casting, even if still searching for a targetSavior's SpeedNew Effect: If Savior’s Speed is active when sprinting toward a Skirmisher, gain an additional 5% movement speed.UpgradesBoth Radiant Transfer and Split Charge have been removedNew Upgrade: Instant BarrierGain a portion of Radiant Transfer's Temp Shields instantly, but Regen Duration is reduced by 2s.New Upgrade: Enduring BarrierRadiant Transfer's Temp Shield Regeneration persists through taking damage.Lua error in Module:Symbol at line 28: Found no data.May 5, 2025 PatchRadiant TransferReduce cooldown to 21s (was 31s, Previous Hotfix)Reduce recharge delay after damage to 1s (was 2s)Increased Tac health regen per tick on Conduit to 4 (was 3, Previous Hotfix)Temporary Shield generation rate increased to 20HP/s (was 15HP/s)Lua error in Module:Symbol at line 28: Found no data.March 21, 2024 PatchRadiant TransferCooldown Increased to 31s (was 26)Regen Interruption delay time increased to 2s (was 1)Lua error in Module:Symbol at line 28: Found no data.February 12, 2024 PatchEnergy BarricadeMine duration reduced to 45s (was 60s)Mine HP reduced to 200HP (was 250HP)The distance at which mines are removed when deployed too close to one another has been increased by ~100%Radiant TransferCooldown increased to 26s (was 21s)Temporary Shield generation rate decreased to 15HP/s (was 20HP/s)Temporary Shield generation time increased to 9s (was 8s)January 09, 2024 PatchImproved visibility for jammers.October 31, 2023 PatchIntroduced.
-## Teasers
-### Datamined and Leaked Data
-Conduitis a dataminedSupportLegend whose character subtitle is "Empathic Shielder". Their most recent abilities come from a leak happened on March 22, 2022.
-Leaked abilities
-Passive - CapacitanceConduit regenerates shield over time. Gain extra regen for each nearby ally. Having friendly banners also provides a bonus - get them back in the fight!Spark of Geniusicon as placeholder.Tactical - Arc FlashHeals the shields of targeted allies (at the cost of some of your shields). Hold to target, release to fire.Eye of the Allfathericon as placeholder.Ultimate - Alternating CurrentConduit launches an arc cluster bomb, damaging the shields of people near the blasts. Heals Conduit's shields based on damage dealt.Perimeter Securityicon as placeholder.
-## Trivia
-- Conduit has a number of rare or unique animations:On rare occasions, she will mimic the Legend select animation (and voice line) ofLobaorNewcastle.While sliding, she will sometimes hold a phone as if she's taking a selfie.Occasionally, if a player accesses their inventory, Conduit will project a holographic screen from her wrist, displaying items.
-## Gallery
-## References
+## 技能
+### 辐射传输（Radiant Transfer）
+| 战术技能 | Q///
+辐射传输（Radiant Transfer）  
+描述 | 向一名队友及自身释放一股能量脉冲，在危险时临时恢复护盾。  
+冷却时间 | 21 秒  
+
+- 信息  
+- 提示  
+- 该技能作用范围为 50 米。  
+- 该技能可穿透墙壁，只要目标在范围内即可。  
+- 当你看到队友头顶浮现一个“护盾”图标时，即表示你在有效范围内。该护盾图标有四种状态：  
+　　白色：队友护盾已满；  
+　　绿色：队友拥有完整临时护盾；  
+　　黄色：队友护盾剩余量超过 50%，但未满；  
+　　红色：队友护盾剩余量低于 50%。  
+
+该技能分为三个细微阶段：  
+
+- 阶段 1：护盾再生  
+在此阶段中，受损或破裂的护盾将被临时护盾强化。  
+此阶段持续 10 秒。  
+每轮恢复都会赋予临时护盾，前提是总护盾生命值尚未达到上限。  
+当目标总护盾生命值已满时，将不再赋予额外临时护盾；这些被浪费的护盾点数无法在后续恢复。  
+在整个持续时间内，最多可为自己赋予总计 60 点护盾值的临时护盾。  
+临时护盾的恢复速率约为每秒 7.5 点护盾值，或每 1.35 秒恢复 10 点护盾值。  
+
+- 阶段 2：临时护盾维持  
+在此阶段中，阶段 1 赋予的所有临时护盾将持续存在，但不再生成新的临时护盾。  
+此阶段持续 20 秒。  
+
+- 阶段 3：临时护盾衰减  
+所有剩余临时护盾将以阶段 1 中生成速率的两倍开始衰减，直至全部消失。  
+此阶段持续至所有临时护盾完全衰减完毕；若临时护盾已达最大值（60 点），则最多持续 4 秒。  
+
+注意：  
+- 此技能每次使用时必定作用于导线管自身，但也可同时作用于一名处于范围内的队友——前提是导线管在施放技能时正将准星悬停于该队友身上。  
+- 该技能作用范围为 50 米。  
+- 该技能自首次使用起拥有 30 秒冷却时间。实际冷却倒计时图标会在阶段 1 结束数秒后才显示。  
+由于临时护盾持续时间与技能冷却时间相近，若旧临时护盾尚未被摧毁，则可在其刚好消退时立即再次使用该战术技能。  
+- 若恢复护盾将导致你的总护盾值超出进化护盾（Evo Shield）所能提供的最大值，则超出部分的临时护盾将直接丢失。  
+- 临时护盾行为与普通护盾一致，但始终优先承受伤害（即使你在获得临时护盾之后又恢复了普通护盾）。  
+- 此技能可在你损失部分或全部护盾后为你提供“第二口气”，助你继续战斗或重新投入交火。  
+- 若你的护盾已出现裂痕，可借此机会寻找掩体并使用护盾电池或注射器。此举可在临时护盾逐步生成期间为你争取额外的生命值恢复时间，同时大幅压缩对手恢复生命值的时间窗口。  
+- 使用护盾电池或凤凰包（Phoenix Kit）将完全恢复你的护盾，从而立即终止该效果。请仅在无法充分利用临时护盾时才执行此操作——例如临时护盾即将自然消失，或你在重新交火中已损失部分临时护盾、需再次满血投入下一轮 skirmish（小规模交火）。  
+- 你可在使用治疗物品的同时施放辐射传输（Radiant Transfer）。若你后撤进行治疗但仍需支援队友，此操作将非常实用。  
+- 辐射传输（Radiant Transfer）在战斗中至关重要。请谨慎使用，因其冷却时间显著长于其他英雄的技能。  
+- 施放战术技能前请注意队友是否即将遭到射击——任何对其造成的伤害都会立刻中断其护盾再生过程。
+
+### 救世疾驰（Savior's Speed）
+| 被动技能 |   
+救世疾驰（Savior's Speed）  
+描述 | 当队友处于你战术技能作用范围之外时，朝他们冲刺的速度更快。  
+冷却时间 | 无  
+
+- 信息  
+- 提示  
+- 激活状态下，导线管将获得冲刺速度加成，但须同时满足以下全部条件：  
+　　导线管必须处于冲刺状态；行走或滑铲均无法触发该被动；  
+　　导线管至少有一名队友位于其战术技能作用范围（50 米）之外；  
+　　导线管必须直接朝向该队友奔跑；若采用横向移动（strafing），速度加成将立即取消；  
+　　导线管须在 60（？）度视野锥内，持续面向该队友至少 3（？）秒。  
+此时队友头顶图标应显示为“加速”图标而非“护盾”图标，并伴有环绕图标的填充圆环。当圆环完全填满时，被动即被激活。  
+
+- 下列移动方式亦被判定为“奔跑”（列表可能不完整）：  
+　　被重力炮（grav-cannon）推动；  
+　　乘坐飞索（zip-line）；  
+　　乘坐三叉戟（Trident）。  
+
+- 若任一条件连续中断超过 3（？）秒，该效果即告终止。  
+- 该效果无冷却时间。  
+- 速度加成为 30%。  
+- 只要所有条件持续满足，该被动效果即可无限持续。善用这一持续加速效果，在搜刮物资后快速归队、追击具备位移能力的传奇英雄，或在战斗中快速调整位置、投入交火。  
+- 导线管的被动技能将其战术技能与终极技能紧密关联：该被动使她能更快抵达队友身边以恢复其护盾，并及时部署终极技能以应对敌方进攻。  
+- 得益于近乎无限的加速效果，导线管是获取关键资源（如进化宝箱/Evo Caches 或队友阵亡后掉落的旗帜/Banner）的理想人选，且仍能迅速返回队友身边。  
+尽管如此，前往可用的复制器（Replicator）仍是更稳妥的选择——毕竟她是一名支援型传奇英雄（Support Legend）。
+
+### 能量路障（Energy Barricade）
+| 终极技能 | Z/+/+/+  
+能量路障（Energy Barricade）  
+描述 | 部署一排干扰护盾的装置，对敌人造成伤害并使其减速。  
+充能时间 | 2.5 分钟  
+
+- 信息  
+- 提示  
+- 技能激活时，导线管将向前投掷一枚投放装置。  
+当投放装置抵达目标位置后，将在地面部署一排共七个护盾干扰器（shield jammer）。  
+中间的干扰器始终垂直下落，其余六个则分别落于其中心左右两侧。  
+干扰器可反弹墙壁及其他表面。  
+若未发生反弹，各干扰器将按略微重叠其作用区域的方式部署，从而形成一条连续的作用带。  
+
+- 干扰器落地后需 4 秒完成预热（priming）。  
+- 预热完成后，活跃的干扰器将持续存在 45 秒，或直至被摧毁。  
+- 每个活跃干扰器悬浮于地面略上方，并在其节点周围生成一个可见的球形作用区域。  
+该球形区域半径约为 10 米（若装备“更大干扰器”（Bigger Jam）天赋，半径可提升 20%）。  
+
+- 处于活跃干扰器作用范围内的敌人每秒受到 10 点伤害，并被减速 15%，该减速效果每秒重置一次。  
+尽管游戏内技能描述提及“对护盾效果更强”，但实际游戏中，干扰器对护盾与生命值的伤害效果并无差异。  
+
+- 每个干扰器拥有 200 点生命值。  
+- 护盾干扰器可反弹墙壁及其他表面，导致作用区域重叠。此特性可用于迫使敌人必须摧毁多个干扰器才能清空某片区域，或迫使其持续承受伤害与减速，抑或干脆绕行规避。  
+- 护盾干扰器可阻挡子弹，战斗中亦可作为掩体使用。  
+- 尽管她的护盾干扰器具备区域控制能力，但建议主要在终局阶段使用该技能实现此类目的。  
+若你希望专门利用护盾干扰器进行区域封锁，那么室内或狭小空间会是更优选择。  
+- 她的终极技能设计初衷（契合其整体技能组与定位）在于阻止敌方朝你或你的队友发起进攻。
+
+### 传奇升级（Legend Upgrades）
+主条目：传奇升级（Legend Upgrades）  
+传奇升级（Legend Upgrades）是第 20 赛季（Season 20）为所有大逃杀模式引入的特殊天赋。随着你的进化护甲（Evo Armor）等级提升，这些天赋将增强传奇英雄的技能效果。每次升级仅可选择一项天赋，总计最多可选择两项天赋。
+
+2 级升级选项  
+- 电池包（Battpack）：+1 护盾电池（Shield Battery）堆叠上限。  
+- 更大干扰器（Bigger Jam）：+10% 能量路障（Energy Barricade）干扰器伤害半径。  
+
+3 级升级选项  
+- 分流充能（Split Charge）：+1 辐射传输（Radiant Transfer）充能次数；护盾再生持续时间减半。  
+- 辐射传输（Radiant Transfer）：+10 米 辐射传输（Radiant Transfer）作用范围。

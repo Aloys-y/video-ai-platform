@@ -1,152 +1,185 @@
 ---
-title: "Rampart"
+title: "兰伯特"
+title_en: "Rampart"
 topic: legends
-categories: ["Apex Legends", "Apex Legends Legends", "Female Legends", "Legends", "Locked legends", "Pages with broken file links"]
+language: zh-CN
+categories: ["Apex英雄", "PC端", "玩法资料"]
 source: https://apexlegends.fandom.com/wiki/Rampart
 ---
 
-# Rampart
+# 兰伯特（Rampart）
 
-“ | Right, mate. I've been knocked down, taken out, hit from both sides hundreds of times - and that was just in a one gauntlet run on a Thursday. But this... this one was a blast!Big Sister's crap of a gang blindsided me at the shop. I mean, do they think they're from the bloody Fringe Worlds? They ain't that tough. I'm just sayin' if ya gonna throw a party at least book a DJ... or a band if you prefer real music, but don't just show up causin' a ruckus and expect not to get a punch in the bloody face. Those plonkers were just pissed that I ran circles around them in the club - cleaned ‘em out pretty good if I don't say so myself. But I ain't stayin' down. Never do. And now, I'm in the bloody big leagues. No more brawlin' for coin against small-town street gangs -Ab aur nahin. My shop may be gone, but the name 'Rampart' ain't. I reckon only one thing left to do... go out, make it Legendary, and be back in time for a midnight pint. NowTHAT'sa Thursday.[1]
-Rampart
+## 玩法概览
+职业 | 控制型
+战术技能 | 增幅掩体（Amped Cover）
+被动技能 | 战斗改装师（Battle Modder）
+终极技能 | 移动式转管机枪“希拉”（Mobile Minigun "Sheila"）
 
-Amped Modder
-Details
-Real Name | Ramya Parekh
-Gender | Female
-Age | 23
-Home World | Gaea
-Gameplay
-Class | Controller
-Tactical Ability | Amped Cover
-Passive Ability | Modded Loader
-Ultimate Ability | Mobile Minigun "Sheila"
-Real-world Info
-Voice Actor | Anjali Bhimani[2]
-Rampartis aControllerLegend. She was introduced inSeason 6and is locked from the base game. She can be unlocked using digital currency: either12,000 or750, or by buying theChampion Editiondownloadable content.
-ALegendthat specializes in securing areas through firepower, Rampart's tactical abilityAmped Coverplaces a rectangular wall. The upper half of a wall blocks a certain amount of bullets taken from one direction, and enhances any bullets fired through from the other direction. Her passive abilityBattle Modderincreases reload speed and magazine size with LMGs and her ultimate. Her ultimate abilityMobile Minigun "Sheila"allows her to use a minigun that she can either carry or place down, but it can only be reloaded while immobile.
-## Abilities
-### Amped Cover
-| Tactical | Q///
-Amped Cover
-Description | Build a crouch-cover wall with roof, which deploys a full-cover amped wall that blocks incoming shots and amps outgoing shots. (Max: 5)
-Cooldown | 20 seconds- Info- Interactions- Tips- Bugs- You can hold up to 3 charges of this ability, and gain 1 charge every 20 seconds.- Ignores ally collision during placement.- Amped Cover takes 2 seconds to deploy, during which only the bottom part is available.During deployment, it has 100 health. Once fully deployed, it will have full health.- The base and the amped barrier have separate health:The crouch base has 400 health. If this part is destroyed, the entire cover is gone.The amped barrier has 175 health; health is shown through 7 hexagons, each one being worth 25 health. The roof has the same health as the amped barrier.- Walls can be charged by doing damage through the amped shield or by having the wall be damaged by enemies. Wall charge is converted to a speed boost by going over the wall.Wall can store up to 300 damage, which results in a 15 second speed boost at full charge. Speed boost time scales linearly with stored charge.Wall charge is only usable by yourself and teammates, and each teammate can use stored charge individually. Speed boost is automatically given to nearby teammates and yourself when the wall is destroyed. Damage to wall is stored at 25%, while damage through amped shield is stored at 100%- Amped Cover boosts the damage of outgoing shots by 20%.The side that can be shot through is indicated by blue and the blocking side by orange color.Shooting through multiple Amped Barriers will still only amp the damage once, and all Amped barriers after the first one will be destroyed.- Non-damaged covers can be picked up to restore one charge.- Rampart remains in placement mode until she runs out of walls- The walls are susceptible to friendly damage from both Rampart and her allies.- The amped barrier can be destroyed byCrypto'sDrone EMP.- The amped barrier takes 1.0x damage from anArc Star.- The amped barrier can be damaged byCaustic'sNox Gas TrapandNox Gas Grenade(1 dmg per tick), but cannot be destroyed by them.- Thermite Grenades only damage the Amped Cover's base. It takes 2.0x towards the Amped barrier.- It takes two melee hits to destroy the entire Amped Cover.If you melee an enemy who is too close to the Amped barrier, only the enemy takes damage, not the Amped barrier.- Rampart effectively switch between placement-mode and attack mode. Since Rampart can and will place walls rapidly until she runs out reserves, players should practice effective switching between the 2 modes, and practice how to rapidly place walls in appropriate positions- While stacking Amped Cover will still only provide you one single effective Amped Barrier, the crouch-covered wall still works. As such, it is still viable to stack Amped Cover during initial setup, depending on the situation.With the 2023-09-19 update, Rampart can rapidly stack up to 3 walls for extra protection. Even if enemies managed to break one, the wall(s) behind them may stay. Depending on the situation, stack either 2 or 3 walls from none, which helps ensure that at least a wall stays up. This should be the default deploy method if one is in a firefight.Make sure to destroy the outer amp barrier first, as there is not damage bleed-off.- Don't take cover behind a single amped barrier that's still being deployed, for two reasons:The barrier has less health at this point, and being behind it when it's destroyed leaves you vulnerable.Enemies are less likely to try to destroy the in-progress barrier if no one is behind it.- If you must take cover behind asingleamped barrierwhilebeing deployed, crouch behind it while it is being built. (This is referenced in the SFTO "Endorsement", where Rampart jumped behind a counter and stayed crouched as she activated her amp cover)- Alternative to rapidly stack up 3 walls as stated above, deploy the walls side-by-side rapidly, with one angled a bit. This plays into other players' psychology, who usually focus on destroying one wall. By having side-by-side walls, enemies will have to decide which wall to destroy first, but still increase the chance of at least one wall stay up. If they failed to destroy it, you also gain a wider coverage.- For aggressive Ramparts fighting in the open, consider placing a wall and then strafing into the open (and continue fighting). In effect the wall serves as a pseudo-decoy: enemies can either shoot you, in which you can go back to the wall for protection; or shoot the wall, which allows you to shoot them back.- Take advantage of any temporary cover to set up, such asGibraltar'sDome of Protectionand Newcastle's mobile shield.- If you do not plan to move from the general area, let the barrier-destroyed Amped Cover stay. It can be used to deploy an Amped Cover wall right behind it and thus make it harder for enemies to destroy it during the building animation.- A quickly deployed Amp Cover blocks explosions and the stun that comes from it.- A slide-build can provide you extra protection on the move.- Unlike other defense characters' traps, Amped Cover's effective range is anywhere you have line of sight.Use long-range weapons to maximize its potential. Unlike other Legend's transulent shields, you can shoot throught it.While Amped Cover does increase damage and provide protection, it is quite easy to spot. If you are firing from afar and intend to remain hidden, you may want to avoid placing cover.A quick deployment provide users a safe space to confirm enemy's precise location- Know the direction of the amped cover. When encountering another enemy's Amped Cover, considerOrange for facingOut, andPurple forPower. Alternatively, you can just remember that most enemy shields are orange, so being on the orange side is a big no-no.For that matter, be aware of your own amped cover, especially when fights become non-linear.Undeploy/destroy amped portion (if not the whole wall) as needed, especially when you foresee possibility of being at the Orange-side of the wall.- Amped Cover can't protect shots from above. Don't set up on the low ground if you can help it.- Due to head tilting affect position of the head's hitbox, it is viable to look at the ground even when hiding behind the crouch wall to minimize hitbox exposure.- If you realize there are 2 possible attack directions that are perpendicular to each other (eg one in front, one to your right), but want to conserve your wall reserves, consider putting one wall at an angle instead of setting up 2 walls to each direction.- If an obstacle is blocking your wall's optimal placement location, jumping vertically will allow the placement marker to mark the area further ahead of the obstacle while you are in the air. This can be used to "walk" your wall- Enemies like to rush close and jump past your Amped Cover. Counter this by retreating to a second Amped Cover behind it.- Similar toNox Gas Trap, it can be used as a barricade to block a door, so the enemy cannot open the door toward it.Careful not to accidentally lock your squadmates out. They can't open the doors either. Pinging Amped Cover on doors can ensure your teammates remain aware.- Enemies are often tempted to shoot at Amped Cover, and consequently deplete their ammo. You can take advantage of this during the final rounds, when resources are scarce.- Sometimes the wall won’t deploy when placed on certain geometry.- Occasionally, in theFiring Range, you'll hear the sound of the wall getting destroyed or picked up, even if there are no walls in your realm.
-### Battle Modder
-| Passive | 
-Battle Modder
-Description | Increased magazine/heat capacity and faster reloads/recharge when usingLMGsand the Minigun. Cover walls permanently gain health as Rampart gains Evo Levels.
-Cooldown | ?- Info- Interactions- Tips- Bugs- Increases magazine size by 15% and decreases reload time by 25%. Battle Modder health increases: Wall health increase by 200 per Evo level (400 → 800 at max level) Shield health increased by 25 per Evo level (175 → 225 at max level)- Stacks with the magazine increase ofExtended Magsand the reload time decrease ofStandard Stocks. Also stacks with theSplatter Roundshop-up, which has the same effect as Modded Loader.- Magazine/heat size increases include:Sheila: 150 → 173Spitfire: 35 /40/45/50→ 40 /46/52/58Rampage: 28 /32/36/40→ 32 /37/41/46Devotion: 36 /40/44/48→ 41 /46/51/55L-STAR: 24 /26/28/30→ 28 /30/32/35; also faster cooldown- Reload time decreases include:Sheila: 8.67 seconds → 6.5 secondsSpitfire:Tactical: 3.4 /3.29/3.17/3.06→ 2.55 /2.47/2.38/2.30Full: 4.2 /4.06/3.92/3.78→ 3.15 /3.05/2.94/2.84Rampage:Tactical: 3.1 /3/2.89/2.79→ 2.33 /2.25/2.17/2.09Full: 4 /3.87/3.73/3.6→ 3 /2.90/2.80/2.7Devotion:Tactical: 2.80 /2.71/2.61/2.52→ 2.10 /2.03/1.96/1.89Full: 3.63 /3.51/3.39/3.27→ 2.72 /2.63/2.54/2.45L-STAR(when overheat): 2.45 /2.37/2.29/2.21→ 1.84 /1.78/1.71/1.65- As the passive also affect the cooldown of L-Star, it becomes a very powerful weapon in the hand of a Rampart who can manage its recoil pattern,A Rampart player can carry 2Purple-StockedL-STARs, fire a quick burst, then swap to bypass the heat cooldown. Note that this swap must be done before the gun reaching critical, otherwise the full part-swap animation will be played.- This ability can persist even after changing characters in theFiring Range. Replacing the LMG you already have with another weapon will fix this.
-### Mobile Minigun "Sheila"
-| Ultimate | Z/+/+/+
-Mobile Minigun "Sheila"
-Description | Wield a mobile minigun with a single high capacity magazine. Place it down for anyone to use as a stationary and reloadable turret (Max: 1)
-Charge time | 2 minutes- Info- Interactions- Arenas- Tips- Bugs- When activated, Rampart carries Sheila with a single magazine of 173 rounds.After firing all the shots, it can either be placed down as a turret or be put away. (Holster will also count as putting it away.)Use the normal weapon switch to holster Sheila; it will remain "active" with that magazine, and can be switched back with the ultimate button, until it was placed in cooldown or emplaced.Press "Utility action" key to switch between mobile mode and placement mode.- Sheila deals 14 damage per round, at 20 rounds/second, with a 2x headshot multiplier and no leg multiplier (full damage profile available atRampart/Mobile Minigun "Sheila").- Sheila has a 1.25 seconds spin up of barrels before any bullets are fired.Laser sight will be activated when spinning, visible to both allies and enemies.Aiming down sights pre-emptively starts the spin up. If the barrel is spinning, you can shoot it immediately.- Tap the sprint button to toggle zoom.Mobile mode: 1.8x; Emplaced mode: 3x.Built-in Holosight will pop up when zoomed in, showing distance to the target like a sniper scope.- While emplaced, Sheila has 350 health, a magazine size of 150 (or 173 withModded Loader), and infinite reserve ammo.Angle of fire is limited to 180° in horizontal view and upward to 71° and downward to 53° in vertical view.Emplaced Sheila can be destroyed by pressing "Utility action" key. No charges will be refunded.- Can destroy doors.- Can be mounted on the back of theTrident.- When emplaced, friendly minigun marker is shown on the map.- Emplaced Sheila is susceptible to friendly damage from both Rampart and her allies.- Emplaced Sheila can be destroyed in two melee attacks.- Mobile form is affected by Seer'sSilence.- Holding Mobile Sheila prevents interactions with loot, death boxes, activation panels and material canisters; players also cannot remove items from inventory screen; also cannot take down Amped Cover (due to the same key used to switch to placement mode).Can still open loot containers and doors; can still interact with and on zipline; can still use items on the inventory screen.- ADS with Sheila will slow your movement on gravity cannons.- The minigun has two inspect animations by Rampart herself  and only one inspect animation by other Legends.- As it is an ultimate, it does not count as an LMG for the purpose of battlepass challenges.- Once the round is over, any remaining ultimate is gone, with no charges carry over; nor would you get a discount for purchase if there are remaining charges.- Putting it in cooldown in mid-match will not be able to bring it back out, even if there are remaining charge. (You can still holster freely within the round)- Accuracy is initially poor but improves after ramping up.- Sheila users need to pay extra attention to the environment.Reduced rate of fire in mobile modeThe zoomed scope can easily create tunnel visionEmplace Sheila makes the gunner stationary, and has a limited field of view; smart enemies can easily flank an inattentive gunner.Because of its loud ramp-up sound and tracking laser, enemies will notice when you stay on Sheila for too long and will plan around it.- Due to the above, Sheila is best used as a proactive weapon instead of reactive. Put Sheila away if you are suddenly caught by the enemy.- Even within a fortified position with walls, sometimes mobile Sheila is better; the addition of movement allows the user to get out of danger fast, while mobile Sheila has a significantly greater FOV, allowing the user to even shoot straight down from the high ground.- Emplace Sheila behind a deployedAmped Coverto gain extra cover and more damage.Place Amped Cover behind Sheila so the gunner won't get shot from the back by surprise.Emplace Sheila near chokepoints to force enemies into your line of fire, especially by the Ring-closing in.Emplaced Sheila's reload time is very long and leaves you vulnerable. Sometimes you'll have to use just one magazine and abandon it.- Take every opportunity you can to finish off downed enemies. With a fresh magazine, Sheila will grind through at leastpurpleKnockdown Shieldin seconds, and even possible a team of enemies all equipped with a purple knockdown shield.- Panicked enemies have a hard time hitting even a stationary target. The more you can catch them off guard, the better.- Consider picking up an emplaced Sheila back up when leaving an area as the enemy may use it against you.- If the mobile Sheila has more than 130 bullets (75%) remain, putting it in cooldown mode allows it to be usable after 43 seconds has passed.- If the mobile Sheila used more than 87 bullets (50%), consider placing Mobile Sheila in cooldown when one is expected to rotate to a different point of the map to ensure a fresh magazine is available.- Holstering a completely depleted mobile Sheila will still put it away until it's fully charged. Thus, if you almost deplete a mobile Sheila (eg less than 15 bullets remain), consider holstering it instead of completely depleting it. That way you can run toward the desired location to emplace it.- While you can place Sheila on aTrident's back, It's treated as "user is in the air" and is significantly less accurate. Don't consider this a serious strategy.- The angle displayed on the holosight is an exaggeration of the actual angle.- Occasionally, in theFiring Range, you'll hear the sound of the turret getting destroyed or picked up, even if there are no turrets in your realm.- Performing a melee attack with a completely depleted mobile Sheila will start recharging it's magazine. This persists while remaining in placement mode. Switching to mobile mode allows using the ammo currently on magazine (and stops magazine from recharging any further).
-### Legend Upgrades
-Main article:Legend Upgrades
-Legend Upgrades are special perks introduced inSeason 20to all Battle Royale modes. These add upgrades to a Legend's abilities as you level up your Evo Armor. Only one option may be chosen per level-up for a maximum of two perks total.
-Level 2 Upgrades- Combat Reserve:Bigger ammo stacks, extra grenades slots, access red weapon supply bins.- Locked and Loaded:Gain faster reloads and infinite ammo when behind amped cover and shield is in tactAmped Cover.Level 3 Upgrades- Ramped Up:Improved MobileMobile Minigun "Sheila"handling and spin-up time by 20%.- Rebuild Module:Amped cover will regen health and rebuild shield section after not being damaged for a period of timeAmped Cover.
-## Lore
-Main article:Rampart (character)
-“ | Rampart is a blue-collar, private business owner who just needs a big gun and a backpack full of scrap metal to get by in the dangerous, wild west world of the Outlands. Before opening her popular modding shop on Gaea, Ramya Parekh (Rampart for short) made a name for herself in the underground gauntlet circuit. Parekh climbed to the top showcasing pure skill using her custom-modded gear. She began taking jobs from smugglers, Syndicate members, and everyone in between. Some say it ain’t great unless it’s got “Rampart” written on it.Parekh never shied away from letting people know how great she was, or better yet, how bad they were. Maybe that’s what led a group of assailants to ambush her at her shop one night. Her business burned down and she was left with nothing -- except an Apex Card. For Parekh, the Apex card is more than just an invitation to compete - it's a sign that she may have lost her shop, but she didn't lose what built it. Like her motto says, she's the kind of person who can always "turn crap into gold.”
-## Cosmetic Items
-### Skins
-There are a total of 71 skins for Rampart: 20Legendary, 14Epic, 21Rareand 16Common.
-- Legendary- Epic- Rare- Common- Premium Finish1,200- The Devi You Know1,200- Heritage Pride1,200- Sari Not Sari1,200- Death Dealer- Crafty KitsuneLevel 25- Wastelander- Metallic DreamsNeedsThe Devi You Know- Packin' PaisleyNeedsHeritage Pride- Cleanup Crew- Rumble Ready- Sly Fox- Checkered FragNeedsPremium Finish- Limit Breaker- Frozen Carnage- Crimson Fixer- Holika- Soiree Away- Hellforger- Sly SovereignLevel 25Note:- Daemon Hunter400- Fiber Optics400- Hack the System400- Heat Sync400- User Friendly400- Feelin Koi400- Deep Freeze- Gold Standard- Cryokinetic- Vacation Vibes- Lime Malachite Green- All Star DestructionJanuary 2023- Amped Up ArmorerLevel 1- Regal Resolve- Blacklight Classic60- Blooms60- Critical Path60- Electrochemical60- Formal Finery60- High Brass60- Jewelled Casing60- Labyrinth60- Prowess60- Refraction60- Scribblers60- Sizzle Reel60- Stained Glass60- Varsity60- Volcanic60- CascadeLevel 53- Custom FinishAugust 2020- Gearhead- War PatchSeason 9- FirestarterLevel 45- Voided Persona Season 18Voided PersonaSeason 18- OriginalDefault- Arctic30- Cardinal30- Clearwater30- Evergreen30- Flamingo30- Hydro30- Limelight30- Mandarin30- Midnight30- Orchid30- Rage30- Sahara30- Skyward30- Vino30- Yellowjacket30
-### Finishers
-Main article:Finisher
-- https://apexlegends.fandom.com/wiki/File:Execution_Rampart_Wound_Up.mp4Wound UpDefault
-- https://apexlegends.fandom.com/wiki/File:Execution_Rampart_No_Mercy.mp4No Mercy1,200
-### Heirloom Set
-Main article:Heirloom
-Rampart's Heirloom Set.
-The set contains:
-- A Banner Pose:Wrench In Your Plan
-- A Melee Weapon skin:Problem Solver
-- AnIntro Quip:"I make things by hand, and kill things by hand."
-### Badges
-See:Rampart/Badges
-### Emotes
-Main article:Emote
-- Loose Cannon-1,200
-- Rampart Rodeo-1,200
-- Spin Up-400
-- The Light Bombastic- Level 67
-- Scorpion Sting
-- Throwdown- Default
-### Skydive Emotes
-Main article:Skydive Emote
-- https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Rampart_Spray_and_Sway.mp4Spray and SwayLevel 59
-- https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Rampart_Recoil_Control.mp4Recoil Control
-- https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Rampart_Catching_a_Current.mp4Catching a CurrentLevel 91
-### Banner Frames
-- Legendary- Epic- Rare- Common- Custom Built1,200- Midnight Oil1,200- Open For Business1,200- Precision Cut1,200- Ride or Die1,200- Pit LaneLevel 84- Perfect TrajectoryLevel 35- New DevelopmentLevel 40- Pest ControlLevel 97- Party StarterLevel 32- Festival Grounds- Final Farewell- A Thousand CutsLevel 18Note:- Groove Chamber60- Orna-metal60- Refined Fineries60- Reinforced60- Tread Lightly60- Koi60- Frag OutSeason 9- Home TurfJanuary 2023- Eye of The TigerSeason 18- Rookie CardDefault- Bloom30- Shifting Gears30- Spray Pattern30- Teardrop30
-### Banner Poses
-- Mythic- Epic- Rare- Common- Wrench In Your Plan- ABC400- My Little Friend400- Pride and Joy400- Singing in the Storm400- Won't Hurt A Bit400- Blind Fire60- Bubbly60- Business End60- Doctor's Orders60- Get Dunked60- Loyalty60- Meet Sheila60- Ready to Go60- Warm Hug60- Built Not BoughtDefault
-### Holosprays
-Main article:Holospray
-- Gonna Get Messy!1,200
-- Boom!400
-- It's Party Time!400
-- That's Tip Top, Mate400
-- Tip Top400
-- Turn Crap Into Gold400
-- What A Beauty400
-- Live Today, Die TomorrowLevel 34
-- Surprise AttackLevel 66
-- Wait 'Til Ya Meet Sheila!Level 39
-- Meet CuteLevel 92
-- Sorry You're DeadLevel 98
-- Long Live The QueenLevel 19
-### Music Packs
-Main article:Music Pack
-- RampartLevel 91
-### Transitions
-Main article:Transition
-- The ReferralLevel 56
-- Midnight PintLevel 74
-- Gossip BoyLevel 55
-- Legal EaglesLevel 73
-- KampaiLevel 45
-- Not So Far From The TreeLevel 87
-## Voice lines
-See:Rampart/Voice lines
-## History
-Patch notes
-November 5, 2025 PatchFile:Battle Modder.svgBattle ModderAdds additional effect to old passive (Modded Loader). Cover walls permanently gain health as Rampart gains Evo Levels.Amped CoverAdds amped shield roof to wallWalls can now be charged by doing damage through the amped shield or by having the wall be damaged by enemies. Wall charge is converted to a speed boost by going over the wallWall can store up to 300 damage, which results in a 15 second speed boost at full charge. Speed boost time scales linearly with stored charge.Wall charge is only usable by teammates, and each teammate can use stored charge individually. Speed boost is automatically given to nearby teammates when the wall is destroyed.Damage to wall is stored at 25%, while damage through amped shield is stored at 100%Speed boost only applies when sprinting.Battle Modder health increases:Wall health increase by 200 per Evo level (400 → 800 at max level)Shield health increased by 25 per Evo level (175 → 225 at max level)Health while wall building reduced (120 → 100 )Amped shield arc star damage multiplier removed (1.5x → 1.0x)Wall frag grenade damage multiplier increased (1.0x → 2.0x)UpgradesLevel 2Ultimate Cooldown: RemovedBandolier: Removed (replaced with Combat reserve)NEW: Combat reserve: Bigger ammo stacks, extra grenades slots, access red weapon supply binsNEW: Locked and Loaded: gain faster reloads and infinite ammo when behind amped cover and shield is in tactLevel 3Ramped up: UnchangedAmped Reloads: Removed (replaced with Locked and Loaded)NEW: Rebuild Module. Amped cover will regen health and rebuild shield section after not being damaged for a period of timeSeptember 17, 2024 PatchLowered delay before she can re-enter Sheila turret to 0.15s (was 1s)Mobile Minigun "Sheila".August 6, 2024 PatchMobile Minigun "Sheila"Ammo drains from pip charge with useMaximum number of place turrets allowed is now 1Need 1 PIP of Ultimate change to draw or place SheilaNo longer requires a full charge to equipNow uses an Ammo-Style Ultimate modelJanuary 09, 2024 PatchAmped Walls are no longer destroyed by friendlyCryptoDrone EMPorMad Maggie’sWrecking Ball.September 19, 2023 PatchAmped CoverPlacement time reduced from 3s to 2s.Rampart now remains in placement mode after deploying a wall.August 09, 2022 PatchNow ignores friendly collision on Amped Cover placement (i.e. placing walls around teammates will feel more smooth).May 10, 2022 PatchMobile Minigun "Sheila":Reduced spin-up time from 1.75 to 1.25.Amped Cover:Increased health while deploying from 45 to 120.Reduced deploy time from 4.25 to 3.6.To be more specific, the building animation (as noted in theNovember 04, 2020 Patch) is still 3 seconds, but the upper arm shield extension delay was reduced from 0.25 seconds to 0.10 seconds, the front armor deploy duration was reduced from 0.5 seconds to 0.3 seconds, and the placement delay was reduced from 0.5 seconds to 0.3 seconds.October 20, 2021 PatchMobile Minigun "Sheila":Fixed some melee and spin-up exploits related to the mobile version.September 14, 2021 PatchUltimate ability:Changed name fromEmplaced Minigun "Sheila"toMobile Minigun "Sheila".Now able to run around with Sheila out, and shoot while walking.The spin-up is longer, and she only gets 1 magazine in this mode.Sheila can now be put away and pulled back out until you run out of ammo (or hit the cooldown time).At any point, the turret can still be placed down for your teammates to use. Once placed, it has infinite reloads and acts just like the previous version, but cannot be picked back up.July 21, 2021 PatchRestored theFrag OutBanner Frame.March 09, 2021 PatchAmped Cover: Explosives damage Amped Cover normally, instead of inflicting 200 damage.Emplaced Minigun "Sheila":Explosives damage Sheila normally, instead of inflicting 175 damage.Can no longer be used to get under the world when placed too close to thePhase RunnerinOlympus.February 02, 2021 PatchEmplaced Minigun "Sheila":Increased angle from 120° to 180°.Can no longer be placed onLaunch Pads inOctane's Gauntlet.Amped Cover: Increased HP while building from 1 to 45 (sniper rounds still pierce through).Modded Loader: Fixed an issue with it persisting even after changing characters in theFiring Range(documented, but not actually fixed).January 14, 2021 PatchFixed an issue with theGold Standardskin having discolored teeth.January 05, 2021 PatchAmped Cover: Decreased cooldown from 30 seconds to 20 seconds.Emplaced Minigun "Sheila":Fixed an issue that allowed Rampart to place Sheila while in thePhase Runner.Fix an issue where UI elements stayed on screen after using Sheila.December 09, 2020 PatchAmped Cover: Fixed an issue with the walls at the feet of the players on the train killing them.December 01, 2020 PatchEmplaced Minigun "Sheila": Fixed an issue with the turret on aTridentcausing crashes. This ability is now re-enabled for use on the vehicle.November 18, 2020 PatchEmplaced Minigun "Sheila":Fixed an issue with being able to put the turret on Crypto’sSurveillance Drone.Temporarily disabled the ability to put the turret on theTridentto fix a bug causing crashes.November 04, 2020 PatchAmped Cover:Build time decreased from 4 seconds to 3 seconds.Fixed an issue with Rampart not being able to place a wall while jumping.Emplaced Minigun "Sheila":Spin-up time decreased from 2 seconds to 1.25 seconds.Fixed an issue with Sheila teleporting when placed on a hatch inWorld's Edge Staging.October 06, 2020 PatchEmplaced Minigun "Sheila":Increased the rate at which the bullet spread tightens.Fixed an issue with being able to place Sheila on loot bins.Fixed an issue with doors closing when dismounting a placed Sheila in a doorway.Amped CoverFixed Amped Cover from floating in the air when placed on a supply ship.Fixed an issue with theLongbow DMR,Triple Take,Mastiff Shotgun, andSentinelnot always receiving the Amped Cover buff.Fixed an issue with Amped Cover being able to be placed at bad angles around the map.Fixed an issue with the Amped Cover not being destroyed by the initial blast ofCharge Rifle.Fixed an issue with bullets getting amped before they cross the amped wall from certain angles.September 03, 2020 PatchAmped Cover: Fixed an issue with the amped cover walls requiring more hits from heirlooms than from normal melee to be destroyed.Emplaced Minigun "Sheila":Fixed a server crash when Sheila is destroyed while someone is using it.Fixed an issue with allowing a player to shoot throughGibraltar'sDome of Protectionwhile using Sheila.Fixed an issue withCrypto'sSurveillance Dronenot detecting players on Sheila.Fixed an issue with theNo Mercyfinisher spamming "Boom" to the entire server.August 20, 2020 PatchAmped Cover:Fixed client error with it in softened gore locales.Fixed a server error causing immediate disconnects when Rampart puts down a wall.Emplaced Minigun "Sheila": Fixed an error caused in some instances where a player is on the turret when it is destroyed.August 18, 2020 PatchIntroduced.
-## Teasers
-- On August 4th, 2020, atweet from the official game accountshows a voice messageBangaloreleft to Rampart, where she calls Rampart by "P" (from Parekh) and asks if an implied commission is done - almost certainly a gun, considering Rampart's background.
-- On August 5th, 2020, signs ofHammond Roboticsfuture worksites onWorld's Edgewere vandalized with spray paint reading "", "SHOP ⟶", and "ALL HAIL SHEILA!".The same day, a secondtweetshows a voice message that a woman called Dion Bakar left to Rampart, where she calls Rampart by "Parekh", praises the pistol that Rampart modded for her and asks for a replica with discount.
-- On August 6th, 2020,the Season 6 Launch Trailerwas released.
-- On August 7th, 2020, anothertweetshows a voice message that a man called Nix left to Rampart, where he calls Rampart by "Rami" and implores for a specific "baby" - almost certainly a nickname for gun.
-- On August 8th, 2020, the train and Capitol City were vandalized with "SORRY SORRY" and "NOT SORRY". Capitol City was also vandalized with images ofKuben Blisk, one of them having a crown, and the message "WON'T LET YA DOWN" beside them.The same day, atweetshows a voice message from a woman called Frances trying to induce Rampart into losing the next day's match for her, and her friends, gambling profits.
-- On August 10th, 2020, a fifthtweetshows a voice message that a man called Grimes left to Rampart. In this message, Grimes offers a good amount of cash for the turret (Sheila) he saw Rampart use in the Gauntlet.
-- On August 11, 2020, "The Endorsement" was released.The same day, theGraffiti Modhop-up was introduced into the game forAlways Be Closing Evolved. It was compatible with theM600 Spitfireand teased Rampart'sModded Loaderpassive.
-- On August 14, 2020,the Season 6 Gameplay Trailerwas released.
-## Trivia
-- Rampart's abilities are derived from Titanfall 2'sA-Walltactical ability. Her affinity for LMGs likely comes from the meta of using theSpitfirewith the A-Wall for easy long-range kills.
-Rampart carving her symbol on to Sheila.
-- Due to some inaccurate leaks, there was a misconception that Rampart was a white male before she was revealed. (The dataminer responsible for the leak admitted that he paired names and faces through guesswork.[3]) When Respawn was accused of "changing" Rampart's design, principal animator Moy Parra responded by stating that the leaked image was never Rampart and that designs cannot be changed on a whim.[4]Knowing that people believed in the bad leaks, writer Tom Casiello seemingly created a male gunsmith character "Reginald" as a red herring to Rampart's identity on Twitter, before Rampart was revealed.
-- While playing Rampart, the sound of a bubble popping can often be heard after landing on the ground from a fall that is higher than the player jump height since Rampart can be seen chewing gum and blowing bubbles in her menu animations, and in her icon on the legend select screen.
-- Rampart's Heirloom is the only heirloom to include an animation that involves a different legend entirely, that beingOctane's leg in a rare door kick animation.
-- During very early development, Rampart was concepted as an old woman as revealed by concept art posted by Moy Parra on Twitter.[5]
-## Gallery
-Videos
-Images
-- Rampart works whileKuben Bliskwatches her.
-- Concept art of Rampart.[6]
-- Concept art of Rampart.[6]
-- Rampart's t-shirt design.[6]
-- Early sketches by Hethe Srodawa.[7][8]
-- Rampart's character sheet for "The Endorsement".[9]
-- Rampart's character sheet for "The Endorsement".[9]
-- Rampart's character sheet for "The Endorsement".[9]
-- The images that appear on the HUD of SHIELA.
-- The images that appear on the HUD of SHIELA.
-- The images that appear on the HUD of SHIELA.
-- Concept art for Rampart'sFrozen Carnageskin by Gadget-Bot Productions.[10]
-- Concept art for Rampart'sRumble Readyskin.[11]
-- Concept art for Rampart'sCleanup Crewskin.[12]
-- Concept arat for Rampart'sProblem Solver.[13]
--
--
-## References
+## 技能
+### 增幅掩体（Amped Cover）
+| 战术技能 | Q///
+增幅掩体（Amped Cover）
+描述 | 建造一堵带顶盖的蹲姿掩体墙，部署后形成一堵完整掩体式增幅墙，可阻挡 incoming 射击，并增幅 outgoing 射击。（上限：5 个）
+冷却时间 | 20 秒  
+- 信息  
+- 互动  
+- 提示  
+- 已知问题  
+- 你最多可持有 3 个该技能充能，每 20 秒获得 1 个充能。  
+- 放置时无视友军碰撞。  
+- 增幅掩体需 2 秒完成部署；部署期间仅底部部分可用；部署过程中拥有 100 点生命值；完全部署后恢复满生命值。  
+- 掩体基座与增幅屏障拥有独立生命值：  
+  • 蹲姿基座拥有 400 点生命值；若此部分被摧毁，整个掩体即告消失。  
+  • 增幅屏障拥有 175 点生命值；生命值以 7 个六边形显示，每个六边形代表 25 点生命值；顶盖生命值与增幅屏障相同。  
+- 墙体可通过两种方式积攒充能：  
+  • 向增幅护盾射击造成伤害；  
+  • 敌人对墙体本身造成伤害。  
+  • 墙体积攒的充能可转化为翻越墙体时的速度加成。  
+- 墙体最多可储存 300 点伤害，对应 15 秒速度加成；速度加成持续时间与储存伤害量呈线性比例关系。  
+- 墙体积攒的充能仅限你自己及队友使用，且每位队友均可独立使用所储存的充能。当墙体被摧毁时，附近队友及你自己将自动获得速度加成。墙体所受伤害按 25% 比例转化为充能，而穿过增幅护盾造成的伤害则按 100% 比例转化。  
+- 增幅掩体可使 outgoing 射击伤害提升 20%。  
+  • 可穿透射击的一侧以蓝色标识；  
+  • 阻挡射击的一侧以橙色标识。  
+- 连续穿过多个增幅屏障射击，仅会触发一次增幅效果，首个之后的所有增幅屏障均会被摧毁。  
+- 未受损的掩体可拾起，恢复 1 个技能充能。  
+- 兰伯特将持续处于放置模式，直至其掩体储备耗尽。  
+- 掩体易受兰伯特本人及其队友的友军伤害。  
+- 增幅屏障可被密客（Crypto）的无人机 EMP 摧毁。  
+- 增幅屏障承受弧星（Arc Star）1.0 倍伤害。  
+- 增幅屏障可被腐蚀（Caustic）的毒气陷阱（Nox Gas Trap）和毒气手雷（Nox Gas Grenade）造成伤害（每跳 1 点），但无法被二者摧毁。  
+- 热熔手雷（Thermite Grenades）仅对增幅掩体基座造成伤害，对增幅屏障造成 2.0 倍伤害。  
+- 需要两次近战攻击才能摧毁整堵增幅掩体。  
+  • 若你对紧贴增幅屏障的敌人发动近战攻击，仅敌人受到伤害，增幅屏障不受影响。  
+- 兰伯特需在放置模式与战斗模式间高效切换。由于她可快速连续放置掩体直至储备耗尽，玩家应勤加练习两种模式间的切换，并熟练掌握如何迅速将掩体置于合适位置。  
+- 即便叠加部署增幅掩体仍仅提供一层有效增幅屏障，蹲姿掩体墙本身仍可提供掩护。因此，在初始布防阶段视情况叠加部署增幅掩体依然可行。  
+  • 自 2023 年 9 月 19 日更新起，兰伯特可快速叠加部署最多 3 面掩体以增强防护。即便敌人成功击破其中一面，其后方的掩体仍可能留存。根据实际情况，可选择叠加部署 2 或 3 面掩体（从无到有），以确保至少一面掩体存留。若身处交火中，此法应作为默认部署策略。  
+- 务必优先摧毁最外层的增幅屏障，因其后无伤害溢出。  
+- 切勿在单面增幅屏障尚在部署中时躲于其后，原因有二：  
+  • 此阶段屏障生命值较低；  
+  • 若屏障被摧毁时你正位于其后，将瞬间暴露于危险之中。  
+  • 若无人位于其后，敌人更少尝试摧毁正在部署中的屏障。  
+- 若必须在增幅屏障部署过程中躲于其后，请在建造期间保持蹲姿。  
+  • （参见 SFTO “背书”（Endorsement）片段：兰伯特跃至柜台后并保持蹲姿，同时激活增幅掩体）  
+- 除上述快速叠加 3 面掩体策略外，亦可快速并排部署掩体，其中一面略作倾斜。此举利用了玩家心理——通常聚焦于摧毁单面掩体。并排部署迫使敌人抉择先摧毁哪一面，同时提高至少一面掩体存留的概率；若其未能及时摧毁，你还将获得更宽广的覆盖范围。  
+- 对于倾向主动进攻、在开阔地带作战的兰伯特，可考虑先放置一堵掩体，再横向移动（strafing）进入开阔地继续作战。此时掩体实质上充当伪诱饵：敌人要么射击你，你可退回掩体后寻求庇护；要么射击掩体，你则可趁机还击。  
+- 善用任何临时掩体进行布防，例如直布罗陀（Gibraltar）的防护穹顶（Dome of Protection）与纽卡斯尔（Newcastle）的移动护盾。  
+- 若你无意离开当前区域，可任由已被摧毁增幅屏障的掩体基座留存。你可在其正后方立即部署新的增幅掩体墙，从而令敌人更难在建造动画期间将其摧毁。  
+- 快速部署的增幅掩体可阻挡爆炸及其附带的眩晕效果。  
+- 滑铲+建造（slide-build）可为你在移动中提供额外防护。  
+- 与其他防御型传奇的陷阱不同，增幅掩体的有效作用范围为你拥有视野的任意位置。请使用长距离武器以最大化其潜力。不同于其他传奇的半透明护盾，你可直接向其后方射击。  
+- 尽管增幅掩体可提升伤害并提供防护，但其极易被发现。若你从远处开火且意图保持隐蔽，则应避免放置掩体。  
+- 快速部署可为你提供安全空间，以确认敌人的精确位置。  
+- 须明确增幅掩体的方向：遭遇敌方增幅掩体时，可记为“橙色朝外（Orange for facing Out），紫色供能（Purple for Power）”。或简单记住：多数敌方护盾为橙色，故身处橙色一侧是绝对禁忌。同理，务必留意自身增幅掩体方向，尤其在战况趋于非线性时。必要时（如预判自己将处于掩体橙色侧）应取消部署/摧毁增幅部分（若非整堵墙）。  
+- 增幅掩体无法防护来自上方的射击。若非迫不得已，请勿在低洼处布设。  
+- 因头部倾斜会影响头部命中框位置，即使藏身于蹲姿掩体墙后，也可通过俯视地面来最小化暴露的命中框。  
+- 若你察觉存在两个相互垂直的潜在攻击方向（例如前方与右侧），但又希望节省掩体储备，可考虑以一定角度放置单面掩体，而非分别朝两个方向各设一面。  
+- 若障碍物阻碍掩体最佳放置点，垂直跳跃可在空中令放置标记前移至障碍物更前方区域。此技巧可用于“引导”掩体位置。  
+- 敌人常试图突进并跃过你的增幅掩体。对此，可退至其后方第二道增幅掩体处予以反制。  
+- 类似毒气陷阱（Nox Gas Trap），增幅掩体可用作门禁障碍，阻止敌人朝其方向开启房门。注意切勿意外锁住己方队友——他们同样无法开门。对门上的增幅掩体进行标记（ping），可确保队友保持警觉。  
+- 敌人常倾向于射击增幅掩体，从而消耗弹药。你可在资源匮乏的终局阶段利用此点。  
+- 有时因特定几何结构限制，掩体无法成功部署。  
+- 偶尔在训练场（Firing Range）中，你将听到掩体被摧毁或拾起的声音，尽管你当前范围内并无掩体。
+
+### 战斗改装师（Battle Modder）
+| 被动技能 |  
+战斗改装师（Battle Modder）  
+描述 | 使用轻机枪（LMGs）与转管机枪（Minigun）时，弹匣容量/热量容量提升，装填/充能速度加快。掩体墙生命值随兰伯特进化护甲（Evo Armor）等级永久提升。  
+冷却时间 | ？  
+- 信息  
+- 互动  
+- 提示  
+- 已知问题  
+- 弹匣容量提升 15%，装填时间减少 25%。战斗改装师生命值提升：  
+  • 掩体生命值每进化等级 +200（400 → 800，满级）；  
+  • 护盾生命值每进化等级 +25（175 → 225，满级）。  
+- 与扩容弹匣（Extended Mags）的弹匣容量加成及标准枪托（Standard Stocks）的装填时间减益效果叠加。亦与溅射弹（Splatter Rounds）升级效果叠加，后者等效于改装装弹器（Modded Loader）。  
+- 弹匣/热量容量提升包括：  
+  • 希拉（Sheila）：150 → 173  
+  • 吐息者（Spitfire）：35 /40/45/50 → 40 /46/52/58  
+  • 暴怒（Rampage）：28 /32/36/40 → 32 /37/41/46  
+  • 狂热（Devotion）：36 /40/44/48 → 41 /46/51/55  
+  • L-STAR：24 /26/28/30 → 28 /30/32/35；同时冷却时间缩短  
+- 装填时间缩短包括：  
+  • 希拉（Sheila）：8.67 秒 → 6.5 秒  
+  • 吐息者（Spitfire）：  
+    • 战术装填：3.4 /3.29/3.17/3.06 → 2.55 /2.47/2.38/2.30  
+    • 全量装填：4.2 /4.06/3.92/3.78 → 3.15 /3.05/2.94/2.84  
+  • 暴怒（Rampage）：  
+    • 战术装填：3.1 /3/2.89/2.79 → 2.33 /2.25/2.17/2.09  
+    • 全量装填：4 /3.87/3.73/3.6 → 3 /2.90/2.80/2.7  
+  • 狂热（Devotion）：  
+    • 战术装填：2.80 /2.71/2.61/2.52 → 2.10 /2.03/1.96/1.89  
+    • 全量装填：3.63 /3.51/3.39/3.27 → 2.72 /2.63/2.54/2.45  
+  • L-STAR（过热时）：2.45 /2.37/2.29/2.21 → 1.84 /1.78/1.71/1.65  
+- 因该被动亦影响 L-STAR 冷却时间，故对能掌控其后坐力模式的兰伯特而言，L-STAR 成为极为强力的武器。一名兰伯特玩家可携带两把紫枪托（Purple-Stocked）L-STAR，发射短连发后切换武器以绕过过热冷却。注意：此切换必须在武器达到临界过热前完成，否则将播放完整换枪动画。  
+- 此能力甚至可在训练场（Firing Range）中更换角色后持续生效。用另一把武器替换已持有的轻机枪即可修复此问题。
+
+### 移动式转管机枪“希拉”（Mobile Minigun "Sheila"）
+| 终极技能 | Z/+/+/+
+移动式转管机枪“希拉”（Mobile Minigun "Sheila"）  
+描述 | 操作一挺具备单一大容量弹匣的移动式转管机枪。可将其部署为固定式、可重新装填的炮塔供任何人使用。（上限：1 座）  
+充能时间 | 2 分钟  
+- 信息  
+- 互动  
+- 场景适配  
+- 提示  
+- 已知问题  
+- 激活后，兰伯特携“希拉”行动，弹匣容量为 173 发。射空所有子弹后，可选择将其部署为炮塔，或收起武器（收起动作亦计入“收起”操作）。  
+  • 使用常规武器切换键收起“希拉”；其将保持“激活”状态并保留当前弹匣，直至被放入冷却或完成部署。  
+  • 按下“辅助动作”（Utility action）键可在移动模式与部署模式间切换。  
+- “希拉”每发造成 14 点伤害，射速 20 发/秒，爆头倍率为 2x，腿部无倍率加成（完整伤害模型详见“兰伯特/移动式转管机枪‘希拉’”页面）。  
+- “希拉”开火前需 1.25 秒枪管预热。预热期间激光瞄准器将启动，对友军与敌军均可见。提前瞄准（ADS）可预启动预热；若枪管已预热，即可立即开火。  
+- 点按冲刺键可切换缩放模式：  
+  • 移动模式：1.8x；  
+  • 部署模式：3x。  
+  • 缩放时内置全息瞄准镜（Holosight）将弹出，显示目标距离，功能类似狙击镜。  
+- 部署后，“希拉”拥有 350 点生命值，弹匣容量为 150 发（改装装弹器 Modded Loader 下为 173 发），且拥有无限备用弹药。  
+  • 水平射界限制为 180°，垂直射界向上 71°、向下 53°。  
+  • 部署后的“希拉”可通过按下“辅助动作”键摧毁，不返还充能。  
+- 可摧毁房门。  
+- 可安装于三叉戟（Trident）背部。  
+- 部署后，友方转管机枪标记将在小地图上显示。  
+- 部署后的“希拉”易受兰伯特本人及其队友的友军伤害。  
+- 部署后的“希拉”需两次近战攻击方可摧毁。  
+- 移动形态受希尔（Seer）的静默（Silence）影响。  
+- 持有移动式“希拉”时，无法与战利品、倒地补给箱、激活面板及材料罐交互；亦无法在物品栏界面中移除物品；亦无法拆除增幅掩体（因与切换至部署模式按键相同）。  
+  • 仍可打开战利品容器与房门；仍可与滑索交互及使用；仍可在物品栏界面中使用物品。  
+- 使用“希拉”瞄准（ADS）时，重力炮（gravity cannons）上的移动速度将降低。  
+- “希拉”拥有两个由兰伯特本人执行的检视动画，其他传奇仅有一个检视动画。  
+- 作为终极技能，其不计入战斗通行证（battlepass）挑战中“轻机枪”类别的统计。  
+- 每局结束后，剩余终极技能充能将清零，不延续至下一局；亦不会因剩余充能而在购买时获得折扣。  
+- 若在对局中途将“希拉”放入冷却，则无法再次取出，即使仍有剩余充能。（但你仍可在本局内自由收起）  
+- 初始精度较差，但随预热完成而提升。  
+- “希拉”使用者需格外关注环境：  
+  • 移动模式下射速降低；  
+  • 缩放瞄准镜易导致视野狭窄（tunnel vision）；  
+  • 部署后射手变为固定目标，且视野受限；精明的敌人可轻易绕后袭击疏忽的射手；  
+  • 因其响亮的预热声与追踪激光，敌人一旦察觉你长时间滞留于“希拉”，便会据此制定应对策略。  
+- 鉴于上述特性，“希拉”最宜作为主动武器而非被动反应武器使用。若突然遭敌人围攻，应立即收起“希拉”。  
+- 即便身处布设掩体的坚固阵地，有时移动式“希拉”更为适用：移动能力可助你快速脱离险境，且移动形态拥有显著更大的视野（FOV），甚至允许你自高处垂直向下射击。  
+- 将“希拉”部署于已展开的增幅掩体（Amped Cover）后方，以获取额外掩护与更高伤害。  
+- 在“希拉”后方部署增幅掩体，以防射手遭背后偷袭。  
+- 将“希拉”部署于关键通道（chokepoints）附近，迫使敌人进入你的火力范围，尤其适用于圈缩阶段（Ring-closing in）。  
+- 部署式“希拉”的装填时间极长，期间极度脆弱。有时你仅能使用一个弹匣后便弃之不顾。  
+- 抓住一切机会终结倒地敌人。满弹匣状态下，“希拉”可在数秒内击穿至少紫色（purple）击倒护盾（Knockdown Shield），甚至可能歼灭全员配备紫色击倒护盾的整支小队。  
+- 慌乱的敌人极难命中静止目标。你越能出其不意，效果越好。  
+- 离开某区域时，可考虑拾起已部署的“希拉”，以防敌人加以利用。  
+- 若移动式“希拉”剩余子弹超过 130 发（75%），将其放入冷却模式后，43 秒即可再次使用。  
+- 若移动式“希拉”已消耗超过 87 发子弹（50%），当预计需转移至地图其他位置时，可考虑将其放入冷却模式，以确保抵达后拥有满弹匣。  
+- 完全耗尽弹药的移动式“希拉”收起后，仍将保持收起状态直至完全充能。因此，若你几乎打空“希拉”（例如仅剩不足 15 发），建议收起而非彻底打空，以便快速奔向目标位置进行部署。  
+- 虽然可将“希拉”部署于三叉戟（Trident）背部，但系统判定为“用户处于空中”，精度大幅下降。请勿将此视为严肃战术策略。  
+- 全息瞄准镜（holosight）显示的角度为实际角度的夸张表现。  
+- 偶尔在训练场（Firing Range）中，你将听到炮塔被摧毁或拾起的声音，尽管你当前范围内并无炮塔。  
+- 使用完全耗尽弹药的移动式“希拉”发动近战攻击，将启动弹匣充能。此充能过程在保持部署模式时持续生效；切换回移动模式后，即可使用当前弹匣内弹药（且弹匣停止进一步充能）。
+
+### 传奇升级（Legend Upgrades）
+主条目：传奇升级（Legend Upgrades）  
+传奇升级是第 20 赛季（Season 20）为所有大逃杀模式引入的特殊增益。随着你进化护甲（Evo Armor）等级提升，传奇技能将获得强化。每次升级仅可选择一项增益，总计最多选择两项。
+
+2 级升级  
+- 战备储备（Combat Reserve）：更大弹药堆叠量、额外手雷槽位、可访问红色武器补给箱。  
+- 锁定并装填（Locked and Loaded）：当身处增幅掩体（Amped Cover）后方且增幅屏障完好时，获得更快装填速度与无限弹药。  
+
+3 级升级  
+- 加速升级（Ramped Up）：“希拉”（Mobile Minigun "Sheila"）操控性与预热时间提升 20%。  
+- 重建模块（Rebuild Module）：增幅掩体（Amped Cover）在未受伤害一段时间后，将自动恢复生命值并重建增幅屏障部分。

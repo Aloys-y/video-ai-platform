@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Outbox 投递调度器
@@ -36,26 +35,15 @@ public class OutboxDispatcherScheduler {
     @Qualifier("outboxCallbackExecutor")
     private final Executor outboxCallbackExecutor;
 
-    private final AtomicInteger inFlight = new AtomicInteger();
-
     @Value("${videoai.outbox.dispatch-batch-size:50}")
     private int dispatchBatchSize;
-
-    @Value("${videoai.outbox.max-in-flight:10}")
-    private int maxInFlight;
 
     @Value("${videoai.outbox.send-timeout-ms:10000}")
     private long sendTimeoutMs;
 
     @Scheduled(fixedDelayString = "${videoai.outbox.dispatch-interval-ms:3000}")
     public void dispatch() {
-        int availableSlots = maxInFlight - inFlight.get();
-        if (availableSlots <= 0) {
-            return;
-        }
-
-        int queryLimit = Math.min(dispatchBatchSize, availableSlots);
-        List<TaskOutbox> outboxes = taskOutboxMapper.selectReadyToDispatch(queryLimit);
+        List<TaskOutbox> outboxes = taskOutboxMapper.selectReadyToDispatch(dispatchBatchSize);
         if (outboxes.isEmpty()) {
             return;
         }
@@ -66,10 +54,8 @@ public class OutboxDispatcherScheduler {
     }
 
     private void dispatchAsync(TaskOutbox outbox) {
-        inFlight.incrementAndGet();
         try {
             if (taskOutboxMapper.markSending(outbox.getId()) == 0) {
-                inFlight.decrementAndGet();
                 return;
             }
 
@@ -80,11 +66,7 @@ public class OutboxDispatcherScheduler {
                     .whenCompleteAsync((result, error) -> completeDispatch(outbox, error),
                             outboxCallbackExecutor);
         } catch (Exception e) {
-            try {
-                markFailed(outbox, e);
-            } finally {
-                inFlight.decrementAndGet();
-            }
+            markFailed(outbox, e);
         }
     }
 
@@ -106,8 +88,6 @@ public class OutboxDispatcherScheduler {
             // 保持 SENDING，由恢复调度器重新置为 NEW，维持至少一次投递语义。
             log.error("Outbox completion callback failed: id={}, taskId={}",
                     outbox.getId(), outbox.getTaskId(), callbackError);
-        } finally {
-            inFlight.decrementAndGet();
         }
     }
 

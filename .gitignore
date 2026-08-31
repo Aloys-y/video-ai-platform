@@ -60,9 +60,11 @@ frontend/.vite/
 # Docker - .env 包含敏感密码，不提交
 docker/.env
 
-# 面试相关 & 文档
-docs/
+# 面试相关 & 文档：说明文档不提交，仅允许 README 使用的界面截图
+docs/*
 !docs/pic/
+docs/pic/*
+!docs/pic/*.png
 notes/
 简历*.md
 面试*.md

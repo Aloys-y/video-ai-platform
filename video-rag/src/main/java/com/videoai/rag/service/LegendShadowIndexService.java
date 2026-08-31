@@ -16,7 +16,6 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.time.LocalDateTime;
 
 @Service
@@ -36,10 +35,8 @@ public class LegendShadowIndexService {
     public Map<String, Object> build() {
         assertShadowBuildIsSafe();
         KnowledgeBase base = knowledgeBaseService.getRequiredBase();
-        Set<String> excluded = Set.copyOf(ragProperties.getLegendExcludedCardCodes());
         List<KnowledgeCard> cards = knowledgeCardMapper.selectByCategory(base.getBaseCode(), "LEGEND").stream()
                 .filter(card -> Integer.valueOf(1).equals(card.getEnabled()))
-                .filter(card -> !excluded.contains(card.getCardCode()))
                 .toList();
 
         vectorStoreClient.ensureCollection();

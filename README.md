@@ -55,6 +55,11 @@
   <sub>AI 分析结果 — Markdown 渲染</sub>
 </p>
 
+<p align="center">
+  <img src="docs/pic/rag.png" alt="RAG 检索评估页面" width="900">
+  <br>
+  <sub>RAG 检索评估 — 查询增强、召回分数、标题路径与注入上下文可视化</sub>
+</p>
 <br>
 
 初心是用来解决个人需求：本人和朋友喜欢玩 APEX (一款三人小队 fps 大逃杀游戏)，为了高效复盘（抓战犯），才萌生了做这个项目的想法。后续会开放给社区使用，也算是一位爱玩派派玩家的社区回馈把！
@@ -89,7 +94,23 @@ Kafka 解耦：用户确认后，API 将任务与 Outbox 事件原子落库并�
 
 **5. RAG 知识增强**
 
-将 Markdown 知识按标题层级和段落切分，通过 DashScope Embedding 向量化并写入 Milvus，使用 HNSW + COSINE 检索相关知识片段注入视频分析 Prompt；检索异常时 fail-open，不阻断主分析链路。
+围绕 PC 端 Apex 英雄知识构建独立的中文 RAG 链路，目前收录 28 个英雄。原始 Wiki 内容经过正文提取、噪声清理、中文化和 Markdown 结构化后，按照标题层级、段落、句子与列表边界进行语义切分；当前基线参数为目标 650 字符、最小 400、最大 800、重叠 100，共生成 223 个 chunk。
+
+索引阶段使用 DashScope `text-embedding-v3` 生成向量，同时将原文、英雄、标题路径、分类等元数据写入 Milvus，MySQL 保存卡片、chunk 和索引任务状态。检索阶段先识别中文英雄名和玩家俗称，再通过 HNSW + COSINE 召回候选片段，经过分数阈值、单卡片数量和上下文长度控制后注入视频分析 Prompt。检索异常采用 fail-open，不阻断主分析链路。
+
+项目提供独立的 **RAG 检索评估页面**，可以直接观察原始 Query、别名增强后的 Query、召回分数、命中标题路径以及最终注入模型的上下文，便于定位“英雄找错”“章节找错”和“范围外问题误召回”等问题。
+
+当前 `bench` 基线使用 36 条中文问题连续运行 3 轮，结果保持一致：
+
+| 指标 | 结果 |
+| :--- | ---: |
+| 英雄 Entity Hit@1 | 100% |
+| 章节 Section Hit@K | 96.43% |
+| 范围外问题拒答率 | 75% |
+| 服务端检索延迟 P50 / P95 | 约 262ms / 352ms |
+| MySQL chunk / Milvus vector 一致性 | 223 / 223 |
+
+> 该结果是当前 28 个英雄、36 条人工标注问题上的工程基线，用于后续切片、阈值和检索策略的对照实验，不代表线上生产准确率。
 
 **6. 双认证体系**
 
@@ -136,7 +157,7 @@ graph TD
 | 对象存储 | AWS S3 SDK / Backblaze B2 | S3 Multipart Upload + 预签名 URL，兼容 MinIO |
 | 向量数据库 | Milvus 2.4.x | HNSW + COSINE 向量检索 |
 | AI 服务 | 阿里 Qwen-VL / 智谱 GLM / OpenAI-compatible | Provider 接口解耦，配置化切换 |
-| RAG | DashScope text-embedding-v3 | Markdown 分块、跨语言检索、fail-open 降级 |
+| RAG | DashScope text-embedding-v3 | 层级感知分块、中文英雄别名增强、可视化评估、fail-open 降级 |
 | 接口文档 | SpringDoc OpenAPI | Swagger UI |
 | 前端 | 纯 HTML/CSS/JS SPA | 无框架依赖 |
 | 部署 | Docker Compose | 一键启动所有中间件 |
@@ -196,9 +217,8 @@ cp video-worker/src/main/resources/application-dev.yml.example \
 | `VIDEOAI_KAFKA_TASK_PARTITIONS` | 视频分析 Topic 分区数，默认 `6` |
 | `VIDEOAI_KAFKA_TASK_REPLICAS` | Topic 副本数，本地默认 `1`，多 Broker 生产集群按规划调整 |
 | `VIDEOAI_WORKER_CONCURRENCY` | 单个 Worker 内 Consumer 数，默认 `3` |
-| `VIDEOAI_OUTBOX_BATCH_SIZE` | Outbox 每轮候选批次，实测默认 `50` |
-| `VIDEOAI_OUTBOX_FIXED_DELAY_MS` | Outbox 扫描间隔，实测默认 `1000ms` |
-| `VIDEOAI_OUTBOX_MAX_IN_FLIGHT` | Kafka 在途发送上限，实测默认 `10` |
+| `VIDEOAI_OUTBOX_DISPATCH_BATCH_SIZE` | Outbox 每轮候选批次，默认 `50` |
+| `VIDEOAI_OUTBOX_DISPATCH_INTERVAL_MS` | Outbox 扫描间隔，默认 `1000ms` |
 | `minio.*` | 对象存储配置（MinIO / Backblaze B2 地址和凭证）|
 | `ai.dashscope.api-key` | 阿里云 DashScope API Key，[点这里申请](https://dashscope.console.aliyun.com/) |
 | `ai.zhipu.api-key` | 智谱 AI API Key，[点这里申请](https://open.bigmodel.cn/) |
@@ -220,7 +240,7 @@ spring:
 
 项目通过 Spring Kafka `NewTopic` 显式声明 `videoai.task.analyze`，Topic 不存在时按配置创建；已有 Topic 分区不足时会增加到配置值，不再依赖 Broker 自动建 Topic 的默认分区数。完整的参数计算、扩缩容和幂等边界见 [Kafka 分区、Consumer Group 与 Worker 部署参数设计](architecture/kafka-partition-consumer-sizing.md)。
 
-Outbox 调度器采用“数据库抢占 + 有界异步发送”：先通过条件更新把消息从 `NEW` 抢占为 `SENDING`，再异步发送 Kafka；回调线程把成功消息更新为 `SENT`，失败消息退回可重试状态，超时停留在 `SENDING` 的消息由恢复扫描重新接管。这样既避免同步逐条等待 Kafka 回执造成的队头阻塞，也用 `max-in-flight=10` 限制并发，防止无界堆积。100 条任务的同条件对照中，Outbox p95 从 `24.51s` 降到 `11.80s`（约下降 52%）。完整压测方法、原始参数矩阵和结论见 [全链路压测指南](architecture/load-test/README.md) 与 [压测实测报告](architecture/load-test/RESULTS.md)。
+Outbox 调度器采用“批量扫描 + 数据库抢占 + 异步发送”：每轮最多读取 50 条候选消息，通过条件更新把消息从 `NEW` 抢占为 `SENDING`，再异步发送 Kafka；回调线程把成功消息更新为 `SENT`，失败消息退回可重试状态，超时停留在 `SENDING` 的消息由恢复扫描重新接管。Kafka 负责消息入队后的削峰填谷，Outbox 负责 ACK 前的持久化。最新对照中，10 条/秒下 Batch 50 与 100 的 Outbox p95 分别为 `3.34s` 和 `3.54s`，扩大批次没有收益；3 条/秒稳态下，Batch 50、1 秒扫描的 Outbox p95 为 `1.38s`。因此 `50/1s` 是当前规模的起始值，不是行业固定值。完整压测方法、原始参数矩阵和生产扩展方案见 [全链路压测指南](architecture/load-test/README.md) 与 [压测实测报告](architecture/load-test/RESULTS.md)。
 
 ### 3. 编译项目
 
@@ -258,14 +278,15 @@ npx --yes serve frontend -l 5173
 python -m http.server 5173 --directory frontend
 ```
 
-启动后访问：`http://localhost:5173`
+启动后访问：`http://localhost:5173`。管理员登录后可直接进入 `http://localhost:5173/#/rag-eval` 测试 RAG 召回效果。
 
 ### 6. 访问
 
 | 服务 | 地址 |
 | :--- | :--- |
 | 前端页面 | http://localhost:5173（或直接打开 `frontend/index.html`） |
-| Swagger UI | http://localhost:8080/swagger-ui.html |
+| RAG 检索评估 | http://localhost:5173/#/rag-eval |
+| Swagger UI | http://localhost:8080/api/swagger-ui.html |
 | MinIO 控制台 | http://localhost:9001（仅本地 MinIO 时可用）|
 
 <br>
@@ -284,7 +305,7 @@ python -m http.server 5173 --directory frontend
 | 统一响应 | ApiResponse + ErrorCode 结构化错误码 | ✅ |
 | AI Provider 解耦 | 接口抽象，支持 DashScope、智谱和 OpenAI-compatible 服务 | ✅ |
 | AI 失败手动重试 | 单次执行只调用一次 AI，失败落库后由用户重新提交，执行代次隔离迟到消息 | ✅ |
-| RAG 知识增强 | Markdown 分块、Milvus 向量检索、上下文注入与 fail-open | ✅ |
+| RAG 知识增强 | 28 个 PC 英雄中文知识、层级感知分块、Milvus 检索、别名增强、评估页面与 fail-open | ✅ |
 
 <br>
 

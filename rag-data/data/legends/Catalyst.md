@@ -1,120 +1,109 @@
 ---
-title: "Catalyst"
+title: "催化姬"
+title_en: "Catalyst"
 topic: legends
-categories: ["Apex Legends", "Apex Legends Legends", "Female Legends", "LGBTQ+ legends", "Legends", "Locked legends", "Pages with broken file links"]
+language: zh-CN
+categories: ["Apex英雄", "PC端", "玩法资料"]
 source: https://apexlegends.fandom.com/wiki/Catalyst
 ---
 
-# Catalyst
+# 催化姬（Catalyst）
 
-“ | Adolescents can be so headstrong. Was it too much or not enough? And even though sometimes it felt like all the forces of the universe were working against us... we had each other. I would do anything for my coven. I still would.
-Catalyst
+## 玩法概览
+职业 | 控制型
+战术技能 | 穿刺尖刺（Piercing Spikes）
+被动技能 | 障壁（Barricade）
+终极技能 | 暗影帷幕（Dark Veil）
 
-Defensive Conjurer
-Details
-Real Name | Tressa Crystal Smith
-Gender | Female
-Age | 30
-Home World | Boreas
-Gameplay
-Class | Controller
-Tactical Ability | Piercing Spikes
-Passive Ability | Barricade
-Ultimate Ability | Dark Veil
-Real-world Info
-Voice Actor | Meli Grant[1]
-Catalystis aControllerLegend. She was introduced inSeason 15and is locked from the base game. She can be unlocked using digital currency: either12,000 or750.
-## Abilities
-### Piercing Spikes
-| Tactical | Q///
-Piercing Spikes
-Description | Throw out a patch of ferrofluid which turns in to spikes when enemies are near. Catalyst remains immune to enemy spikes.
-Cooldown | 25 seconds- Info- Interactions- Arenas- Tips- Has 2 charges. Can create a maximum of 2 patches. Catalyst can pick up the patch to regain a charge, so long as the patch hasn't been activated.- Holding Tactical button delays the launch. Melee cancels the launch.Has a throw distance of ~15 meters when launched horizontally (trajectory can be increased by aiming higher, increase distance to ~40m if target area is at same level as Catalyst).Can be thrown simultaneously with other actions (firing, reloading, healing, etc.) without interrupting them.- Creates a 2m x 11m patch perpendicular to the point of view.Spikes will start moving when an enemy player in line-of-sight to the center gets within 10m from the center. It will be considered activated at that stage.When an enemy walks over activated spikes, it slows them and deals 15 damage every second. Unactivated spikes will slow enemies, but do not deal damage.In the middle of the patch is a glowing orb with 300 HP that appears when enemies get close. Destroying this dissipates the patch. The orb also takes double damage from all sources.Patches last until destroyed, either by the Catalyst who created them with the Utility Action button, or enemies by shooting the orb in the middle of the patch.- Patch can travel under closed doors.- Catalyst can pick up her spikes and get a charge refund, as long as no enemy player got inside the detection range of the spikes.- Can be destroyed by punching the orb 1 time.- Catalyst is immune to all Piercing Spikes, regardless of who created it.- Can be shot down byWattson'sInterception Pylon.- Starts with only 1 charge; can still bank 2 charges.- When using it to trap a door, aim next to the hinge of the door, so that the core can be protected by the opened door and the wall. This is effective because doors don't hinder the core's LOS; the spikes will activate as though it can see an enemy, but enemies cannot see nor shoot the core because their own LOS is blocked by the opened door.- If the core hits a wall while travelling through the air, it behaves differently to other projectiles - rather than bouncing off, it will travel straight downward and place the patch parallel to the wall. Using walls as a guide is a great way to see how best to align your traps with the environment, as well as to efficiently position your traps while staying out of LOS of enemies (because you do not need to aim for the floor).- Spike strips can function as proximity alarms. In tight quarters, pay attention to your/your teammate's spike strip reacting when enemies are near.- As Opponent: Destroy the spike strip as soon as possible as it will linger until Catalyst's death; it is easy to forget its existence due to tunnel vision as well as its position close to the ground. Get close to it, but do not step on it, and destroy it.
-### Barricade
-| Passive | HoldX///
-Barricade
-Description | Reinforce doors, strengthening them and locking them to enemies. Spaces where doors have been destroyed can also be reinforced.
-Cooldown | ?- Info- Interactions- Tips- Hold the "alternative action" button near doorways for 0.5s to reinforce either existing doorpanes, or build a ferro-barrier if doorpanes are gone.- Can reinforce up to 2 doorways at a time; if a new barricade is created, the last barricade will disappear.- Reinforced doors take 4 melee hits to destroy; ferro-barriers take 2 melee hits to destroy.- Doors can still be operated by Catalyst and her teammates, but not by enemy squads.- The ferro-barrier can be broken by Catalyst and her teammates by pressing "interaction" key; Catalyst will need to rebuild the ferro-barrier if needed.- Abilities still damage doors/ferro-barriers as normal.- Grenades such as theArc StarandFrag Grenadewill instantly destroy the barricaded door. TheThermite Grenadewill slowly damage the door.- Mad Maggie'sRiot DrillandFuse'sKnuckle Clusterslowly damage the barricaded door until it is destroyed.- Wattson'sPerimeter Securityfences instantly destroy barricaded doors.- Mad Maggie'sWrecking Ball,Horizon'sBlack Hole,Gibraltar'sDefensive Bombardment,Bangalore'sRolling Thunder,Newcastle'sCastle Wallimpact,Rampart'sMinigun, andCrypto'sDrone EMPinstantly destroy barricaded doors.- When any doorway (standard or reinforced) is broken, it takes 3 seconds before Catalyst can reinforce the empty space. Resist the urge to run to a doorway and attempt to reinforce it the moment it is broken, as you risk leaving yourself open if an enemy team runs through the space.- Vision through reinforced doors and ferro-barriers is greatly obscured by ferrofluid; this is useful in scenarios where enemies might otherwise spot you, your teammates, or other hazards such as Caustic traps through the door's small windows.- Destroying a ferro-barrier with the "interaction" key can only be done by Catalyst and her team, and the ferro-barrier disappears near instantly; use this to surprise approaching enemies or enemies trying to kick down the barrier.- When entering a building that you're trying to quickly reinforce, follow the pattern: reinforce as you approach door -> open door -> close door. Trying to open the door, reinforce it and then close it leaves Catalyst's body in open space while you fiddle with the door. This situation could cost you vital extra health if the enemy lands some damage during this time.
-### Dark Veil
-| Ultimate | Z/+/+/+
-Dark Veil
-Description | Raise a permeable wall of ferrofluid. Enemies who walk through it will be slowed and partially blinded for a brief time.
-Charge time | 2.5 minutes- Info- Interactions- Tips- Bugs- Creates a permeable wall 40m in length and 8m in height in line with Catalyst's reticle.- Takes 1 second before the first veil section rises, and takes additonal 3 seconds maximum to build the complete veil.- The veil will keep travelling until one of the following:It reaches a wall that is greater than a climbable height.Its height reaches 2x a climbable height.- The Dark Veil lasts 15 seconds.- Enemies that try to cross through the wall will be slowed by 15% and blinded for 7 seconds.- Does not block bullets, ordnance, or abilities.- Most scanning abilities will not apply scans to players on the other side of the wall.- Catalyst is immune to the blind effect and slow of the Dark Veil, regardless of who created it.- Scanning abilities will only be blocked if the scan itself tries to go through the wall. If an enemy is already scanned, moving behind the wall won't remove it.Bloodhound'sEye of the Allfather,Crypto'sNeurolink,Seer'sFocus of AttentionandHeart Seeker,Valkyrie'sVTOL JetsHUD, andVantage'sSpotter's Lenswill not work through the wall.- Crypto's drone can fly through the wall without experiencing any debuffs.- In non-BR game modes, the wall will disappear when the Catalyst who created it dies.- The wall may only be placed lengthways, in front of Catalyst. Because of this, it is liable to leaving an open space on the end where Catalyst placed it. To completely prevent enemies from moving through an area, position yourself flat against a surface before placing the wall.- When looking straight ahead during placement, there is a gap between the start point and Catalyst's feet. Try looking down before placing it; this positions the start point directly under Catalyst's feet, completely preventing enemies from slipping between the empty space. This is especially useful when placing inside buildings.- Don't understimate the blindness effect when moving through an enemy Catalyst's wall; if the wall is crossed by an enemy, their sensitivity is greatly reduced, all colour is removed from their screen and a huge dark vignette effect covers their screen. Because of this, don't be afraid to approach enemies who you can see have travelled through your wall; it is near impossible for them to fight back effectively.The veil can currently be built on top of Gibraltar'sDome of Protection, Mirage's decoy, Crypto'sSurveillance Drone, and Vantage's Echo. For the latter three, a section of the veil will be on top of them as they move around.
-### Legend Upgrades
-Main article:Legend Upgrades
-Legend Upgrades are special perks introduced inSeason 20to all Battle Royale modes. These add upgrades to a Legend's abilities as you level up your Evo Armor. Only one option may be chosen per level-up for a maximum of two perks total.
-Level 2 Upgrades- Sister Spikes:Increase max number of activePiercing Spikesto three.- Long Veil:IncreaseDark Veillength to 180 feetLevel 3 Upgrades- Ferro-Door:Fully rebuild and reinforce missing doors withPassive.- Resilient Veil:IncreaseDark Veilduration to 20 seconds.
-## Lore
-Main article:Catalyst (character)
-“ | Tressa Crystal Smith isn’t everyone’s cup of tea–an elegant, standoffish woman, she likes crystals more than she likes most people. She grew up on Boreas, a faltering planet with a deteriorating moon. Conformity and efficiency were necessities there, but that never suited Tressa. Instead, she was more at home with fellow misfits who spent their time on crystal readings, moon rituals and personal witchery–they made her turbulent teenage years (and simultaneous gender transition) easier and less lonely. But when her closest friend went to extreme lengths to save their moon from corporate encroachment, Tressa was caught in the middle. Ultimately, she ran away from home, finding solace in the one place her friend cared about most: their moon, Cleo.There she joined the terraforming crews hired to repair and rejuvenate the celestial body. She learned to work with ferrofluid, and use it with a certain witchy flair. She grew attached to her new community and, when the heat on Boreas died down, brought some of her old friends back into the fold. She found a place to call her own–just in time for the Apex Games to arrive and sweep it out from under her new family. But Catalyst won’t disappear so easily. If the Games are going to get in her way, she’s going to turn them to her advantage, putting the prize money to use supporting her family. She sees a win in her future, and she’ll rise to the occasion.
-## Cosmetic items
-### Skins
-There are a total of 48 Legend skins for Catalyst; 9Legendary, 8Epic, 15Rareand 16Common.
-- Legendary- Epic- Rare- Common- Blood Moon- Celestial Protector- Legacy of the Ancients- Violet Sands- Suns Up- Technowitch- Stellar Swimmer- Crimson Goddess- Gorgon's Glare- Daemon Hunter- Fiber Optics- Hack the System- Heat Sync- User Friendly- ArchonLevel 1- Natural EssenceNovember 2022- Rune GoddessRune Goddess- Alpha Royal- Arachnophobia- Bloodline- Dire Wolf- Disruptor- Formal Finery- Labyrinth- Prowess- Racing Stripes- Snakeskin- Super Rad- Unholy Alliance- Volcanic- Wallflower- Wishbone- OriginalDefault- Amethyst- Arctic- Cardinal- Clearwater- Evergreen- Flamingo- Hydro- Limelight- Mandarin- Midnight- Orchid- Rage- Sahara- Skyward- Yellowjacket
-### Finishers
-- https://apexlegends.fandom.com/wiki/File:Execution_Catalyst_Witch%27s_Wrath.mp4Witch's WrathDefault
-- https://apexlegends.fandom.com/wiki/File:Execution_Catalyst_Ferro_Fury.mp4Ferro Fury1,200
-### Badges
-See:Catalyst/Badges
-### Emotes
-- Lunar Lounge-1,200
-- Fit For a Queen-400
-- To Your Health- Level 12
-- Go With a Smile- Default
-### Skydive Emotes
-- https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Catalyst_Over_the_Moon.mp4Over the MoonLevel 2
-- https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Catalyst_Mystic_Spiral.mp4Mystic SpiralLevel 90
-- https://apexlegends.fandom.com/wiki/File:SkydiveEmote_Catalyst_Crescent_Chamomile.mp4Crescent Chamomile
-### Banner Frames
-- Legendary- Epic- Rare- Common- Guru Meditation1,200- Lunar Reading1,200- Motion of Change1,200- Project Firestart1,200- Zen Garden1,200- Crystal CoredLevel 32- Celestial BeatdownLevel 79- Ritual Ascension- Blood Infused30- Celestial Doom60- Dark Throne60- Verdant Takeoff60- World Breaker60- Autumn WindsNovember 2022- Rookie CardDefault- Celestial Canopy30- Cosmic Starlight30- Lunar Summit30- Soul Syphon30
-### Banner Poses
-- Epic- Rare- Common- Child's Play- Empath- Not Today- Play It Cool- Transfixed- Aggressive Negotiation- Divination- I Arise- Misfortune Awaits- Mystic Crystals- Resistance- Star Gazing- Surprising Read- Tea Time- RegalDefault
-### Holosprays
-Main article:Holosprays
-- For Hope1,200
-- Death400
-- Double Double Here's Some Trouble400
-- It's The Witching Hour400
-- Let's Work Some Magic400
-- Seeing Stars400
-- The Stars Didn't Align400
-- We Are All Made of Stardust400
-- Wining Takes An Iron Will400
-- Everyone Deserves The Chance to Rise400
-- Let's See What the Crystals SayLevel 35
-- Guardian Angel
-- Double Double Toil TroubleLevel 58
-### Music Packs
-Main article:Music Pack
-- CatalystLevel 50
-### Transitions
-Main article:Transition
-## Voice lines
-See:Catalyst/Voice lines
-## History
-Patch notes
-January 09, 2024 PatchPiercing SpikesNow require line-of-sight to an enemy player to activate.Spikes that have not been activated will still slow players.October 31, 2023 PatchPiercing SpikesCore no longer blocks projectiles, allowing bullets to pass throughMax in-world count reduced to 2 (was 3)Throw range decreased by about 50%Dark VeilCooldown now starts after the wall comes downReduced lifetime to 25s (was 30s)November 30, 2022 PatchWhile in Phase,Wraithwill now see doors sealed byCatalyst'spassive.While in Phase,Wraithwill not be affected byCatalyst's ferrofluid.Crypto'sdronewill no longer be able to open doors sealed byCatalyst'spassive.November 01, 2022 PatchIntroduced.
-## Development
-- Catalyst was created to be "inescapably" transgender, with the help of transgender employees at Respawn, a transgender representative atGLAAD, and the character's voice actor Meli Grant, who is transgender herself. Her neopaganism also comes about from research regarding the community.[2]
-## Teasers
-- On October 13, 2022, the Apex Legends Twitter account posted an image that showed Catalyst's Tablet.[3]
-- On October 17, 2022, "Last Hope" was released.
-- On October 20, 2022, theSeason 15 Launch Trailerwas released, which confirmed Catalyst being released for Season 15.
-### Datamined and Leaked Data
-Catalystwas leaked as aDefensiveLegend whose character subtitle was "Creative Builder" on March 22, 2022. Her concept art is a copyright-free placeholder titled "The Witch".[4]A low-resolution holospray that might possibly be Catalyst was datamined after the release ofSeason 14. Her abilities revolve aroundferrofluid, noticeable especially when using her Ultimate.
-Leaked abilities
-Passive - ReinforceStanding near your ferro fluid structures, doors, and other Legends placeables will strengthen their integrity and allow them to take significantly more damage.Tactical - Ferro ShotOn impact the shot creates a ramp of hardened ferro fluid that can be extended with more shots. Can also be used to create platforms on walls. (Max 3 structures)Structures can be instantly destroyed by a punch.Ultimate - Iron TowerFerrofluid rises up from below, pushing you upwards while creating a tall solid column under you.The column can be instantly destroyed by a punch.
-Among these, the finalized version retains her neopaganism, the use of ferrofluid, and her passive.
-## Trivia
-- Catalyst is transgender.[5]
-## Gallery
-- Concept art for Catalyst.
-- Concept art for Catalyst'sBlood Moonskin.[6]
-- Catalyst'sMoontarot card, depictingCleo
-- Catalyst'sSuntarot card, depictingWattsonandCrypto
-- Catalyst'sMagiciantarot card, depictingSeer
-- Catalyst'sTwinstarot card, depictingLifelineandOctane
-- Catalyst'sHigh Priestesstarot card, depicting herself
-- Catalyst'sDeathtarot card, depictingRevenant
-- Catalyst'sDeviltarot card, depicting theApex Predators
-## References
+## 技能
+### 穿刺尖刺（Piercing Spikes）
+| 战术技能 | Q///
+穿刺尖刺（Piercing Spikes）
+描述 | 投掷一片铁磁流体，当敌人靠近时，该流体会转化为尖刺。催化姬自身对所有尖刺免疫。
+冷却时间 | 25 秒  
+- 信息  
+- 互动  
+- 竞技场（Arenas）  
+- 技巧  
+- 拥有 2 个充能。最多可同时部署 2 片尖刺区域。只要尖刺区域尚未被激活，催化姬即可拾取该区域以返还 1 个充能。  
+- 按住战术技能按键可延迟投掷。近战攻击可取消投掷。  
+- 水平投掷时投掷距离约为 15 米（若瞄准更高角度，弹道轨迹将提升，目标区域与催化姬处于同一高度时最大投掷距离可达约 40 米）。  
+- 可在执行其他动作（射击、换弹、治疗等）的同时投掷，且不会中断这些动作。  
+- 生成的尖刺区域尺寸为 2 米 × 11 米，方向垂直于催化姬当前视角。  
+- 当一名敌方玩家进入尖刺区域中心点的视野范围内且距离中心点小于 10 米时，尖刺即开始移动；此时视为已激活。  
+- 敌方玩家踩踏已激活的尖刺时，将被减速并每秒受到 15 点伤害。未激活的尖刺仅造成减速效果，不造成伤害。  
+- 尖刺区域中央存在一个发光核心，当敌人靠近时显现，拥有 300 点生命值。摧毁该核心将使整片尖刺区域消散。该核心承受所有来源的双倍伤害。  
+- 尖刺区域将持续存在直至被摧毁：可由创造该区域的催化姬按“辅助行动”键主动清除；或由敌人射击中央核心将其摧毁。  
+- 尖刺区域可穿过关闭的门下方。  
+- 只要尚无敌方玩家进入尖刺区域的侦测范围，催化姬即可拾取尖刺区域并返还充能。  
+- 核心仅需一次近战攻击即可摧毁。  
+- 催化姬对所有穿刺尖刺免疫，无论其由谁部署。  
+- 可被沃特森（Wattson）的拦截信标（Interception Pylon）击落。  
+- 初始仅拥有 1 个充能；但最多仍可储存 2 个充能。  
+- 若用于封锁门，建议瞄准门铰链旁投掷，使核心可被开启的门及墙壁共同掩护。此法有效，因为门不会阻碍核心的视野（LOS）；尖刺仍会如常激活，但敌人因开启的门阻挡其自身视野（LOS），既无法看见也无法射击核心。  
+- 若核心在空中飞行途中撞击墙面，其行为与其他抛射物不同——它不会反弹，而是直接垂直下落，并使尖刺区域平行于墙面生成。利用墙面作为参照，是判断如何最佳对齐陷阱与环境的有效方式，亦可高效布设陷阱同时避免暴露于敌人视野（LOS）之下（因无需瞄准地面）。  
+- 尖刺带可充当近距警报器。在狭小空间内，请留意你或队友部署的尖刺带是否产生反应，以提示敌人临近。  
+- 作为对手：应尽快摧毁尖刺带，因其将持续存在直至部署者死亡；由于注意力狭窄（tunnel vision）及尖刺带位置贴近地面，极易忽略其存在。请靠近尖刺带但切勿踩踏，并予以摧毁。
+
+### 障壁（Barricade）
+| 被动技能 | 按住 X///
+障壁（Barricade）
+描述 | 加固门体，增强其耐久度并锁定门体，阻止敌人开启。门体已被摧毁的空缺处亦可加固。
+冷却时间 | ？  
+- 信息  
+- 互动  
+- 技巧  
+- 在门框附近按住“替代行动”键 0.5 秒，即可加固现存门板；若门板已损毁，则生成一道铁磁屏障。  
+- 最多可同时加固 2 处门框；若新建障壁，最早部署的障壁将自动消失。  
+- 加固后的门需 4 次近战攻击方可摧毁；铁磁屏障需 2 次近战攻击方可摧毁。  
+- 催化姬及其队友仍可正常操作加固后的门，但敌方小队不可操作。  
+- 铁磁屏障可由催化姬及其队友按“交互”键破除；若需，催化姬可重新部署铁磁屏障。  
+- 各类技能对门/铁磁屏障造成的伤害不受影响，仍按常规计算。  
+- 如弧星手雷（Arc Star）和破片手雷（Frag Grenade）等投掷物可瞬间摧毁加固门。热熔手雷（Thermite Grenade）将缓慢破坏门体。  
+- 疯玛吉（Mad Maggie）的暴乱钻头（Riot Drill）及暴雷（Fuse）的指节集束弹（Knuckle Cluster）将缓慢破坏加固门直至其被摧毁。  
+- 沃特森（Wattson）的外围安保（Perimeter Security）电网可瞬间摧毁加固门。  
+- 疯玛吉（Mad Maggie）的毁灭之球（Wrecking Ball）、地平线（Horizon）的黑洞（Black Hole）、直布罗陀（Gibraltar）的防御轰炸（Defensive Bombardment）、班加罗尔（Bangalore）的滚动雷霆（Rolling Thunder）、纽卡斯尔（Newcastle）的城堡之墙（Castle Wall impact）、兰伯特（Rampart）的转管机枪（Minigun）以及密客（Crypto）的无人机 EMP（Drone EMP）均可瞬间摧毁加固门。  
+- 任一门口（标准门或加固门）被破坏后，催化姬需等待 3 秒方可加固该空缺处。切勿在门刚被破坏时立即冲向门口尝试加固，否则可能因暴露于开阔空间而遭敌方小队突入，导致重大风险。  
+- 加固门与铁磁屏障的视野透过性因铁磁流体而大幅降低；此特性在敌人可能透过门上小窗发现你、队友或腐蚀（Caustic）等陷阱等危险物时尤为实用。  
+- 仅催化姬及其队友可通过“交互”键摧毁铁磁屏障，且屏障将近乎瞬时消失；可借此突袭逼近之敌或试图踹门的敌人。  
+- 进入一栋需快速加固的建筑时，请遵循以下流程：接近门口时即开始加固 → 开门 → 关门。若先开门、再加固、最后关门，催化姬身体将在操作门时完全暴露于开阔空间；此情形下若敌人在此期间命中数发，可能令你损失关键血量。
+
+### 暗影帷幕（Dark Veil）
+| 终极技能 | Z/+/+/+
+暗影帷幕（Dark Veil）
+描述 | 升起一道可穿透的铁磁流体帷幕。穿越该帷幕的敌人将被减速并短暂致盲。
+充能时间 | 2.5 分钟  
+- 信息  
+- 互动  
+- 技巧  
+- 已知问题（Bugs）  
+- 生成一道长度 40 米、高度 8 米的可穿透帷幕，方向与催化姬准星对齐。  
+- 第一段帷幕升起需 1 秒，完整帷幕构建完成最多额外耗时 3 秒。  
+- 帷幕持续延伸直至满足以下任一条件：  
+ - 触及高于可攀爬高度的墙体；  
+ - 其高度达到可攀爬高度的两倍。  
+- 暗影帷幕持续时间为 15 秒。  
+- 试图穿越帷幕的敌人将被减速 15%，并致盲 7 秒。  
+- 帷幕不阻挡子弹、投掷物或技能。  
+- 大多数扫描类技能无法对帷幕另一侧的玩家施加扫描效果。  
+- 催化姬对暗影帷幕的致盲与减速效果免疫，无论其由谁部署。  
+- 扫描类技能仅在扫描路径本身需穿过帷幕时才会被阻挡；若敌人已被扫描，其随后移至帷幕后方并不会移除扫描状态。  
+- 寻血猎犬（Bloodhound）的全视之眼（Eye of the Allfather）、密客（Crypto）的神经链接（Neurolink）、希尔（Seer）的聚焦凝视（Focus of Attention）与心跳探测（Heart Seeker）、瓦尔基里（Valkyrie）的 VTOL 喷气 HUD（VTOL Jets HUD）以及万蒂奇（Vantage）的观察者透镜（Spotter's Lens）均无法穿透帷幕生效。  
+- 密客（Crypto）的无人机可自由飞越帷幕，且不受任何减益效果影响。  
+- 在非大逃杀（non-BR）游戏模式中，帷幕将在部署者死亡时立即消失。  
+- 帷幕仅可沿催化姬正前方纵向部署。因此，其末端可能存在未覆盖的空隙。为彻底封锁某区域，部署前请紧贴墙面站立。  
+- 部署时若直视前方，帷幕起始点与催化姬双脚之间将存在间隙。建议部署前先向下瞄准；此举可使起始点精准位于催化姬双脚正下方，彻底杜绝敌人从空隙中溜过的可能。此技巧在室内部署时尤为实用。  
+- 切勿低估穿越敌方催化姬帷幕时的致盲效果：一旦敌人穿越帷幕，其鼠标灵敏度将大幅下降，屏幕将褪去全部色彩，并被巨大的暗角效果覆盖。因此，若你目击敌人穿越你的帷幕，请大胆逼近——其几乎无法进行有效反击。  
+- 当前版本中，帷幕可部署于直布罗陀（Gibraltar）的防护穹顶（Dome of Protection）、幻象（Mirage）的诱饵（decoy）、密客（Crypto）的监控无人机（Surveillance Drone）及万蒂奇（Vantage）的回声（Echo）之上。对于后三者，帷幕的一部分将随其移动而覆盖于其上方。
+
+### 英雄升级（Legend Upgrades）
+主条目：英雄升级（Legend Upgrades）  
+英雄升级（Legend Upgrades）是第 20 赛季为所有大逃杀（Battle Royale）模式引入的特殊增益效果。随着你的进化护甲（Evo Armor）等级提升，该系统将为英雄技能提供强化。每次升级仅可选择一项增益，总计最多选择两项增益。
+
+2 级升级  
+- 双生尖刺（Sister Spikes）：将穿刺尖刺（Piercing Spikes）的最大同时活跃数量提升至 3 片。  
+- 延长帷幕（Long Veil）：将暗影帷幕（Dark Veil）长度提升至 180 英尺（约 54.86 米）。  
+
+3 级升级  
+- 铁磁之门（Ferro-Door）：通过被动技能（Passive）完全重建并加固缺失的门体。  
+- 韧性帷幕（Resilient Veil）：将暗影帷幕（Dark Veil）持续时间提升至 20 秒。

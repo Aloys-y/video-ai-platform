@@ -4,8 +4,6 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
-
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "videoai.rag")
@@ -23,36 +21,8 @@ public class RagProperties {
     /** 中文英雄名和玩家俗称的定向实体增强；与通用查询扩展独立，便于真实 A/B。 */
     private boolean legendAliasEnhancementEnabled = true;
 
-    /**
-     * 英雄知识实验过滤开关。开启后仅检索 LEGEND，并排除冻结快照中已识别的
-     * Mobile、lore 和辅助语言卡片；不删除原始数据，便于 A/B 回滚。
-     */
+    /** PC 英雄知识过滤开关。语料已物理清洗，开启后只需约束 LEGEND 类别。 */
     private boolean legendPcGameplayFilterEnabled = true;
-
-    private List<String> legendExcludedCardCodes = List.of(
-            "ash-mobile",
-            "ballistic-character",
-            "bloodhound-mobile",
-            "caustic-mobile",
-            "conduit-character",
-            "crypto-mobile",
-            "fade",
-            "gibraltar-mobile",
-            "horizon-mobile",
-            "how-to-play-guide-for-apex-legends",
-            "how-to-play-guide-for-apex-legends-game-",
-            "legend",
-            "lifeline-mobile",
-            "loba-mobile",
-            "mirage-mobile",
-            "octane-mobile",
-            "pathfinder-mobile",
-            "pathfinder-ru",
-            "revenant-mobile",
-            "rhapsody",
-            "wraith-id",
-            "wraith-mobile"
-    );
 
     /** 仅供隔离集合实验使用，默认禁止通过管理接口批量构建影子索引。 */
     private boolean shadowIndexBuildEnabled = false;
@@ -77,12 +47,8 @@ public class RagProperties {
 
     private int chunkOverlapChars = 100;
 
-    private int dispatchBatchSize = 20;
-
-    private int dispatchSendTimeoutSeconds = 10;
-
-    /** 已标记 QUEUED 但未成功送达 Kafka 的任务，超过该时间后重新投递。 */
-    private int queuedRecoveryTimeoutSeconds = 60;
+    /** 每轮从 MySQL 抢占执行的知识索引任务数。 */
+    private int scanBatchSize = 20;
 
     /** 长时间停留在 PROCESSING 的任务标记为失败，避免永久假运行。 */
     private int processingTimeoutSeconds = 1800;

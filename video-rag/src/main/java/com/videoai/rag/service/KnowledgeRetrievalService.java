@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -113,15 +112,7 @@ public class KnowledgeRetrievalService {
             return filter;
         }
 
-        List<String> excludedCardCodes = ragProperties.getLegendExcludedCardCodes();
-        if (excludedCardCodes == null || excludedCardCodes.isEmpty()) {
-            return filter + " and category == \"LEGEND\"";
-        }
-        String excludedValues = excludedCardCodes.stream()
-                .map(this::escapeFilterValue)
-                .map(value -> "\"" + value + "\"")
-                .collect(Collectors.joining(", "));
-        return filter + " and category == \"LEGEND\" and card_code not in [" + excludedValues + "]";
+        return filter + " and category == \"LEGEND\"";
     }
 
     private String escapeFilterValue(String value) {

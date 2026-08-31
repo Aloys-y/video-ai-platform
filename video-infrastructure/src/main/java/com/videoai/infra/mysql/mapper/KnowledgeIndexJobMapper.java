@@ -16,12 +16,10 @@ public interface KnowledgeIndexJobMapper extends BaseMapper<KnowledgeIndexJob> {
     @Select("SELECT * FROM knowledge_index_job WHERE job_id = #{jobId} LIMIT 1")
     KnowledgeIndexJob selectByJobId(@Param("jobId") String jobId);
 
-    @Select("SELECT * FROM knowledge_index_job WHERE status = 'NEW' ORDER BY created_at ASC LIMIT #{limit}")
-    List<KnowledgeIndexJob> selectReadyToDispatch(@Param("limit") int limit);
-
-    @Update("UPDATE knowledge_index_job SET status = 'QUEUED', queued_at = NOW(), updated_at = NOW() " +
-            "WHERE id = #{id} AND status = 'NEW'")
-    int markQueued(@Param("id") Long id);
+    // QUEUED 只为兼容移除 Kafka 前已经进入该状态的历史任务；新任务由 NEW 直接抢占为 PROCESSING。
+    @Select("SELECT * FROM knowledge_index_job WHERE status IN ('NEW', 'QUEUED') " +
+            "ORDER BY created_at ASC LIMIT #{limit}")
+    List<KnowledgeIndexJob> selectReadyToProcess(@Param("limit") int limit);
 
     @Update("UPDATE knowledge_index_job SET status = 'PROCESSING', started_at = NOW(), updated_at = NOW() " +
             "WHERE job_id = #{jobId} AND status IN ('NEW', 'QUEUED')")
@@ -38,11 +36,6 @@ public interface KnowledgeIndexJobMapper extends BaseMapper<KnowledgeIndexJob> {
     @Update("UPDATE knowledge_index_job SET status = 'FAILED', error_message = #{errorMessage}, " +
             "completed_at = NOW(), updated_at = NOW() WHERE job_id = #{jobId}")
     int markFailed(@Param("jobId") String jobId, @Param("errorMessage") String errorMessage);
-
-    @Update("UPDATE knowledge_index_job SET status = 'NEW', queued_at = NULL, " +
-            "error_message = 'Recovered after Kafka dispatch timeout', updated_at = NOW() " +
-            "WHERE status = 'QUEUED' AND queued_at < #{cutoff}")
-    int recoverStaleQueued(@Param("cutoff") LocalDateTime cutoff);
 
     @Update("UPDATE knowledge_index_job SET status = 'FAILED', " +
             "error_message = 'Index processing timed out', completed_at = NOW(), updated_at = NOW() " +

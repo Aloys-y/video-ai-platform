@@ -80,8 +80,11 @@ mvn -pl video-worker -am spring-boot:run `
 python scripts/outbox_load_test.py `
   --tasks 100 `
   --concurrency 20 `
+  --submit-rate 10 `
   --token $env:VIDEOAI_LOAD_TEST_TOKEN
 ```
+
+`--submit-rate=0`（默认）表示突发提交；指定速率用于稳态容量测试。两类流量都要跑：突发测试验证积压能否最终排空，稳态测试判断系统能否长期跟上业务到达速率。
 
 结果写入 `architecture/load-test/results/<runId>.json`，包括：
 
@@ -108,12 +111,22 @@ python scripts/outbox_load_test.py `
 | C2 | 50 | 1000 ms | 3 | 100 | 生产保守默认并发 |
 | C3 | 50 | 1000 ms | 6 | 100 | 验证 6 分区基础设施上限 |
 
+异步投递器还需要固定提交速率做受控对照：
+
+| 实验 | Batch | 扫描间隔 | 提交模型 | 目的 |
+|---|---:|---:|---:|---|
+| D1 | 50 | 1000 ms | 100 条突发 | 验证积压时不丢任务，观察排空时间 |
+| D2 | 100 | 1000 ms | 100 条突发 | 观察扩大批次后的突发行为 |
+| D3 | 50 | 1000 ms | 10 条/秒 | 与 D4 做受控 Batch 对照 |
+| D4 | 100 | 1000 ms | 10 条/秒 | 验证 Batch 收益拐点 |
+| D5 | 50 | 1000 ms | 3 条/秒 | 低于消费能力的稳态基线 |
+| D6 | 50 | 500 ms | 3 条/秒 | 衡量更短扫描间隔的延迟收益 |
+
 对应环境变量：
 
 ```powershell
 $env:VIDEOAI_OUTBOX_DISPATCH_BATCH_SIZE = "50"
 $env:VIDEOAI_OUTBOX_DISPATCH_INTERVAL_MS = "1000"
-$env:VIDEOAI_OUTBOX_MAX_IN_FLIGHT = "10"
 $env:VIDEOAI_OUTBOX_CALLBACK_THREADS = "10"
 $env:VIDEOAI_WORKER_CONCURRENCY = "3"
 $env:KAFKA_CONSUMER_MAX_POLL_INTERVAL_MS = "4000"
@@ -121,12 +134,30 @@ $env:KAFKA_CONSUMER_MAX_POLL_INTERVAL_MS = "4000"
 
 ## 如何从实测结果选择参数
 
-1. 批次大小取“继续增大后 Outbox p95 不再明显下降”的最小值。
-2. 扫描间隔取满足任务入队延迟 SLO 的最大值，避免无意义地频繁空查数据库。
-3. Worker 并发增加到吞吐不再近似线性增长或达到分区数为止。
-4. 分区数至少覆盖计划最大消费并发，并预留扩容空间；分区数不是越多越好。
-5. `max.poll.interval.ms` 应大于 AI p99 + 下载/存储/数据库开销 + 安全余量。缩时实验验证相对关系，生产值仍使用真实时长校准。
-6. 任一组出现 `send_attempt_count > 0`、FAILED、consumer rebalance 或数据库连接池等待，都要结合日志定位，不能只看平均值。
+1. 先用 `Batch / 扫描间隔 >= 峰值创建速率` 计算候选值，再用稳态与突发两种流量验证。这个公式只表示每轮读取容量，实际吞吐还受逐条 CAS、数据库往返和 Kafka 发送影响。
+2. 批次大小取“继续增大后 Outbox p95 不再明显下降”的最小值；批次过大只会增加单轮持有的数据和抢占竞争。
+3. 扫描间隔取满足任务入队延迟 SLO 的最大值，避免无意义地频繁空查数据库。均匀到达且无积压时，单纯由扫描引入的平均等待约为间隔的一半。
+4. Worker 并发增加到吞吐不再近似线性增长或达到分区数为止。
+5. 分区数至少覆盖计划最大消费并发，并预留扩容空间；分区数不是越多越好。
+6. `max.poll.interval.ms` 应大于 AI p99 + 下载/存储/数据库开销 + 安全余量。缩时实验验证相对关系，生产值仍使用真实时长校准。
+7. 任一组出现 `send_attempt_count > 0`、FAILED、consumer rebalance 或数据库连接池等待，都要结合日志定位，不能只看平均值。
+
+## 生产环境如何演进
+
+当前“索引扫描 + 单条 CAS 抢占 + 异步 Kafka send”适合中低任务量，优点是实现简单、故障状态可审计。生产中不会只盯着 Batch 和扫描间隔，而会持续监控：
+
+- `NEW` 数量和最老 `NEW` 的年龄，这是 Outbox 是否积压的直接信号；
+- Outbox dispatch p95/p99、每轮命中数、发送失败与恢复次数；
+- MySQL 查询/更新耗时、连接池等待，以及 Kafka producer error/latency；
+- Kafka consumer lag 和 AI 实际并发，区分“没发进 Kafka”与“已入队但消费不过来”。
+
+扩展顺序通常是：
+
+1. 先保证应用与 MySQL 同地域部署、命中 `(status, available_at)` 索引，并根据 SLO 调整 Batch/间隔。
+2. 如果持续流量下 Outbox 年龄仍增长，不能只继续增大 Batch；应把逐条抢占改成一次事务内的批量 claim，例如 `SELECT ... FOR UPDATE SKIP LOCKED`，或用带 owner/lease 的批量更新，减少数据库往返并支持多个 Dispatcher 实例分工。
+3. 当 Outbox 吞吐已经高到轮询数据库本身成为负担时，再升级为读取 binlog 的 CDC（如 Debezium Outbox Event Router）。CDC 是容量演进，不是这个项目当前规模的前置条件。
+
+Kafka 只削峰“已经成功写入 Broker”的消息；ACK 前仍由 MySQL Outbox 保证持久性。当前实现不额外维护应用级在途计数，Kafka producer 自身通过 `buffer.memory`、`max.block.ms` 和 `delivery.timeout.ms` 提供有界缓冲与失败边界，每轮 Batch 则限制一次扫描加载量。
 
 ## 正确性判定
 

@@ -127,11 +127,6 @@ videoai:
     chunk-min-chars: 400
     chunk-max-chars: 800
     chunk-overlap-chars: 100
-    dispatch-batch-size: 20
-    dispatch-send-timeout-seconds: 10
-    queued-recovery-timeout-seconds: 60
-    processing-timeout-seconds: 1800
-    rebuild-processing-timeout-seconds: 21600
     vector:
       provider: milvus
       base-url: ${MILVUS_BASE_URL:http://localhost:19530}

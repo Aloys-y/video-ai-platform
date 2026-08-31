@@ -49,7 +49,6 @@ class OutboxDispatcherSchedulerTest {
                 kafkaTemplate,
                 directExecutor);
         ReflectionTestUtils.setField(scheduler, "dispatchBatchSize", 50);
-        ReflectionTestUtils.setField(scheduler, "maxInFlight", 10);
         ReflectionTestUtils.setField(scheduler, "sendTimeoutMs", 10_000L);
 
         outbox = new TaskOutbox();
@@ -63,7 +62,7 @@ class OutboxDispatcherSchedulerTest {
     @Test
     void shouldMarkSentOnlyAfterKafkaFutureSucceeds() {
         TaskMessage message = TaskMessage.builder().taskId("task-1").build();
-        when(taskOutboxMapper.selectReadyToDispatch(10)).thenReturn(List.of(outbox));
+        when(taskOutboxMapper.selectReadyToDispatch(50)).thenReturn(List.of(outbox));
         when(taskOutboxMapper.markSending(1L)).thenReturn(1);
         when(taskOutboxService.parsePayload("{}")).thenReturn(message);
         when(kafkaTemplate.send(TopicConstant.TASK_TOPIC, "task-1", message))
@@ -84,7 +83,7 @@ class OutboxDispatcherSchedulerTest {
                 new CompletableFuture<>();
         failed.completeExceptionally(new IllegalStateException("broker unavailable"));
 
-        when(taskOutboxMapper.selectReadyToDispatch(10)).thenReturn(List.of(outbox));
+        when(taskOutboxMapper.selectReadyToDispatch(50)).thenReturn(List.of(outbox));
         when(taskOutboxMapper.markSending(1L)).thenReturn(1);
         when(taskOutboxService.parsePayload("{}")).thenReturn(message);
         when(kafkaTemplate.send(TopicConstant.TASK_TOPIC, "task-1", message)).thenReturn(failed);
@@ -97,7 +96,7 @@ class OutboxDispatcherSchedulerTest {
 
     @Test
     void shouldNotSendWhenAnotherDispatcherWinsClaim() {
-        when(taskOutboxMapper.selectReadyToDispatch(10)).thenReturn(List.of(outbox));
+        when(taskOutboxMapper.selectReadyToDispatch(50)).thenReturn(List.of(outbox));
         when(taskOutboxMapper.markSending(1L)).thenReturn(0);
 
         scheduler.dispatch();

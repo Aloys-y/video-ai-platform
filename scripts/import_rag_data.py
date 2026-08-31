@@ -14,6 +14,14 @@ TOPIC_CATEGORY_MAP = {
     "gameplay": "MECHANIC", "cosmetics": "TACTIC", "general": "MECHANIC",
 }
 
+PC_LEGENDS = {
+    "Alter", "Ash", "Axle", "Ballistic", "Bangalore", "Bloodhound",
+    "Catalyst", "Caustic", "Conduit", "Crypto", "Fuse", "Gibraltar",
+    "Horizon", "Lifeline", "Loba", "Mad Maggie", "Mirage", "Newcastle",
+    "Octane", "Pathfinder", "Rampart", "Revenant", "Seer", "Sparrow",
+    "Valkyrie", "Vantage", "Wattson", "Wraith",
+}
+
 def parse_frontmatter(text: str):
     """Parse YAML frontmatter, return (metadata_dict, body_str)."""
     if not text.startswith("---"):
@@ -80,6 +88,7 @@ def batch_create(base_url, token, cards):
     for c in cards:
         meta = c.get("_meta", {})
         yaml_title = meta.get("title", "")
+        yaml_title_en = meta.get("title_en", "")
         yaml_tags = meta.get("categories", [])
         existing_tags = c.get("tags", [])
         merged = list(dict.fromkeys(
@@ -93,7 +102,9 @@ def batch_create(base_url, token, cards):
             "title": (yaml_title[:255] if yaml_title else c["title"]),
             "category": c["category"],
             "subjectCode": c.get("subjectCode"),
-            "aliases": c.get("aliases", []),
+            "aliases": list(dict.fromkeys(
+                ([yaml_title_en] if yaml_title_en else []) + c.get("aliases", [])
+            ))[:20],
             "tags": merged[:20],
             "contentMarkdown": c["contentMarkdown"],
             "enabled": True,
@@ -113,10 +124,13 @@ def main():
     p = argparse.ArgumentParser(description="Import rag-data into knowledge base")
     p.add_argument("--email", default="ragadmin@videoai.com")
     p.add_argument("--pass", dest="password", default="Admin@123456")
-    p.add_argument("--dir", default="rag-data/data")
+    p.add_argument("--dir", default="rag-data/data/legends",
+                   help="Markdown directory; defaults to the curated PC Legend corpus")
     p.add_argument("--batch", type=int, default=10)
     p.add_argument("--api", default="http://localhost:8080/api")
     p.add_argument("--dry-run", action="store_true")
+    p.add_argument("--allow-incomplete-pc-roster", action="store_true",
+                   help="allow importing a PC Legend directory with missing official roster files")
     args = p.parse_args()
 
     base_url = args.api
@@ -124,6 +138,27 @@ def main():
 
     # Collect files grouped by topic
     all_files = list(root.rglob("*.md"))
+    if root.name == "legends":
+        actual = {fp.stem for fp in all_files}
+        unexpected = sorted(actual - PC_LEGENDS)
+        missing = sorted(PC_LEGENDS - actual)
+        if unexpected:
+            print("Refusing to import non-PC Legend files: " + ", ".join(unexpected), file=sys.stderr)
+            return 2
+        if missing and not args.allow_incomplete_pc_roster:
+            print("Refusing incomplete PC roster; missing: " + ", ".join(missing), file=sys.stderr)
+            print("Use --allow-incomplete-pc-roster only for an explicit partial experiment.", file=sys.stderr)
+            return 2
+        non_chinese = []
+        for fp in all_files:
+            with open(fp, "r", encoding="utf-8") as f:
+                meta, _ = parse_frontmatter(f.read())
+            if meta.get("language") != "zh-CN":
+                non_chinese.append(fp.name)
+        if non_chinese:
+            print("Refusing non-zh-CN Legend files: " + ", ".join(sorted(non_chinese)), file=sys.stderr)
+            print("Run scripts/translate_legend_data_zh.py before importing.", file=sys.stderr)
+            return 2
     by_topic = {}
     for fp in all_files:
         with open(fp, "r", encoding="utf-8") as f:

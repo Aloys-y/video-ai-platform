@@ -31,7 +31,7 @@ class LegendShadowIndexServiceTest {
     @Mock private VectorStoreClient vectorStoreClient;
 
     @Test
-    void shouldBuildOnlyIncludedCardsWithoutWritingMysqlChunks() {
+    void shouldBuildOnlyEnabledCuratedCardsWithoutWritingMysqlChunks() {
         RagProperties rag = new RagProperties();
         rag.setShadowIndexBuildEnabled(true);
         rag.setChunkMinChars(400);
@@ -45,10 +45,11 @@ class LegendShadowIndexServiceTest {
         KnowledgeBase base = new KnowledgeBase();
         base.setBaseCode("apex-default");
         KnowledgeCard wraith = card("wraith", "Wraith");
-        KnowledgeCard mobile = card("wraith-mobile", "Wraith (Mobile)");
+        KnowledgeCard disabled = card("disabled", "Disabled");
+        disabled.setEnabled(0);
         when(knowledgeBaseService.getRequiredBase()).thenReturn(base);
         when(knowledgeCardMapper.selectByCategory("apex-default", "LEGEND"))
-                .thenReturn(List.of(wraith, mobile));
+                .thenReturn(List.of(wraith, disabled));
         ChunkedSegment segment = ChunkedSegment.builder()
                 .chunkNo(0).title("Wraith").headingPath("Wraith > Abilities")
                 .contentText("x".repeat(500)).build();
@@ -63,7 +64,7 @@ class LegendShadowIndexServiceTest {
 
         verify(vectorStoreClient).ensureCollection();
         verify(vectorStoreClient).upsert(List.of(record));
-        verify(knowledgeChunkingService, never()).chunkMarkdown("Wraith (Mobile)", "content");
+        verify(knowledgeChunkingService, never()).chunkMarkdown("Disabled", "content");
         assertEquals(1, result.get("cardCount"));
         assertEquals(1, result.get("vectorCount"));
         assertEquals(500, result.get("p50Chars"));
