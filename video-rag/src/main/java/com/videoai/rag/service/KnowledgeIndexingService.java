@@ -10,6 +10,7 @@ import com.videoai.common.enums.KnowledgeIndexStatus;
 import com.videoai.common.enums.KnowledgeIndexJobType;
 import com.videoai.infra.mysql.mapper.KnowledgeCardMapper;
 import com.videoai.infra.mysql.mapper.KnowledgeChunkMapper;
+import com.videoai.infra.rag.config.RagProperties;
 import com.videoai.infra.rag.model.VectorRecord;
 import com.videoai.infra.rag.vector.EmbeddingProvider;
 import com.videoai.infra.rag.vector.VectorStoreClient;
@@ -35,6 +36,7 @@ public class KnowledgeIndexingService {
     private final KnowledgeChunkMapper knowledgeChunkMapper;
     private final KnowledgeIndexJobService knowledgeIndexJobService;
     private final KnowledgeChunkingService knowledgeChunkingService;
+    private final RagProperties ragProperties;
     private final EmbeddingProvider embeddingProvider;
     private final VectorStoreClient vectorStoreClient;
     private final ObjectMapper objectMapper;
@@ -158,8 +160,8 @@ public class KnowledgeIndexingService {
     }
 
     /**
-     * 向量化时补充标题、别名、类别和标题路径；Milvus 中仍保存原始正文用于最终注入。
-     * 这样实体名或章节名没有重复出现在正文时，也能被查询稳定召回。
+     * 向量化时补充结构化字段；Milvus 中始终保留原始正文和标题路径元数据。
+     * heading_path 是否进入 Embedding 可独立配置，用于验证结构信息对语义召回的真实贡献。
      */
     private String buildEmbeddingText(KnowledgeCard card, ChunkedSegment segment) {
         StringBuilder text = new StringBuilder();
@@ -167,7 +169,9 @@ public class KnowledgeIndexingService {
         appendEmbeddingField(text, "Aliases", card.getAliases());
         appendEmbeddingField(text, "Category", card.getCategory());
         appendEmbeddingField(text, "Subject", card.getSubjectCode());
-        appendEmbeddingField(text, "Section", segment.getHeadingPath());
+        if (ragProperties.isEmbeddingHeadingPathEnabled()) {
+            appendEmbeddingField(text, "Section", segment.getHeadingPath());
+        }
         appendEmbeddingField(text, "Content", segment.getContentText());
         return text.toString().trim();
     }

@@ -17,4 +17,19 @@ public interface KnowledgeChunkMapper extends BaseMapper<KnowledgeChunk> {
 
     @Delete("DELETE FROM knowledge_chunk WHERE base_code = #{baseCode} AND card_code = #{cardCode}")
     int deleteByCardCode(@Param("baseCode") String baseCode, @Param("cardCode") String cardCode);
+
+    @Select("""
+            SELECT chunk.*
+            FROM knowledge_chunk chunk
+            INNER JOIN knowledge_card card
+              ON card.base_code = chunk.base_code AND card.card_code = chunk.card_code
+            WHERE chunk.base_code = #{baseCode}
+              AND chunk.index_status = 'INDEXED'
+              AND card.enabled = 1
+              AND card.category = 'LEGEND'
+              AND (card.timeless = 1 OR card.version_tag = #{versionTag})
+            ORDER BY chunk.id ASC
+            """)
+    List<KnowledgeChunk> selectForRetrieval(@Param("baseCode") String baseCode,
+                                            @Param("versionTag") String versionTag);
 }

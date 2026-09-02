@@ -1,0 +1,40 @@
+{"id":"hard-alter-loot-through-wall","query":"刚劝完架，隔着墙能看到一个紫色盒子，但我不想绕过去暴露身位。玩变幻能先从里面顺一件东西吗？如果我想直接换甲也可以吗？","category":"玩家场景-机制反推","relevant_titles":["变幻"],"relevant_sections":["裂隙馈赠"]}
+{"id":"hard-ash-track-winner","query":"地图上刚冒出几只新盒子，我不想舔包，只想追刚才打赢的那队。艾许能不能借这些盒子找到还活着的人？","category":"玩家场景-结果反推","relevant_titles":["艾许"],"relevant_sections":["判决标记"]}
+{"id":"hard-axle-save-knocked-teammate","query":"队友倒在门边还在慢慢爬，我玩艾瑟儿，能不能让他突然滑进掩体，而不是站在枪线里硬扶？","category":"玩家场景-救援决策","relevant_titles":["艾瑟儿"],"relevant_sections":["氮气门"]}
+{"id":"hard-ballistic-third-gun-push","query":"枪带里那把白板枪一直没法装配件，但强冲时它突然变成满配，还让全队换弹更快、子弹像打不完一样，这是弹道的哪套机制？","category":"玩家场景-机制组合","relevant_titles":["弹道"],"relevant_sections":["风暴"]}
+{"id":"hard-bangalore-shot-speed","query":"跑毒过空地时第一枪刚擦到我，烟还没交，人却一下跑快了。这个加速是班加自己触发的吗，能拿来撤回掩体吗？","category":"玩家场景-现象解释","relevant_titles":["班加罗尔"],"relevant_sections":["双重加速"]}
+{"id":"hard-bloodhound-clues","query":"房区里没看见人，但门开过、地上还有脚印。我玩狗子时怎么判断这队刚走还是早就走远了？","category":"玩家场景-线索推理","relevant_titles":["寻血猎犬"],"relevant_sections":["追踪者"]}
+{"id":"hard-catalyst-rebuild-door","query":"守楼时门已经被踹没了，只剩一个空门框。催化姬还能把这个口重新封住，不让对面直接推吗？","category":"玩家场景-反事实","relevant_titles":["催化姬"],"relevant_sections":["障壁"]}
+{"id":"hard-caustic-research-points","query":"毒叔这版本好像不只靠护甲升级；击杀、开特殊盒子、扫圈控台都会攒一种东西。攒到 100 点之后到底会发生什么？","category":"玩家场景-数值机制","relevant_titles":["腐蚀"],"relevant_sections":["实地研究"]}
+{"id":"hard-conduit-catch-teammate","query":"队友先冲出去一大截，我玩导线管追他时脚下会突然提速。这个效果什么时候触发，是不是朝任意方向跑都行？","category":"玩家场景-触发条件","relevant_titles":["导线管"],"relevant_sections":["救世疾驰"]}
+{"id":"hard-crypto-banner-respawn","query":"队友盒子掉在三个人架枪的楼里，我不想肉身进去送。密客能不能隔远拿牌，甚至不让本人站到信标旁就把人拉回来？","category":"玩家场景-远程交互","relevant_titles":["密客"],"relevant_sections":["侦查无人机"]}
+{"id":"hard-fuse-grenade-inventory","query":"背包格子很紧，但我还想多带几颗雷，而且希望远距离也能丢得准。暴雷为什么在这件事上比别人省格子？","category":"玩家场景-资源管理","relevant_titles":["暴雷"],"relevant_sections":["炮手"]}
+{"id":"hard-gibraltar-ads-shield","query":"和胖胖正面对枪时，我明明先破了他的甲，开镜后面前却又多出一小层能挡子弹的东西。那是什么，打碎后还能回来吗？","category":"玩家场景-现象解释","relevant_titles":["直布罗陀"],"relevant_sections":["枪盾"]}
+{"id":"hard-horizon-no-landing-stun","query":"同样从楼顶跳下来，队友落地会顿一下，我玩地平线却还能顺着滑走，空中转向也更灵活。这不是升降机带来的吧？","category":"玩家场景-排除干扰","relevant_titles":["地平线"],"relevant_sections":["太空漫步"]}
+{"id":"hard-lifeline-halo-cover","query":"决赛圈队友缩在石头后打电，我想临时给他圈一小块能挡子弹、还能更快恢复护盾的区域。奶妈现在靠什么做到？","category":"玩家场景-能力识别","relevant_titles":["命脉"],"relevant_sections":["D.O.C. 光环"]}
+{"id":"hard-loba-purple-through-wall","query":"黑市都还没放，我隔墙却能看到紫色和金色物资的轮廓。罗芭这个找东西的范围和什么有关？","category":"玩家场景-现象解释","relevant_titles":["罗芭"],"relevant_sections":["鉴宝之眼"]}
+{"id":"hard-maggie-shotgun-chase","query":"拿喷子贴脸追人时，疯玛吉好像不用为了跑快反复收枪；刚喷中的残血还会短暂露出来。这两个现象来自哪里？","category":"玩家场景-机制组合","relevant_titles":["疯玛吉"],"relevant_sections":["战主之怒"]}
+{"id":"hard-mirage-invisible-revive","query":"枪线正扫过来时我开始扶人，对面却突然丢了我的轮廓。幻象在扶人之外，还有哪些救援相关动作也会这样消失？","category":"玩家场景-救援决策","relevant_titles":["幻象"],"relevant_sections":["现在看见我"]}
+{"id":"hard-newcastle-jump-to-teammate","query":"队友在远处被三个人贴脸，我这边又没有现成掩体。纽卡斯尔能不能直接跳到他附近，落地顺手造出一堵能守的墙？","category":"玩家场景-救援决策","relevant_titles":["纽卡斯尔"],"relevant_sections":["城堡之墙"]}
+{"id":"hard-octane-heal-without-meds","query":"针扎多了只剩半血，附近暂时没人，我不想浪费小药。动力小子躲一会儿能自己补回来吗，进毒里还会不会继续回？","category":"玩家场景-资源管理","relevant_titles":["动力小子"],"relevant_sections":["迅捷自愈"]}
+{"id":"hard-pathfinder-scan-care-package","query":"机器人路过空投总要抬头扫一下，队友觉得是在浪费时间。这个动作除了看物资，会不会让下一根全队都能坐的长绳更快准备好？","category":"玩家场景-收益判断","relevant_titles":["探路者"],"relevant_sections":["内部情报"]}
+{"id":"hard-rampart-lmg-bonus","query":"同一把轻机枪给兰伯特用，弹匣像是更耐打，换弹也没那么拖。是枪被偷偷加强了，还是她本人对 LMG 有额外改装？","category":"玩家场景-归因判断","relevant_titles":["兰伯特"],"relevant_sections":["战斗改装师"]}
+{"id":"hard-revenant-low-health-highlight","query":"对面被我打残后钻进墙角，我没让侦察位扫描，却还能看到他被标出来；而且蹲着追和爬墙都比队友顺。这是亡灵哪部分能力？","category":"玩家场景-机制组合","relevant_titles":["亡灵"],"relevant_sections":["刺客本能"]}
+{"id":"hard-seer-heartbeat-before-entry","query":"进屋前我不想先放技能暴露意图，只想贴着墙架住慢慢扫。希尔能不能在对面没开枪、没跑动时也判断 50 米内有没有人？","category":"玩家场景-信息决策","relevant_titles":["希尔"],"relevant_sections":["心跳感知器"]}
+{"id":"hard-sparrow-second-air-jump","query":"翻墙时总差一点高度，飞雀却能在半空再蹬一次，贴墙起跳还会往上弹；这和他能多带箭是同一个能力吗？","category":"玩家场景-机制组合","relevant_titles":["飞雀"],"relevant_sections":["技能"]}
+{"id":"hard-valkyrie-reach-roof","query":"附近没绳也没跳塔，我想从低处蹭到屋顶。瓦鸡在空中反复按跳能飞上去，但为什么不能一直悬着不落？","category":"玩家场景-资源约束","relevant_titles":["瓦尔基里"],"relevant_sections":["VTOL 喷气推进器"]}
+{"id":"hard-vantage-scope-intel","query":"远处那队还没开枪，我只用中倍镜看过去，万蒂奇能提前读出人数、甲的品质和大概距离，还能看到子弹下坠吗？","category":"玩家场景-信息决策","relevant_titles":["万蒂奇"],"relevant_sections":["观察者透镜"]}
+{"id":"hard-wattson-accelerant-shield","query":"为什么电妹吃一个大招加速剂就能直接灌满，而且一格还能塞两个？我脱战后护盾自己慢慢涨也是同一项能力吗？","category":"玩家场景-机制组合","relevant_titles":["沃特森"],"relevant_sections":["天才火花"]}
+{"id":"hard-wraith-warning-voice","query":"穿过空地时还没挨枪，耳边却突然提醒有人正盯着我。恶灵这个提示能分辨狙击手、陷阱或者附近刚死了很多人吗？","category":"玩家场景-风险判断","relevant_titles":["恶灵"],"relevant_sections":["虚空之声"]}
+{"id":"hard-neg-wingman-loot-choice","query":"落地只摸到小帮手、二倍镜和两组不同弹药，背包又快满了；为了下一场架该留哪组，一枪没爆头大概掉多少？","category":"近域拒答-武器机制","answerable":false,"relevant_titles":[]}
+{"id":"hard-neg-final-ring-position","query":"最后一个圈往熔岩虹吸收，我们在北侧高点，另外两队一队楼里一队车站。现在先下楼还是等他们打，具体走哪条线？","category":"近域拒答-地图决策","answerable":false,"relevant_titles":[]}
+{"id":"hard-neg-armor-swap-ui","query":"盒子叠在门口一团，我被打到只剩十滴，怎么操作才能最快把红甲换上又不误捡一堆子弹？","category":"近域拒答-操作技巧","answerable":false,"relevant_titles":[]}
+{"id":"hard-neg-ranked-points","query":"还剩三队，我现在两杀一助攻，继续苟到第二和主动劝架哪个加分更高？按这赛季规则分别能拿多少？","category":"近域拒答-赛季规则","answerable":false,"relevant_titles":[]}
+{"id":"hard-neg-video-sync","query":"复盘里枪声总比画面早半秒，我想判断到底是我先开枪还是对面先探头。上传前该怎么把音轨和画面对齐？","category":"近域拒答-视频处理","answerable":false,"relevant_titles":[]}
+{"id":"hard-neg-mouse-sensitivity","query":"我从 800 DPI 换到 1600 DPI，又不想让转身距离变化，游戏内灵敏度和开镜倍率应该怎么改？","category":"近域拒答-外设设置","answerable":false,"relevant_titles":[]}
+{"id":"hard-neg-controller-aim-assist","query":"同样贴脸腰射，手柄队友说他的准星会被人带一下，鼠标却没有。PC 混合输入时辅助瞄准到底按什么规则生效？","category":"近域拒答-输入机制","answerable":false,"relevant_titles":[]}
+{"id":"hard-neg-r99-patch","query":"昨晚更新后 R-99 一梭经常差一点打不倒人，是伤害、弹匣还是射速被改了？和上个版本差多少？","category":"近域拒答-版本更新","answerable":false,"relevant_titles":[]}
+{"id":"hard-neg-team-composition","query":"固定队已经锁了恶灵和地平线，第三个人想补信息又怕没人续航。按当前环境应该选谁，为什么不选另一个？","category":"近域拒答-阵容推荐","answerable":false,"relevant_titles":[]}
+{"id":"hard-neg-drop-route","query":"三队一起落纪念碑，我方先踩外圈小房。前一分钟搜哪几栋、从哪条绳上主楼，才能少撞一队？","category":"近域拒答-地图路线","answerable":false,"relevant_titles":[]}
+{"id":"hard-neg-backpack-meds","query":"蓝包只剩四格能放补给，决赛圈前电池、小电、大药和凤凰分别带多少最不容易断资源？","category":"近域拒答-背包配置","answerable":false,"relevant_titles":[]}
+{"id":"hard-neg-gold-helmet-allocation","query":"队里三个大招都没好，只捡到一个金头。给侦察位、转点位还是支援位，整场能多转几次技能？","category":"近域拒答-装备分配","answerable":false,"relevant_titles":[]}

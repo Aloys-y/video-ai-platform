@@ -111,17 +111,31 @@ videoai:
 # SpringDoc / Swagger配置
   rag:
     legend-alias-enhancement-enabled: ${RAG_LEGEND_ALIAS_ENHANCEMENT_ENABLED:true}
+    # 消融实验确认长标题路径会稀释正文语义；元数据仍保留 heading_path，仅不再参与 Embedding
+    embedding-heading-path-enabled: ${RAG_EMBEDDING_HEADING_PATH_ENABLED:false}
+    shadow-index-build-enabled: ${RAG_SHADOW_INDEX_BUILD_ENABLED:false}
     enabled: true
     fail-open: true
     knowledge-base: apex-default
     query-expansion-enabled: false
-    # L02 可回滚实验开关：只检索 PC 玩法英雄卡，不删除 Mobile/lore 原始数据
+    # 当前知识域只包含 PC 英雄玩法卡片；类别过滤作为后续扩充语料时的安全边界
     legend-pc-gameplay-filter-enabled: ${RAG_LEGEND_PC_GAMEPLAY_FILTER_ENABLED:true}
+    # 混合检索仍处于实验阶段：Milvus 语义召回 + 内存 BM25 + RRF，默认不影响基准链路
+    hybrid-retrieval-enabled: ${RAG_HYBRID_RETRIEVAL_ENABLED:false}
+    hybrid-conditional-rescue-enabled: ${RAG_HYBRID_CONDITIONAL_RESCUE_ENABLED:false}
+    hybrid-conditional-rescue-min-dense-score: ${RAG_HYBRID_CONDITIONAL_RESCUE_MIN_DENSE_SCORE:0.60}
+    hybrid-conditional-rescue-max-chunks: ${RAG_HYBRID_CONDITIONAL_RESCUE_MAX_CHUNKS:1}
+    hybrid-lexical-union-enabled: ${RAG_HYBRID_LEXICAL_UNION_ENABLED:false}
+    lexical-top-k: ${RAG_LEXICAL_TOP_K:20}
+    rrf-k: ${RAG_RRF_K:60}
+    dense-rrf-weight: ${RAG_DENSE_RRF_WEIGHT:1.0}
+    lexical-rrf-weight: ${RAG_LEXICAL_RRF_WEIGHT:1.0}
+    lexical-index-ttl-seconds: ${RAG_LEXICAL_INDEX_TTL_SECONDS:300}
     top-k: ${RAG_TOP_K:20}
     final-top-k: ${RAG_FINAL_TOP_K:3}
     max-chunks-per-card: ${RAG_MAX_CHUNKS_PER_CARD:2}
-    # LEGEND 正负样本开发集标定值；扩大知识类别或更换 Embedding 后需重测
-    min-score: ${RAG_MIN_SCORE:0.61}
+    # 中文英雄 bench 首轮实测值：不降低正例/Section 指标，并将负例拒绝率由 75% 提升到 87.5%
+    min-score: ${RAG_MIN_SCORE:0.62}
     max-context-chars: ${RAG_MAX_CONTEXT_CHARS:3500}
     chunk-target-chars: 650
     chunk-min-chars: 400
@@ -132,7 +146,7 @@ videoai:
       base-url: ${MILVUS_BASE_URL:http://localhost:19530}
       token: ${MILVUS_TOKEN:}
       database: default
-      collection: ${VIDEOAI_RAG_VECTOR_COLLECTION:apex_knowledge_chunk_l03_v1}
+      collection: ${VIDEOAI_RAG_VECTOR_COLLECTION:apex_knowledge_chunk_experiment_no_heading_v1}
       metric-type: COSINE
       index-type: HNSW
       connect-timeout-seconds: 10

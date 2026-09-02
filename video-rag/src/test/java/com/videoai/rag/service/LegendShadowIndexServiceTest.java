@@ -37,7 +37,7 @@ class LegendShadowIndexServiceTest {
         rag.setChunkMinChars(400);
         rag.setChunkMaxChars(800);
         MilvusProperties milvus = new MilvusProperties();
-        milvus.setCollection("apex_knowledge_chunk_l03_test");
+        milvus.setCollection("apex_knowledge_chunk_experiment_test");
         LegendShadowIndexService service = new LegendShadowIndexService(
                 knowledgeBaseService, knowledgeCardMapper, knowledgeChunkingService,
                 knowledgeIndexingService, vectorStoreClient, rag, milvus);
@@ -67,6 +67,7 @@ class LegendShadowIndexServiceTest {
         verify(knowledgeChunkingService, never()).chunkMarkdown("Disabled", "content");
         assertEquals(1, result.get("cardCount"));
         assertEquals(1, result.get("vectorCount"));
+        assertEquals(false, result.get("embeddingHeadingPathEnabled"));
         assertEquals(500, result.get("p50Chars"));
         assertEquals(0L, result.get("belowMinCount"));
     }
@@ -76,7 +77,7 @@ class LegendShadowIndexServiceTest {
         RagProperties rag = new RagProperties();
         rag.setShadowIndexBuildEnabled(true);
         MilvusProperties milvus = new MilvusProperties();
-        milvus.setCollection("apex_knowledge_chunk_l03_test");
+        milvus.setCollection("apex_knowledge_chunk_experiment_test");
         LegendShadowIndexService service = new LegendShadowIndexService(
                 knowledgeBaseService, knowledgeCardMapper, knowledgeChunkingService,
                 knowledgeIndexingService, vectorStoreClient, rag, milvus);
@@ -104,7 +105,7 @@ class LegendShadowIndexServiceTest {
                 org.mockito.ArgumentMatchers.eq(wraith),
                 org.mockito.ArgumentMatchers.eq(List.of(segment)),
                 org.mockito.ArgumentMatchers.eq(List.of(metadata)),
-                org.mockito.ArgumentMatchers.startsWith("l03-shadow-promote-"),
+                org.mockito.ArgumentMatchers.startsWith("rag-experiment-promote-"),
                 org.mockito.ArgumentMatchers.eq(false)))
                 .thenReturn(1);
 
@@ -114,7 +115,8 @@ class LegendShadowIndexServiceTest {
         verify(vectorStoreClient, never()).upsert(org.mockito.ArgumentMatchers.anyList());
         assertEquals(1, result.get("persistedChunkCount"));
         assertEquals(0, result.get("newlyEmbeddedVectorCount"));
-        assertEquals("apex_knowledge_chunk", result.get("baselineCollectionPreserved"));
+        assertEquals("apex_knowledge_chunk_experiment_no_heading_v1",
+                result.get("baselineCollectionPreserved"));
     }
 
     private KnowledgeCard card(String code, String title) {

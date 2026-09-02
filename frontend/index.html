@@ -223,9 +223,24 @@
             <div><span class="rc-label">Version:</span> <span id="rev-version">-</span></div>
             <div><span class="rc-label">topK/minScore:</span> <span id="rev-topk">-</span> / <span id="rev-minscore">-</span></div>
             <div><span class="rc-label">Hit Count:</span> <strong id="rev-hitcount">0</strong></div>
+            <div><span class="rc-label">Pipeline:</span> <strong id="rev-pipeline">-</strong></div>
             <div><span class="rc-label">Latency:</span> <span id="rev-latency">0 ms</span></div>
           </div>
         </div>
+
+        <details class="card" style="margin-bottom:var(--space-md)">
+          <summary class="card__header" style="cursor:pointer">
+            <h3 class="card__title" style="display:inline">候选淘汰轨迹</h3>
+          </summary>
+          <div style="overflow-x:auto">
+            <table class="rc-table">
+              <thead><tr>
+                <th style="width:52px">Rank</th><th style="width:72px">Score</th><th style="width:140px">CardCode</th><th>Title</th><th>Heading</th><th style="width:120px">结果</th>
+              </tr></thead>
+              <tbody id="rev-trace-body"></tbody>
+            </table>
+          </div>
+        </details>
 
         <div class="card" style="margin-bottom:var(--space-md)">
           <div class="card__header"><h3 class="card__title">命中结果</h3></div>
