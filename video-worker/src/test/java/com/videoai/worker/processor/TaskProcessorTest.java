@@ -78,7 +78,7 @@ class TaskProcessorTest {
                 redisTemplate,
                 objectMapper,
                 taskFailureService,
-                ragOrchestrator);
+                ragOrchestrator, org.mockito.Mockito.mock(AudioPrefilterPipeline.class), new com.videoai.worker.config.WorkerExecutionProperties());
     }
 
     @Test
@@ -95,7 +95,7 @@ class TaskProcessorTest {
                 .build();
 
         when(analysisTaskMapper.selectOne(any())).thenReturn(task);
-        when(analysisTaskMapper.updateStatusWithCheck("task-1", TaskStatus.PENDING.getCode(), TaskStatus.QUEUED.getCode()))
+        when(analysisTaskMapper.markQueued("task-1", 0))
                 .thenReturn(1);
         when(analysisTaskMapper.startProcessing("task-1", 0)).thenReturn(1);
         when(analysisTaskMapper.updateProgress("task-1", 0, 10)).thenReturn(1);
@@ -131,7 +131,7 @@ class TaskProcessorTest {
                 .build();
 
         when(analysisTaskMapper.selectOne(any())).thenReturn(task);
-        when(analysisTaskMapper.updateStatusWithCheck("task-1", TaskStatus.PENDING.getCode(), TaskStatus.QUEUED.getCode()))
+        when(analysisTaskMapper.markQueued("task-1", 0))
                 .thenReturn(1);
         when(analysisTaskMapper.startProcessing("task-1", 0)).thenReturn(1);
         when(analysisTaskMapper.updateProgress("task-1", 0, 10)).thenReturn(1);
@@ -143,7 +143,7 @@ class TaskProcessorTest {
         when(aiService.analyzeVideo("https://example.com/video", promptEnvelope)).thenReturn("{\"summary\":\"ok\"}");
         when(analysisTaskMapper.completeTask("task-1", 0, "{\"summary\":\"ok\"}", "ok", 0, 0L)).thenReturn(0);
 
-        assertTrue(taskProcessor.process(message));
+        org.junit.jupiter.api.Assertions.assertThrows(UnsettledTaskException.class, () -> taskProcessor.process(message));
 
         verify(ragOrchestrator, never()).saveTaskContext(anyString(), any());
         verify(taskFailureService, never()).markExecutionFailed(anyString(), anyInt(), anyString());
@@ -165,7 +165,7 @@ class TaskProcessorTest {
                 .build();
 
         when(analysisTaskMapper.selectOne(any())).thenReturn(task, failedTask);
-        when(analysisTaskMapper.updateStatusWithCheck("task-1", TaskStatus.PENDING.getCode(), TaskStatus.QUEUED.getCode()))
+        when(analysisTaskMapper.markQueued("task-1", 0))
                 .thenReturn(1);
         when(analysisTaskMapper.startProcessing("task-1", 0)).thenReturn(1);
         when(analysisTaskMapper.updateProgress("task-1", 0, 10)).thenReturn(1);

@@ -88,6 +88,12 @@ public class AnalysisTask {
      */
     private Integer retryCount;
 
+    /** DIRECT_VIDEO 为现有流程，AUDIO_PREFILTER 为语音粗筛流程。 */
+    private String analysisMode;
+
+    /** 当前执行步骤；配置和中间结果通过 task_id + retry_count 查询执行快照。 */
+    private String currentStep;
+
     /**
      * 错误信息
      * 记录最后一次失败的原因

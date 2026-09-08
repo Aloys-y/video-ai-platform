@@ -18,6 +18,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
+@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(name="videoai.worker.async-enabled",havingValue="false",matchIfMissing=true)
 @RequiredArgsConstructor
 public class ProcessingTimeoutRecoveryScheduler {
 

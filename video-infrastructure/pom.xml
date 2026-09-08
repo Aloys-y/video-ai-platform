@@ -16,6 +16,12 @@
     <description>基础设施层 - 数据库、Redis、Kafka、OSS配置</description>
 
     <dependencies>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.2.224</version>
+            <scope>test</scope>
+        </dependency>
         <!-- 依赖common模块 -->
         <!-- 父模块可以直接调用子模块的 Java 类、方法、资源。 -->
         <dependency>

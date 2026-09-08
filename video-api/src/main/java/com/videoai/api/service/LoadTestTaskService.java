@@ -43,6 +43,7 @@ public class LoadTestTaskService {
         String uploadId = UPLOAD_PREFIX + runId + ":" + sequence;
 
         AnalysisTask task = new AnalysisTask();
+        task.setAnalysisMode(com.videoai.common.enums.AnalysisMode.DIRECT_VIDEO.name());
         task.setTaskId(taskId);
         task.setTaskName("loadtest-" + runId);
         task.setUploadId(uploadId);
