@@ -135,8 +135,8 @@ public class TaskService {
                 throw new BusinessException(ErrorCode.USER_FORBIDDEN);
             }
             TaskStatus status = task.getStatusEnum();
-            if (status != TaskStatus.FAILED && status != TaskStatus.DEAD) {
-                throw new BusinessException(ErrorCode.TASK_STATUS_ERROR, "只有失败的任务可以重新分析");
+            if (status != TaskStatus.FAILED && status != TaskStatus.DEAD && status != TaskStatus.PARTIALLY_COMPLETED) {
+                throw new BusinessException(ErrorCode.TASK_STATUS_ERROR, "只有失败或部分完成的任务可以重新分析");
             }
             throw new BusinessException(ErrorCode.TASK_STATUS_ERROR);
         }

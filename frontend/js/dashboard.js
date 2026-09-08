@@ -100,10 +100,10 @@ const Dashboard = {
   renderTaskCard(task) {
     const statusClass = task.status ? task.status.toLowerCase() : 'pending';
     const statusText = this.getStatusText(task.status);
-    const progress = parseInt(task.progress) || 0;
+    const stage = TaskStage.describe(task);
     const displayName = task.taskName || this.extractFileName(task.videoUrl);
     const time = task.createdAt ? this.formatTime(task.createdAt) : '';
-    const canRetry = task.status === 'FAILED' || task.status === 'DEAD';
+    const canRetry = task.status === 'FAILED' || task.status === 'DEAD' || task.status === 'PARTIALLY_COMPLETED';
     const canDelete = this.isFinalState(task.status) || this.isStuck(task);
     const deleteLabel = this.isFinalState(task.status) ? '删除' : '强制取消';
 
@@ -126,14 +126,8 @@ const Dashboard = {
             ${task.retryCount > 0 ? `<span class="text-muted" style="margin-left:8px">已重新分析 ${task.retryCount} 次</span>` : ''}
           </div>
         </div>
-        <div class="task-card__progress">
-          <div class="progress">
-            <div class="progress__bar" style="width:${progress}%"></div>
-          </div>
-          <div class="progress__label">
-            <span>进度</span>
-            <span>${progress}%</span>
-          </div>
+        <div class="task-card__progress" style="color:var(--text-secondary);line-height:1.6">
+          ${this.escapeHtml(stage)}
         </div>
         <div class="task-card__time">${time}</div>
       </div>
@@ -279,7 +273,7 @@ const Dashboard = {
   },
 
   isFinalState(status) {
-    return ['COMPLETED', 'FAILED', 'DEAD', 'CANCELLED'].includes(status);
+    return ['COMPLETED', 'PARTIALLY_COMPLETED', 'FAILED', 'DEAD', 'CANCELLED'].includes(status);
   },
 
   /**
@@ -300,7 +294,7 @@ const Dashboard = {
       'PENDING': '等待中',
       'QUEUED': '排队中',
       'PROCESSING': '分析中',
-      'COMPLETED': '已完成',
+      'COMPLETED': '已完成', 'PARTIALLY_COMPLETED': '部分完成',
       'FAILED': '失败',
       'RETRYING': '重试中',
       'DEAD': '已终止',

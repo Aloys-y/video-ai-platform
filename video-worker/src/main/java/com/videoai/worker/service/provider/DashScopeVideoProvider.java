@@ -1,120 +1,70 @@
 package com.videoai.worker.service.provider;
 
-import com.alibaba.dashscope.aigc.multimodalconversation.MultiModalConversation;
-import com.alibaba.dashscope.aigc.multimodalconversation.MultiModalConversationParam;
-import com.alibaba.dashscope.aigc.multimodalconversation.MultiModalConversationResult;
-import com.alibaba.dashscope.common.MultiModalMessage;
-import com.alibaba.dashscope.utils.Constants;
-import com.alibaba.dashscope.common.Role;
-import com.alibaba.dashscope.common.Status;
+import com.alibaba.dashscope.aigc.multimodalconversation.*;
+import com.alibaba.dashscope.common.*;
 import com.alibaba.dashscope.exception.ApiException;
-import com.alibaba.dashscope.exception.NoApiKeyException;
+import com.alibaba.dashscope.protocol.ConnectionOptions;
 import com.videoai.worker.config.DashScopeConfig;
+import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-
+import java.time.Duration;
 import java.util.*;
 
-/**
- * 阿里云DashScope Provider（Qwen-VL系列）
- */
-@Slf4j
+/** 每个请求独立参数、连接选项及 SDK 会话，不修改 Constants 静态配置。 */
 @Component
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "ai.provider", havingValue = "dashscope", matchIfMissing = true)
 public class DashScopeVideoProvider implements AiVideoProvider {
-
     private final DashScopeConfig config;
 
-    @Override
-    public String call(String videoUrl, String prompt) throws AiProviderException {
-        log.info("DashScope API request - model: {}, videoUrl: {}, timeout: {}s",
-                config.getModel(), videoUrl, config.getTimeout());
+    @Override public String call(String videoUrl, String prompt) throws AiProviderException {
+        return request(videoUrl, prompt, false).text();
+    }
 
-        // 设置SDK超时，给大文件下载留足时间
-        if (Constants.connectionConfigurations == null) {
-            Constants.connectionConfigurations = com.alibaba.dashscope.protocol.ConnectionConfigurations.builder().build();
-        }
-        Constants.connectionConfigurations.setReadTimeout(
-                java.time.Duration.ofSeconds(config.getTimeout()));
-        Constants.connectionConfigurations.setConnectTimeout(
-                java.time.Duration.ofSeconds(config.getConnectTimeout()));
+    @Override public DetailedResult callDetailed(String videoUrl, String prompt) throws AiProviderException {
+        return request(videoUrl, prompt, true);
+    }
 
-        Map<String, Object> videoParams = new HashMap<>();
-        videoParams.put("video", videoUrl);
-        videoParams.put("fps", 2);
-
-        Map<String, Object> textParams = new HashMap<>();
-        textParams.put("text", prompt);
-
-        MultiModalMessage userMessage = MultiModalMessage.builder()
-                .role(Role.USER.getValue())
-                .content(Arrays.asList(videoParams, textParams))
-                .build();
-
-        MultiModalConversationParam param = MultiModalConversationParam.builder()
-                .apiKey(config.getApiKey())
-                .model(config.getModel())
-                .messages(Collections.singletonList(userMessage))
-                .build();
-
+    private DetailedResult request(String videoUrl, String prompt, boolean structured) throws AiProviderException {
+        var builder = MultiModalConversationParam.builder().apiKey(config.getApiKey()).model(config.getModel())
+                .messages(List.of(MultiModalMessage.builder().role(Role.USER.getValue())
+                        .content(List.of(Map.of("video", videoUrl, "fps", 2), Map.of("text", prompt))).build()));
+        if (structured) builder.maxTokens(config.getMaxTokens()).enableThinking(false).temperature(0f);
+        ConnectionOptions options;
+        try {
+            var timeout = com.videoai.common.analysis.ExecutionBudget.limit(Duration.ofSeconds(config.getTimeout()));
+            options = ConnectionOptions.builder().connectTimeout(com.videoai.common.analysis.ExecutionBudget.limit(Duration.ofSeconds(config.getConnectTimeout())))
+                    .readTimeout(timeout).writeTimeout(timeout).build();
+        } catch (java.io.IOException e) { throw new AiProviderException("任务总期限已耗尽", false); }
+        options.setUseDefaultClient(false);
         MultiModalConversationResult result;
-        try {
-            MultiModalConversation conv = new MultiModalConversation();
-            result = conv.call(param);
-        } catch (ApiException e) {
+        try { result = invoke(builder.build(), options); }
+        catch (ApiException e) {
             Status status = e.getStatus();
-            String errorCode = status != null ? status.getCode() : null;
-            int httpStatus = status != null ? status.getStatusCode() : 0;
-            log.error("DashScope API error - httpStatus: {}, errorCode: {}, message: {}",
-                    httpStatus, errorCode, e.getMessage(), e);
-            boolean retryable = httpStatus == 429 ||
-                    (errorCode != null && (errorCode.contains("Throttling") || errorCode.contains("RateLimit"))) ||
-                    isTransientError(e.getMessage());
-            throw new AiProviderException(
-                    "DashScope API error: code=" + errorCode + ", " + e.getMessage(), e, retryable);
-        } catch (NoApiKeyException e) {
-            throw new AiProviderException("DashScope API Key未配置: " + e.getMessage(), false);
-        } catch (Exception e) {
-            log.error("DashScope SDK exception", e);
-            throw new AiProviderException("SDK exception: " + e.getClass().getSimpleName() + " - " + e.getMessage(), false);
-        }
-
+            int code = status == null ? 0 : status.getStatusCode();
+            // 厂商异常可能含签名 URL，不保留原 message/cause 到业务日志。
+            throw new AiProviderException("DashScope 请求失败，HTTP=" + code, code == 429 || code >= 500);
+        } catch (Exception e) { throw new AiProviderException("DashScope 请求失败或超时", false); }
         try {
-            List<Map<String, Object>> contentList = result.getOutput().getChoices().get(0).getMessage().getContent();
-            if (contentList != null && !contentList.isEmpty()) {
-                Object textObj = contentList.get(0).get("text");
-                String text = textObj != null ? textObj.toString() : "";
-                log.info("DashScope API response length: {}", text.length());
-                return text;
-            }
-            throw new AiProviderException("DashScope API returned empty content", false);
-        } catch (AiProviderException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to parse DashScope response", e);
-            throw new AiProviderException("Failed to parse response: " + e.getMessage(), false);
-        }
+            var choice = result.getOutput().getChoices().get(0);
+            StringBuilder text = new StringBuilder();
+            for (var item : choice.getMessage().getContent()) if (item.get("text") != null) text.append(item.get("text"));
+            return new DetailedResult(text.toString(), result.getUsage() == null ? null : new Gson().toJson(result.getUsage()),
+                    result.getRequestId(), choice.getFinishReason());
+        } catch (Exception e) { throw new AiProviderException("DashScope 响应结构无效", false); }
     }
 
-    @Override
-    public int getPresignedUrlExpireHours() {
-        return config.getPresignedUrlExpireHours();
+    protected MultiModalConversationResult invoke(MultiModalConversationParam param, ConnectionOptions options) throws Exception {
+        return new MultiModalConversation("http", "https://dashscope.aliyuncs.com/api/v1", options).call(param);
     }
 
-    @Override
-    public String getName() {
-        return "DashScope(" + config.getModel() + ")";
+    @Override public Map<String, Object> segmentSettings() {
+        return new TreeMap<>(Map.of("provider", "dashscope", "supported", true, "model", config.getModel(),
+                "maxTokens", config.getMaxTokens(), "fps", 2, "thinking", false, "temperature", 0,
+                "timeoutSeconds", config.getTimeout(), "connectTimeoutSeconds", config.getConnectTimeout()));
     }
-
-    /**
-     * 判断是否为瞬态错误（网络超时等可重试错误）
-     */
-    private boolean isTransientError(String message) {
-        if (message == null) return false;
-        return message.contains("timed out") || message.contains("timeout")
-                || message.contains("timed out") || message.contains("connection reset");
-    }
+    @Override public int getPresignedUrlExpireHours() { return config.getPresignedUrlExpireHours(); }
+    @Override public String getName() { return "DashScope(" + config.getModel() + ")"; }
 }

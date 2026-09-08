@@ -1,0 +1,8 @@
+{
+  "sample_id": "replace-with-sample-id",
+  "split": "dev",
+  "annotation_status": "template_not_reviewed",
+  "duration_ms": 120000,
+  "combat_ranges": [[30000, 60000]],
+  "note": "仅格式示例，不是真实标注。人工观看原片后填写毫秒区间；确认后将 annotation_status 改为 human_reviewed。独立验收录像使用 holdout。"
+}

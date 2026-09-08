@@ -8,6 +8,17 @@ package com.videoai.worker.service.provider;
  */
 public interface AiVideoProvider {
 
+    /** 片段路径必须显式支持可审计响应；旧整片接口保持兼容。 */
+    record DetailedResult(String text, String usageJson, String requestId, String finishReason) {}
+
+    default DetailedResult callDetailed(String videoUrl, String prompt) throws AiProviderException {
+        throw new AiProviderException("该 Provider 尚未验证片段并发与用量接口", false);
+    }
+
+    default java.util.Map<String, Object> segmentSettings() {
+        return java.util.Map.of("provider", getName(), "supported", false);
+    }
+
     /**
      * 执行一次视频分析API调用
      *

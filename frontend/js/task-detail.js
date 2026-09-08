@@ -6,6 +6,11 @@ const TaskDetail = {
   taskId: null,
   task: null,
   pollTimer: null,
+  segmentData: null,
+  segmentError: null,
+  loadVersion: 0,
+  activeSegmentNo: null,
+  playRequest: 0,
 
   /**
    * 初始化任务详情
@@ -13,6 +18,11 @@ const TaskDetail = {
   init(taskId) {
     this.taskId = taskId;
     this.task = null;
+    this.segmentData = null;
+    this.segmentError = null;
+    this.activeSegmentNo = null;
+    this.playRequest++;
+    this.loadVersion++;
     this.stopPolling();
 
     if (!taskId) {
@@ -32,8 +42,28 @@ const TaskDetail = {
    * 加载任务详情
    */
   async loadTask() {
+    const id = this.taskId;
+    const version = ++this.loadVersion;
     try {
-      this.task = await Api.get(`/task/${this.taskId}`);
+      const task = await Api.get(`/task/${encodeURIComponent(id)}`);
+      let segmentData = null, segmentError = null;
+      if (task.analysisMode === 'AUDIO_PREFILTER') {
+        try {
+          segmentData = await Api.get(`/task/${encodeURIComponent(id)}/segments`);
+          if (segmentData.executionNo !== (task.retryCount || 0)) throw new Error('任务已重试，请刷新查看当前结果');
+          task.status = segmentData.taskStatus;
+          task.currentStep = segmentData.currentStep;
+        } catch (err) { segmentData = null; segmentError = err.message; }
+      }
+      if (version !== this.loadVersion || id !== this.taskId) return;
+      if (this.task && (this.task.retryCount || 0) !== (task.retryCount || 0)) {
+        this.activeSegmentNo = null;
+        this.playRequest++;
+        document.getElementById('segment-player')?.pause();
+      }
+      this.task = task;
+      this.segmentData = segmentData;
+      this.segmentError = segmentError;
       this.render();
 
       // 非终态 → 自动轮询（用递归 setTimeout 替代 setInterval，避免并发）
@@ -41,12 +71,13 @@ const TaskDetail = {
         this.scheduleNextPoll();
       }
     } catch (err) {
+      if (version !== this.loadVersion) return;
       // H-06 fix: 加载失败时停止轮询
       this.stopPolling();
       document.getElementById('task-detail-content').innerHTML = `
         <div class="empty-state">
           <div class="empty-state__title">加载失败</div>
-          <div class="empty-state__desc">${err.message}</div>
+          <div class="empty-state__desc">${this.escapeHtml(err.message)}</div>
           <div style="display:flex;gap:12px;justify-content:center;margin-top:16px">
             <button class="btn btn--ghost btn--small" onclick="TaskDetail.retryLoad()">重试</button>
             <a href="#/dashboard" class="btn btn--ghost btn--small">返回列表</a>
@@ -60,7 +91,7 @@ const TaskDetail = {
    * 判断是否终态
    */
   isFinalState(status) {
-    return ['COMPLETED', 'FAILED', 'DEAD', 'CANCELLED'].includes(status);
+    return ['COMPLETED', 'PARTIALLY_COMPLETED', 'FAILED', 'DEAD', 'CANCELLED'].includes(status);
   },
 
   /**
@@ -111,36 +142,38 @@ const TaskDetail = {
     const statusText = this.getStatusText(task.status);
     const isFinal = this.isFinalState(task.status);
     const displayName = task.taskName || this.extractFileName(task.videoUrl);
-    const progress = parseInt(task.progress) || 0;
-    const canRetry = task.status === 'FAILED' || task.status === 'DEAD';
+    const stage = TaskStage.describe(task);
+    const canRetry = task.status === 'FAILED' || task.status === 'DEAD' || task.status === 'PARTIALLY_COMPLETED';
     const isStuck = !isFinal && this._isStuck(task);
     const canDelete = isFinal || isStuck;
     const deleteLabel = isFinal ? '删除' : '强制取消';
+    const previousPlayer = document.getElementById('segment-player');
 
     let resultHtml = '';
     if (task.status === 'COMPLETED' && task.result) {
-      resultHtml = this.renderResult(task.result);
+      const segmentNotice = task.analysisMode === 'AUDIO_PREFILTER' && this.segmentData?.total > 0
+        && task.result.startsWith('已完成 ');
+      resultHtml = segmentNotice ? '' : this.renderResult(task.result);
     } else if (!isFinal) {
       resultHtml = `
         <div class="card result-section" style="text-align:center;padding:48px 24px">
           <div class="badge badge--${statusClass}" style="margin-bottom:16px">${statusText}</div>
-          <div class="hud-title" style="margin-bottom:8px">分析进行中</div>
-          <div class="progress progress--large" style="max-width:400px;margin:16px auto">
-            <div class="progress__bar" style="width:${progress}%"></div>
-          </div>
-          <div class="progress__label" style="justify-content:center">
-            <span>进度</span><span>${progress}%</span>
+          <div role="status" aria-live="polite">
+            <div class="hud-title" style="margin-bottom:12px">${this.escapeHtml(stage)}</div>
+            <p style="color:var(--text-secondary);margin:0">${task.currentStep === 'ANALYZING_SEGMENTS' && this.segmentData?.total > 0
+              ? `已完成 ${this.segmentData.succeeded} / ${this.segmentData.total} 个片段`
+              : '阶段完成后自动更新，可稍后回来查看。'}</p>
           </div>
         </div>
       `;
-    } else if (task.status === 'FAILED' || task.status === 'DEAD') {
+    } else if (task.status === 'FAILED' || task.status === 'DEAD' || task.status === 'PARTIALLY_COMPLETED') {
       resultHtml = `
         <div class="card result-section" style="text-align:center;padding:48px 24px">
           <div style="font-size:48px;margin-bottom:16px;opacity:0.3">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent-red)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
           </div>
           <div class="badge badge--${statusClass}" style="margin-bottom:16px">${statusText}</div>
-          <div class="result-section__title">错误信息</div>
+          <div class="result-section__title">${task.status === 'PARTIALLY_COMPLETED' ? '部分片段未完成，已保存结果见下方' : '错误信息'}</div>
           <p style="color:var(--accent-red);margin-top:8px">${this.escapeHtml(task.errorMessage || '未知错误')}</p>
           ${canRetry ? `<button class="btn btn--primary btn--small mt-lg" onclick="TaskDetail.confirmRetry()">重新分析</button>` : ''}
         </div>
@@ -152,10 +185,12 @@ const TaskDetail = {
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
           </div>
           <div class="badge badge--${statusClass}" style="margin-bottom:12px">${statusText}</div>
-          <p style="color:var(--text-secondary);margin-top:8px">此任务已被取消，没有分析结果</p>
+          <p style="color:var(--text-secondary);margin-top:8px">${task.analysisMode === 'AUDIO_PREFILTER' ? '此任务已取消，已保存的片段结果仍可在下方查看' : '此任务已被取消，没有分析结果'}</p>
         </div>
       `;
     }
+
+    if (task.analysisMode === 'AUDIO_PREFILTER') resultHtml += this.renderSegments();
 
     container.innerHTML = `
       <div class="task-detail">
@@ -167,11 +202,9 @@ const TaskDetail = {
               <span class="badge badge--${statusClass}">${statusText}</span>
             </div>
             ${!isFinal ? `
-            <div class="task-sidebar__overview-progress">
-              <div class="progress">
-                <div class="progress__bar" style="width:${progress}%"></div>
-              </div>
-              <div class="progress__label"><span>进度</span><span>${progress}%</span></div>
+            <div class="task-sidebar__overview-progress" style="color:var(--text-secondary);line-height:1.6">
+              <div style="font-size:12px;margin-bottom:4px">当前阶段</div>
+              <strong style="color:var(--text-primary)">${this.escapeHtml(stage)}</strong>
             </div>` : ''}
           </div>
 
@@ -226,6 +259,101 @@ const TaskDetail = {
         </div>
       </div>
     `;
+    const playerSlot = document.getElementById(`segment-player-slot-${this.activeSegmentNo}`);
+    if (playerSlot && previousPlayer && previousPlayer.dataset.taskId === this.taskId
+        && previousPlayer.dataset.executionNo === String(task.retryCount || 0)) playerSlot.appendChild(previousPlayer);
+  },
+
+  renderSegments() {
+    const step = TaskStage.describe(this.task);
+    const data = this.segmentData;
+    if (this.segmentError) return `<div class="card result-section"><p>${this.escapeHtml(this.segmentError)}</p>
+      <button class="btn btn--ghost btn--small" onclick="TaskDetail.retryLoad()">重新加载片段</button></div>`;
+    if (!data) return '';
+    const isFinal = this.isFinalState(data.taskStatus);
+    const label = status => ({SUCCEEDED: '已完成', FAILED: '分析失败',
+      PREPARED: isFinal ? '未执行' : '等待分析', PROCESSING: isFinal ? '未完成' : '分析中'}[status] || status);
+    const playIcon = '<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3.5v9l7-4.5z"/></svg>';
+    const timeButton = (item, ms) => `<button class="segment-time" title="定位原视频 ${this.segmentTime(ms)}" aria-label="播放片段 ${Number(item.segmentNo) + 1}，原视频 ${this.segmentTime(ms)}" onclick="TaskDetail.playSegment(${Number(item.segmentNo)},${Number(ms)})">${playIcon}<span>${this.segmentTime(ms)}</span></button>`;
+    return `<div class="segment-overview"><div><h3>片段分析</h3><p>${isFinal ? '仅展示选中片段的分析结果，不代表覆盖整段视频' : this.escapeHtml(step)}</p></div>
+      <span class="segment-count"><strong>${data.succeeded}</strong> / ${data.total} 已完成</span></div>
+      ${data.total === 0 ? '<div class="card result-section">暂无可展示的片段。</div>' : ''}` + data.segments.map(item => {
+        const r = item.review, active = this.activeSegmentNo === item.segmentNo;
+        const tone = item.status === 'SUCCEEDED' ? 'success' : item.status === 'FAILED' ? 'error' : 'pending';
+        return `<article class="card segment-card${active ? ' is-playing' : ''}" id="segment-card-${Number(item.segmentNo)}">
+          <header class="segment-card__header">
+            <div class="segment-card__identity"><span class="segment-number">${String(Number(item.segmentNo) + 1).padStart(2, '0')}</span>
+              <div><h3>片段 ${Number(item.segmentNo) + 1}</h3><div class="segment-range"><span>原视频</span><time>${this.segmentTime(item.startMs)}</time><span aria-hidden="true">—</span><time>${this.segmentTime(item.endMs)}</time></div></div></div>
+            <div class="segment-card__actions"><span class="segment-status segment-status--${tone}">${this.escapeHtml(label(item.status))}</span>
+              <button class="segment-play" aria-expanded="${active}" onclick="TaskDetail.${active ? 'closeSegment()' : `playSegment(${Number(item.segmentNo)},${Number(item.startMs)})`}">${active ? '收起视频' : playIcon + '播放片段'}</button></div>
+          </header>
+          <div class="segment-card__body">
+            ${active ? `<div class="segment-media"><div class="segment-media__slot" id="segment-player-slot-${Number(item.segmentNo)}"></div><p>片段播放 · 时间标记对应原视频</p></div>` : ''}
+            <div class="segment-analysis">
+              ${item.reused ? '<span class="segment-reused">复用已保存结果</span>' : ''}
+              ${item.errorMessage ? `<p class="segment-error">${this.escapeHtml(item.errorMessage)}</p>` : ''}
+              ${r ? `<p class="segment-summary">${this.escapeHtml(r.summary)}</p>
+                ${(r.events || []).length ? '<h4 class="segment-section-title">画面观察</h4>' : ''}
+                <div class="segment-events">${(r.events || []).map(e => `<div class="segment-event">${timeButton(item, e.startMs)}<p>${this.escapeHtml(e.observation)}</p></div>`).join('')}</div>
+                ${(r.advice || []).length ? '<h4 class="segment-section-title">问题与建议</h4>' : ''}
+                ${(r.advice || []).map(a => `<div class="segment-advice"><div class="segment-advice__title"><strong>${this.escapeHtml(a.issue)}</strong>${timeButton(item, a.startMs)}</div>
+                  <p>${this.escapeHtml(a.suggestion)}</p>
+                  ${a.knowledgeBasis ? `<div class="segment-basis">参考依据 · ${this.escapeHtml(a.knowledgeBasis)}</div>` : ''}</div>`).join('')}
+                ${(r.uncertainties || []).length ? `<div class="segment-uncertainties"><h4>尚不确定</h4><ul>${r.uncertainties.map(u => `<li>${this.escapeHtml(u)}</li>`).join('')}</ul></div>` : ''}` : !item.errorMessage ? `<p class="segment-empty">${isFinal ? '本次未完成该片段的分析。' : '分析结果将在完成后显示。'}</p>` : ''}
+            </div>
+          </div>
+        </article>`;
+      }).join('');
+  },
+
+  segmentTime(ms) {
+    const seconds = Math.floor(Math.max(0, Number(ms) || 0) / 1000);
+    return `${String(Math.floor(seconds / 3600)).padStart(2, '0')}:${String(Math.floor(seconds / 60) % 60).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+  },
+
+  closeSegment() {
+    this.playRequest++;
+    document.getElementById('segment-player')?.pause();
+    this.activeSegmentNo = null;
+    this.render();
+  },
+
+  async playSegment(segmentNo, originalMs) {
+    const id = this.taskId, no = this.segmentData?.executionNo;
+    if (no == null) return;
+    const request = ++this.playRequest;
+    const existing = document.getElementById('segment-player');
+    if (existing && this.activeSegmentNo === segmentNo && existing.readyState > 0 && !existing.error) {
+      existing.currentTime = Math.max(0, (originalMs - Number(existing.dataset.originalStartMs)) / 1000);
+      existing.play().catch(() => {});
+      existing.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+      return;
+    }
+    try {
+      const playback = await Api.get(`/task/${encodeURIComponent(id)}/segments/${segmentNo}/play`, {executionNo: no});
+      if (request !== this.playRequest || id !== this.taskId || no !== this.segmentData?.executionNo) return;
+      const url = new URL(playback.url);
+      if (!['https:', 'http:'].includes(url.protocol)) throw new Error('播放地址无效');
+      existing?.pause();
+      this.activeSegmentNo = segmentNo;
+      this.render();
+      const slot = document.getElementById(`segment-player-slot-${segmentNo}`);
+      if (!slot) return;
+      const player = document.createElement('video');
+      player.id = 'segment-player'; player.controls = true; player.preload = 'metadata'; player.playsInline = true;
+      player.className = 'segment-video';
+      player.setAttribute('aria-label', `片段 ${segmentNo + 1} 播放器`);
+      player.dataset.taskId = id; player.dataset.executionNo = String(no);
+      player.dataset.originalStartMs = String(playback.originalStartMs);
+      player.src = url.href;
+      player.addEventListener('loadedmetadata', () => {
+        if (!player.isConnected) return;
+        player.currentTime = Math.max(0, (originalMs - playback.originalStartMs) / 1000);
+        player.play().catch(() => {});
+      }, {once: true});
+      player.addEventListener('error', () => App.toast('片段播放失败，请重新点击时间获取播放地址', 'error'));
+      slot.replaceChildren(player); slot.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+    } catch (err) { if (request === this.playRequest) App.toast(err.message || '播放失败', 'error'); }
   },
 
   /**
@@ -412,7 +540,7 @@ const TaskDetail = {
   getStatusText(status) {
     const map = {
       'PENDING': '等待中', 'QUEUED': '排队中', 'PROCESSING': '分析中',
-      'COMPLETED': '已完成', 'FAILED': '失败', 'RETRYING': '重试中',
+      'COMPLETED': '已完成', 'PARTIALLY_COMPLETED': '部分完成', 'FAILED': '失败', 'RETRYING': '重试中',
       'DEAD': '已终止', 'CANCELLED': '已取消',
     };
     return map[status] || status || '未知';
@@ -489,6 +617,9 @@ const TaskDetail = {
    * 销毁（离开页面时调用）
    */
   destroy() {
+    this.loadVersion++;
+    this.playRequest++;
+    document.getElementById('segment-player')?.pause();
     this.stopPolling();
   },
 };

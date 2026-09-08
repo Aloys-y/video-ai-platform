@@ -50,6 +50,7 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
     @Update("UPDATE analysis_task SET status = 'QUEUED', updated_at = NOW(3) " +
             "WHERE task_id = #{taskId} AND retry_count = #{retryCount} " +
             "AND status = 'PENDING'")
+    @org.apache.ibatis.annotations.Options(timeout = 5)
     int markQueued(@Param("taskId") String taskId,
                    @Param("retryCount") Integer retryCount);
 
@@ -62,6 +63,7 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
             "frame_count = #{frameCount}, tokens_used = #{tokensUsed} " +
             "WHERE task_id = #{taskId} AND status = 'PROCESSING' " +
             "AND retry_count = #{retryCount}")
+    @org.apache.ibatis.annotations.Options(timeout = 5)
     int completeTask(@Param("taskId") String taskId,
                      @Param("retryCount") Integer retryCount,
                      @Param("result") String result,
@@ -72,10 +74,11 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
     /**
      * 当前执行失败。系统不自动重试，等待用户手动重新提交。
      */
-    @Update("UPDATE analysis_task SET status = 'FAILED', " +
+    @Update("UPDATE analysis_task SET status = CASE WHEN EXISTS (SELECT 1 FROM analysis_segment s WHERE s.task_id=analysis_task.task_id AND s.execution_no=analysis_task.retry_count AND s.status='SUCCEEDED') THEN 'PARTIALLY_COMPLETED' ELSE 'FAILED' END, " +
             "error_message = #{errorMessage}, completed_at = NOW(3), updated_at = NOW(3) " +
             "WHERE task_id = #{taskId} AND status = 'PROCESSING' " +
             "AND retry_count = #{executionNo}")
+    @org.apache.ibatis.annotations.Options(timeout = 5)
     int markFailed(@Param("taskId") String taskId,
                    @Param("executionNo") Integer executionNo,
                    @Param("errorMessage") String errorMessage);
@@ -86,6 +89,7 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
     @Update("UPDATE analysis_task SET progress = #{progress}, " +
             "updated_at = NOW(3) WHERE task_id = #{taskId} " +
             "AND status = 'PROCESSING' AND retry_count = #{retryCount}")
+    @org.apache.ibatis.annotations.Options(timeout = 5)
     int updateProgress(@Param("taskId") String taskId,
                        @Param("retryCount") Integer retryCount,
                        @Param("progress") Integer progress);
@@ -105,12 +109,23 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
      * retry_count 在这里作为单调递增的执行代次，不能清零，否则旧 Kafka 消息可能匹配新执行。
      */
     @Update("UPDATE analysis_task SET status = 'PENDING', " +
-            "retry_count = retry_count + 1, progress = 0, error_message = NULL, " +
+            "retry_count = retry_count + 1, progress = 0, error_message = NULL, current_step = NULL, " +
             "started_at = NULL, completed_at = NULL, updated_at = NOW(3) " +
             "WHERE task_id = #{taskId} AND user_id = #{userId} " +
-            "AND status IN ('FAILED', 'DEAD')")
+            "AND status IN ('FAILED', 'DEAD', 'PARTIALLY_COMPLETED')")
     int resetForManualRetry(@Param("taskId") String taskId,
                             @Param("userId") Long userId);
+
+    /** 迟到的旧执行不能改写当前步骤。此字段不参与任务领取。 */
+    @Update("UPDATE analysis_task SET current_step = #{step}, updated_at = NOW(3) " +
+            "WHERE task_id = #{taskId} AND retry_count = #{executionNo} AND status = 'PROCESSING'")
+    @org.apache.ibatis.annotations.Options(timeout = 5)
+    int updateStep(@Param("taskId") String taskId, @Param("executionNo") int executionNo,
+                   @Param("step") String step);
+
+    @Select("SELECT COUNT(*) FROM analysis_task WHERE task_id=#{taskId} AND retry_count=#{executionNo} AND status='PROCESSING'")
+    @org.apache.ibatis.annotations.Options(timeout = 5)
+    int isCurrentProcessing(@Param("taskId") String taskId, @Param("executionNo") int executionNo);
 
     /**
      * 逻辑删除任务（状态改为CANCELLED）
