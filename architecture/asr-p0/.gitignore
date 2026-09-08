@@ -1,0 +1,4 @@
+results/
+samples.local.json
+*.wav
+*.mp4

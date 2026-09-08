@@ -24,6 +24,8 @@ import org.springframework.stereotype.Component;
 public class TaskConsumer {
 
     private final TaskProcessor taskProcessor;
+    @org.springframework.beans.factory.annotation.Autowired private AsyncVideoCoordinator coordinator;
+    @org.springframework.beans.factory.annotation.Value("${videoai.worker.async-enabled:false}") private boolean asyncEnabled;
 
     /**
      * 消费任务消息
@@ -31,22 +33,24 @@ public class TaskConsumer {
      * - concurrency: 并发消费者数量
      */
     @KafkaListener(
+            id = "video-tasks",
             topics = TopicConstant.TASK_TOPIC,
             groupId = TopicConstant.WORKER_GROUP,
             concurrency = "${videoai.worker.concurrency:3}"
     )
+    public void consumeRecord(org.apache.kafka.clients.consumer.ConsumerRecord<String,TaskMessage> record,
+            Acknowledgment ack, org.apache.kafka.clients.consumer.Consumer<?,?> consumer) {
+        if(asyncEnabled) coordinator.accept(consumer,new org.apache.kafka.common.TopicPartition(record.topic(),record.partition()),record.value(),ack);
+        else consume(record.value(),ack);
+    }
+
     public void consume(TaskMessage message, Acknowledgment ack) {
         String taskId = message.getTaskId();
         log.info("Received task message: taskId={}, executionNo={}, userId={}",
                 taskId, message.getBusinessRetryNo(), message.getUserId());
 
-        try {
-            boolean shouldAck = taskProcessor.process(message);
-            if (shouldAck) {
-                ack.acknowledge();
-            }
-        } catch (Exception e) {
-            log.error("Task consumer error: taskId={}", taskId, e);
-        }
+        if (!taskProcessor.process(message))
+            throw new com.videoai.worker.processor.UnsettledTaskException("任务尚未可靠收敛");
+        ack.acknowledge();
     }
 }

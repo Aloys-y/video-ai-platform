@@ -41,6 +41,8 @@ public class TaskProcessor {
     private final ObjectMapper objectMapper;
     private final TaskFailureService taskFailureService;
     private final RagOrchestrator ragOrchestrator;
+    private final AudioPrefilterPipeline prefilterPipeline;
+    private final com.videoai.worker.config.WorkerExecutionProperties executionProperties;
 
     public boolean process(TaskMessage message) {
         String taskId = message.getTaskId();
@@ -60,15 +62,22 @@ public class TaskProcessor {
 
         int currentExecutionNo = normalizeExecutionNo(task.getRetryCount());
         if (executionNo != currentExecutionNo) {
+            if (executionNo > currentExecutionNo) throw new UnsettledTaskException("消息代次超前，等待数据库核对");
             log.info("Skip stale task message: taskId={}, messageExecutionNo={}, dbExecutionNo={}",
                     taskId, executionNo, currentExecutionNo);
             return true;
         }
 
+        if (task.getStatusEnum() == TaskStatus.PROCESSING && com.videoai.common.analysis.ExecutionOwnership.current() == null) {
+            if (task.getStartedAt() != null && task.getStartedAt().isBefore(java.time.LocalDateTime.now()
+                    .minusMinutes(executionProperties.getTaskTimeoutMinutes())))
+                return handleFailure(taskId, executionNo, new IllegalStateException("任务处理超过总期限，等待用户重试"));
+            throw new UnsettledTaskException("当前执行仍在处理，不能确认重复消息");
+        }
+
         TaskStatus currentStatus = task.getStatusEnum();
         if (currentStatus == TaskStatus.PENDING) {
-            int rows = analysisTaskMapper.updateStatusWithCheck(
-                    taskId, TaskStatus.PENDING.getCode(), TaskStatus.QUEUED.getCode());
+            int rows = analysisTaskMapper.markQueued(taskId, executionNo);
             if (rows == 0) {
                 AnalysisTask latest = queryByTaskId(taskId);
                 if (latest == null || latest.isFinalState()
@@ -78,27 +87,47 @@ public class TaskProcessor {
             }
         }
 
-        int started = analysisTaskMapper.startProcessing(taskId, executionNo);
+        int started = task.getStatusEnum() == TaskStatus.PROCESSING && com.videoai.common.analysis.ExecutionOwnership.current() != null
+                ? 1 : analysisTaskMapper.startProcessing(taskId, executionNo);
         if (started == 0) {
             log.info("Start processing skipped: taskId={}, executionNo={}", taskId, executionNo);
-            return true;
+            return requireSettled(taskId, executionNo);
         }
 
-        try {
-            doProcess(taskId, task, executionNo);
+        if (task.getStatusEnum() == TaskStatus.PROCESSING && (task.getAnalysisMode() == null || "DIRECT_VIDEO".equals(task.getAnalysisMode()))
+                && com.videoai.common.analysis.ExecutionOwnership.current() != null)
+            return handleFailure(taskId, executionNo, new IllegalStateException("原直传调用结果未知，禁止恢复时自动重发"));
+        java.time.Instant deadline = com.videoai.common.analysis.ExecutionOwnership.current() == null
+                ? java.time.Instant.now().plusSeconds(executionProperties.getTaskTimeoutMinutes() * 60L) : java.time.Instant.MAX;
+        try (var budget = com.videoai.common.analysis.ExecutionBudget.bind(deadline)) {
+            if ("AUDIO_PREFILTER".equals(task.getAnalysisMode())) {
+                var result = prefilterPipeline.run(task, executionNo, extractObjectPath(task.getVideoUrl()), deadline);
+                com.videoai.common.analysis.ExecutionBudget.check();
+                if (analysisTaskMapper.completeTask(taskId, executionNo, result.markdown(), extractSummary(result.markdown()), null, result.tokensUsed()) != 1)
+                    throw new StaleTaskExecutionException("粗筛任务终态写入被拒绝");
+                if (result.ragContext() != null) persistRagContext(taskId, result.ragContext());
+            } else if (task.getAnalysisMode() == null || "DIRECT_VIDEO".equals(task.getAnalysisMode())) {
+                doProcess(taskId, task, executionNo);
+            } else throw new IllegalArgumentException("未知的任务分析模式");
             cacheTask(taskId);
             sendTaskEvent(taskId, "COMPLETED", null);
             return true;
         } catch (StaleTaskExecutionException e) {
             log.info("Ignore stale task execution result: {}", taskId);
-            return true;
+            return requireSettled(taskId, executionNo);
+        } catch (org.springframework.dao.DataAccessException | org.springframework.transaction.TransactionException | UnsettledTaskException e) {
+            throw new UnsettledTaskException("数据库操作未可靠收敛，保留消息等待核对");
         } catch (Exception e) {
+            var owner = com.videoai.common.analysis.ExecutionOwnership.current();
+            if(owner != null && !owner.valid()) throw new UnsettledTaskException("执行所有权失效，不写终态");
+            if (e instanceof com.videoai.worker.segment.SegmentAnalysisExecutor.BatchFailure batch && batch.persistenceUnsettled())
+                throw new UnsettledTaskException("片段持久化尚未收敛，保留消息等待恢复");
             log.error("Task processing error: {}", taskId, e);
             return handleFailure(taskId, executionNo, e);
         }
     }
 
-    private void doProcess(String taskId, AnalysisTask task, int executionNo) {
+    private void doProcess(String taskId, AnalysisTask task, int executionNo) throws java.io.IOException {
         log.info("Task processing started: {}", taskId);
         updateProgressOrThrow(taskId, executionNo, 10);
 
@@ -107,12 +136,12 @@ public class TaskProcessor {
         String presignedUrl = storageService.getPresignedUrl(
                 extractObjectPath(videoUrl),
                 aiVideoProvider.getPresignedUrlExpireHours());
-        log.info("Generated presigned URL for task: {}, url: {}, originalPath: {}",
-                taskId, presignedUrl, videoUrl);
+        log.info("Generated presigned URL for task: {}", taskId);
         updateProgressOrThrow(taskId, executionNo, 20);
         
         // RAG 检索构建提示词
         PromptEnvelope promptEnvelope = ragOrchestrator.buildPrompt(task);
+        com.videoai.common.analysis.ExecutionBudget.check();
         String userPrompt = task.getPrompt();
         log.info("Task {} calling AI - prompt: {}, ragStatus={}", taskId,
                 userPrompt != null ? (userPrompt.length() > 100 ? userPrompt.substring(0, 100) + "..." : userPrompt) : "null",
@@ -120,6 +149,7 @@ public class TaskProcessor {
         
         // 调用 AI 分析
         String aiResult = aiService.analyzeVideo(presignedUrl, promptEnvelope);
+        com.videoai.common.analysis.ExecutionBudget.check();
         updateProgressOrThrow(taskId, executionNo, 80);
 
         // 完成任务,提取摘要
@@ -146,9 +176,17 @@ public class TaskProcessor {
         cacheTask(taskId);
 
         if (markedFailed) {
-            sendTaskEvent(taskId, "FAILED", errorMessage);
+            var failed = queryByTaskId(taskId);
+            sendTaskEvent(taskId, failed == null ? "FAILED" : failed.getStatus(), errorMessage);
+            return true;
         }
-        return true;
+        return requireSettled(taskId, executionNo);
+    }
+
+    private boolean requireSettled(String taskId, int no) {
+        var latest = queryByTaskId(taskId);
+        if (latest == null || latest.isFinalState() || normalizeExecutionNo(latest.getRetryCount()) > no) return true;
+        throw new UnsettledTaskException("任务终态尚未确认，不能提交 offset");
     }
 
     private void updateProgressOrThrow(String taskId, int executionNo, int progress) {

@@ -1982,3 +1982,70 @@ h4 { font-size: 1.1rem; }
   border-top: 1px solid var(--border-default);
 }
 .rev-score { font-weight: 700; font-size: 0.9rem; text-align: center; }
+
+/* 片段复盘：播放器属于当前片段，时间标记作为轻量证据入口。 */
+.segment-overview { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 8px 2px; }
+.segment-overview h3 { margin: 0 0 5px; font-size: 1.05rem; color: var(--text-heading); }
+.segment-overview p { margin: 0; font-size: .8rem; color: var(--text-secondary); }
+.segment-count { flex-shrink: 0; font-size: .78rem; color: var(--text-secondary); }
+.segment-count strong { font-size: 1.05rem; color: var(--accent-primary); }
+.segment-card { padding: 0; overflow: hidden; border: 1px solid var(--border-default); }
+.segment-card::before { display: none; }
+.segment-card.is-playing { border-color: var(--accent-primary-light); }
+.segment-card__header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px; border-bottom: 1px solid var(--border-default); }
+.segment-card__identity { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.segment-number { display: grid; place-items: center; flex-shrink: 0; width: 38px; height: 42px; background: #f3efff; border-radius: 10px; color: var(--accent-primary-dark); font: 600 .85rem var(--font-display); }
+.segment-card__identity h3 { margin: 0 0 6px; font-size: .94rem; }
+.segment-range { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: .73rem; color: var(--text-secondary); }
+.segment-range > span:first-child { margin-right: 3px; color: var(--text-tertiary); }
+.segment-range time { font-variant-numeric: tabular-nums; }
+.segment-card__actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.segment-status { display: inline-flex; align-items: center; gap: 5px; font-size: .72rem; white-space: nowrap; color: var(--text-secondary); }
+.segment-status::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #9ca3af; }
+.segment-status--success { color: #16834b; }
+.segment-status--success::before { background: #22a864; }
+.segment-status--error { color: #cf4855; }
+.segment-status--error::before { background: #e66773; }
+.segment-play { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 34px; padding: 6px 12px; border: 1px solid #ded5f6; border-radius: 8px; color: var(--accent-primary-dark); background: #faf8ff; font: 500 .76rem var(--font-body); cursor: pointer; white-space: nowrap; }
+.segment-play:hover { background: #f0eaff; border-color: var(--accent-primary-light); }
+.segment-card__body { padding: 22px 24px; }
+.segment-card.is-playing .segment-card__body { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1fr); align-items: start; gap: 24px; }
+.segment-media { min-width: 0; }
+.segment-media__slot { background: #17171e; border-radius: 10px; overflow: hidden; aspect-ratio: 16 / 9; }
+.segment-video { display: block; width: 100%; height: 100%; aspect-ratio: 16 / 9; object-fit: contain; }
+.segment-media > p { margin: 8px 0 0; font-size: .68rem; color: var(--text-secondary); text-align: center; }
+.segment-analysis { min-width: 0; font-size: .86rem; line-height: 1.8; overflow-wrap: anywhere; }
+.segment-summary { margin: 0; white-space: pre-wrap; color: var(--text-primary); }
+.segment-section-title { margin: 22px 0 10px; font-size: .76rem; font-weight: 600; color: var(--text-secondary); }
+.segment-event { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: baseline; margin: 8px 0; }
+.segment-event p { margin: 0; }
+.segment-time { display: inline-flex; align-items: center; justify-content: center; gap: 3px; flex-shrink: 0; min-height: 30px; padding: 2px 5px; border: 0; border-radius: 5px; background: transparent; color: var(--accent-primary-dark); font: 500 .74rem var(--font-body); font-variant-numeric: tabular-nums; white-space: nowrap; cursor: pointer; }
+.segment-time:hover { background: #f1ebff; }
+.segment-time svg { opacity: .65; }
+.segment-time:focus-visible, .segment-play:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 3px; }
+.segment-advice { padding: 12px 14px; background: #f8f6fc; border-radius: 10px; margin: 10px 0; }
+.segment-advice__title { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.segment-advice__title strong { font-size: .85rem; font-weight: 600; }
+.segment-advice > p { margin: 6px 0 0; white-space: pre-wrap; }
+.segment-basis { margin-top: 9px; padding-top: 8px; border-top: 1px solid #ebe5f5; font-size: .73rem; color: var(--text-secondary); }
+.segment-uncertainties { margin-top: 20px; padding-top: 14px; border-top: 1px dashed var(--border-default); color: var(--text-secondary); font-size: .77rem; }
+.segment-uncertainties h4 { font-size: inherit; font-weight: 500; margin: 0 0 5px; }
+.segment-uncertainties ul { margin: 0; padding-left: 18px; }
+.segment-error { margin: 0; color: #cf4855; }
+.segment-empty { margin: 0; color: var(--text-secondary); font-size: .8rem; }
+.segment-reused { display: inline-block; margin-bottom: 8px; font-size: .72rem; color: var(--text-secondary); }
+@media (max-width: 1150px) {
+  .segment-card.is-playing .segment-card__body { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .segment-media { width: 100%; max-width: 560px; margin-inline: auto; }
+}
+@media (max-width: 600px) {
+  .segment-card__header { flex-wrap: wrap; padding: 16px; gap: 12px; }
+  .segment-card__actions { width: 100%; justify-content: space-between; padding-left: 50px; }
+  .segment-card__body { padding: 16px; }
+  .segment-overview { gap: 8px; }
+  .segment-overview p { max-width: 220px; }
+  .segment-time { min-height: 36px; }
+}
+
+/* 部分完成仍可查看已保存结果。 */
+.badge--partially_completed { color: var(--text-primary); background: rgba(245,158,11,.14); border-color: rgba(245,158,11,.3); }

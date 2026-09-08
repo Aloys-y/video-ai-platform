@@ -29,6 +29,81 @@ public class StorageService {
     private final S3Presigner s3Presigner;
     private final MinioConfig minioConfig;
 
+    /** 媒体流水线专用：限流式读写，避免原片进入 Java 堆或签名 URL 出现在异常中。 */
+    public void downloadToFile(String key, java.nio.file.Path target, long maxBytes,
+                               java.time.Duration timeout, long minFreeBytes) throws java.io.IOException {
+        long deadline = System.nanoTime() + com.videoai.common.analysis.ExecutionBudget.limit(timeout).toNanos();
+        for (int attempt = 1; ; attempt++) {
+            com.videoai.common.analysis.ExecutionBudget.check();
+            long remaining = deadline - System.nanoTime();
+            if (remaining <= 0) throw new java.io.IOException("对象下载总期限已耗尽");
+            try {
+                downloadAttempt(key, target, maxBytes, Duration.ofNanos(remaining), minFreeBytes, deadline);
+                return;
+            } catch (DownloadReadException e) {
+                com.videoai.common.analysis.ExecutionBudget.check();
+                if (attempt >= 3 || System.nanoTime() >= deadline)
+                    throw new java.io.IOException("原始对象下载中断，有限重试未成功，请稍后重试", e);
+                log.warn("对象下载流中断，准备第 {} 次下载", attempt + 1);
+                try { Thread.sleep(Math.min(attempt * 1000L, Math.max(1, (deadline - System.nanoTime()) / 1_000_000))); }
+                catch (InterruptedException interrupted) {
+                    Thread.currentThread().interrupt();
+                    throw new java.io.InterruptedIOException("下载重试已中断");
+                }
+            }
+        }
+    }
+
+    /** 仅重试响应体读取中断；本地磁盘、权限、取消及预算错误不重试。 */
+    private static final class DownloadReadException extends java.io.IOException {
+        DownloadReadException(java.io.IOException cause) { super("对象响应体读取中断", cause); }
+    }
+
+    private void downloadAttempt(String key, java.nio.file.Path target, long maxBytes, Duration timeout,
+                                 long minFreeBytes, long deadline) throws java.io.IOException {
+        boolean created = false, completed = false;
+        try (var input = s3Client.getObject(GetObjectRequest.builder().bucket(minioConfig.getBucketName()).key(key)
+                .overrideConfiguration(c -> c.apiCallTimeout(timeout).apiCallAttemptTimeout(timeout)).build())) {
+            try {
+                Long length = input.response().contentLength();
+                if (length != null && length > maxBytes) throw new java.io.IOException("对象超过下载大小限制");
+                try (var output = java.nio.file.Files.newOutputStream(target, java.nio.file.StandardOpenOption.CREATE_NEW)) {
+                    created = true;
+                    byte[] buffer = new byte[64 * 1024]; long total = 0;
+                    while (true) {
+                        com.videoai.common.analysis.ExecutionBudget.check();
+                        if (System.nanoTime() >= deadline) throw new java.io.IOException("下载总期限已耗尽");
+                        int n;
+                        try { n = input.read(buffer); }
+                        catch (java.io.IOException e) { throw new DownloadReadException(e); }
+                        if (n == -1) break;
+                        total += n;
+                        if (total > maxBytes || java.nio.file.Files.getFileStore(target).getUsableSpace() < minFreeBytes)
+                            throw new java.io.IOException("下载大小或磁盘预算不足");
+                        output.write(buffer, 0, n);
+                    }
+                    if (length != null && total != length)
+                        throw new DownloadReadException(new java.io.EOFException("对象长度不完整"));
+                }
+                completed = true;
+            } finally { if (!completed) input.abort(); }
+        } catch (java.io.IOException e) { throw e; }
+        catch (Exception e) { throw new java.io.IOException("对象存储下载失败", e); }
+        finally { if (created && !completed) java.nio.file.Files.deleteIfExists(target); }
+    }
+
+    /** 每次写入使用新 UUID 对象键，绑定数据库后不再覆盖该对象。 */
+    public String putArtifact(java.nio.file.Path source, String contentType) throws java.io.IOException {
+        var timeout = com.videoai.common.analysis.ExecutionBudget.limit(Duration.ofMinutes(10));
+        String key = "analysis-artifacts/" + java.util.UUID.randomUUID();
+        try {
+            s3Client.putObject(PutObjectRequest.builder().bucket(minioConfig.getBucketName()).key(key)
+                    .contentType(contentType).overrideConfiguration(c -> c.apiCallTimeout(timeout)
+                            .apiCallAttemptTimeout(timeout)).build(), RequestBody.fromFile(source));
+            return key;
+        } catch (Exception e) { throw new java.io.IOException("中间产物上传失败"); }
+    }
+
     /**
      * 确保桶存在，不存在则创建
      */

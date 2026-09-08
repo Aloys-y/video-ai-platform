@@ -74,6 +74,11 @@ CREATE TABLE IF NOT EXISTS analysis_task (
 
     -- 执行代次（首次为0，用户每次手动重新分析后递增）
     retry_count     INT NOT NULL DEFAULT 0 COMMENT '执行代次/用户手动重新分析次数',
+    analysis_mode   VARCHAR(32) NOT NULL DEFAULT 'DIRECT_VIDEO' COMMENT '分析模式',
+    current_step    VARCHAR(32) NULL COMMENT '当前执行步骤，不用于领取任务',
+    execution_owner VARCHAR(64) NULL COMMENT '当前执行所有者令牌',
+    execution_lease_until DATETIME(3) NULL COMMENT '数据库时间租约',
+    execution_heartbeat_at DATETIME(3) NULL COMMENT '最后续租时间',
     error_message   TEXT COMMENT '错误信息',
 
     -- AI分析结果
@@ -263,3 +268,95 @@ CREATE TABLE IF NOT EXISTS task_rag_context (
 
     INDEX idx_task_rag_task (task_id, created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='任务RAG上下文表';
+
+-- 每代一行；不承担任务领取，配置只插入一次，产物引用只从 NULL 写入一次。
+CREATE TABLE IF NOT EXISTS analysis_execution (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    task_id VARCHAR(64) NOT NULL,
+    execution_no INT NOT NULL,
+    analysis_mode VARCHAR(32) NOT NULL,
+    config_snapshot LONGTEXT COLLATE utf8mb4_bin NOT NULL COMMENT '无凭据的完整配置JSON快照',
+    config_hash CHAR(64) COLLATE utf8mb4_bin NOT NULL COMMENT '规范化配置SHA256',
+    input_hash CHAR(64) COLLATE utf8mb4_bin NOT NULL COMMENT '原视频内容SHA256',
+    asr_task_id VARCHAR(128) NULL,
+    transcript_object_key VARCHAR(512) NULL,
+    candidates_object_key VARCHAR(512) NULL,
+    segments_object_key VARCHAR(512) NULL,
+    created_at DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
+    UNIQUE KEY uk_execution (task_id, execution_no),
+    CONSTRAINT fk_execution_task FOREIGN KEY (task_id) REFERENCES analysis_task(task_id),
+    CONSTRAINT ck_execution_no CHECK (execution_no >= 0),
+    CONSTRAINT ck_execution_mode CHECK (analysis_mode IN ('DIRECT_VIDEO', 'AUDIO_PREFILTER')),
+    CONSTRAINT ck_execution_hash CHECK (CHAR_LENGTH(config_hash) = 64 AND CHAR_LENGTH(input_hash) = 64)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='按代次保存的分析配置及产物引用';
+
+CREATE TABLE IF NOT EXISTS analysis_segment (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    task_id VARCHAR(64) NOT NULL,
+    execution_no INT NOT NULL,
+    segment_no INT NOT NULL COMMENT '从0开始，按时间排序',
+    start_ms BIGINT NOT NULL COMMENT '原视频毫秒坐标，含起点',
+    end_ms BIGINT NOT NULL COMMENT '原视频毫秒坐标，不含终点',
+    object_key VARCHAR(512) NOT NULL COMMENT '裁剪片段对象键，不保存签名URL',
+    status VARCHAR(20) NOT NULL DEFAULT 'PREPARED',
+    result LONGTEXT NULL,
+    error_message TEXT NULL,
+    usage_json LONGTEXT NULL COMMENT '本次调用厂商实际用量JSON，未知或复用为NULL',
+    reused_execution_no INT NULL,
+    reused_segment_no INT NULL,
+    created_at DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
+    completed_at DATETIME(3) NULL,
+    UNIQUE KEY uk_segment (task_id, execution_no, segment_no),
+    CONSTRAINT fk_segment_execution FOREIGN KEY (task_id, execution_no)
+        REFERENCES analysis_execution(task_id, execution_no),
+    CONSTRAINT fk_segment_source FOREIGN KEY (task_id, reused_execution_no, reused_segment_no)
+        REFERENCES analysis_segment(task_id, execution_no, segment_no),
+    CONSTRAINT ck_segment_range CHECK (segment_no >= 0 AND start_ms >= 0 AND end_ms > start_ms),
+    CONSTRAINT ck_segment_status CHECK (status IN ('PREPARED', 'PROCESSING', 'SUCCEEDED', 'FAILED')),
+    CONSTRAINT ck_segment_result CHECK (
+        (status = 'SUCCEEDED' AND result IS NOT NULL AND error_message IS NULL)
+        OR (status = 'FAILED' AND error_message IS NOT NULL AND result IS NULL)
+        OR (status IN ('PREPARED', 'PROCESSING') AND result IS NULL AND error_message IS NULL)),
+    CONSTRAINT ck_segment_source CHECK (
+        (reused_execution_no IS NULL AND reused_segment_no IS NULL)
+        OR (reused_execution_no IS NOT NULL AND reused_segment_no IS NOT NULL
+            AND reused_execution_no >= 0 AND reused_execution_no < execution_no
+            AND reused_segment_no >= 0 AND status = 'SUCCEEDED' AND usage_json IS NULL))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='分析片段与执行结果';
+
+-- P2：每个音轨分段记录远端任务ID和产物，不承担任务调度。
+-- 执行前将本表默认 COLLATE 与 analysis_execution.task_id 保持一致。
+CREATE TABLE IF NOT EXISTS analysis_asr_part (
+    task_id VARCHAR(64) NOT NULL,
+    execution_no INT NOT NULL,
+    part_no INT NOT NULL,
+    start_ms BIGINT NOT NULL,
+    end_ms BIGINT NOT NULL,
+    audio_object_key VARCHAR(512) NOT NULL,
+    asr_task_id VARCHAR(128) NULL COMMENT 'NULL未提交，SUBMITTING提交状态不确定，其余为远端ID',
+    transcript_object_key VARCHAR(512) NULL,
+    usage_json LONGTEXT NULL,
+    reused_execution_no INT NULL,
+    created_at DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
+    PRIMARY KEY (task_id, execution_no, part_no),
+    CONSTRAINT fk_asr_part_execution FOREIGN KEY (task_id, execution_no)
+        REFERENCES analysis_execution(task_id, execution_no),
+    CONSTRAINT ck_asr_part_range CHECK (part_no >= 0 AND start_ms >= 0 AND end_ms > start_ms),
+    CONSTRAINT ck_asr_part_reuse CHECK (reused_execution_no IS NULL OR (reused_execution_no >= 0 AND reused_execution_no < execution_no)),
+    CONSTRAINT ck_asr_part_result CHECK (transcript_object_key IS NULL OR
+        (asr_task_id IS NOT NULL AND asr_task_id <> 'SUBMITTING'))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='音轨分段转写记录';
+
+-- P3：文本模型调用留痕；默认排序规则应匹配 analysis_execution.task_id。
+CREATE TABLE IF NOT EXISTS analysis_text_call (
+    task_id VARCHAR(64) NOT NULL,
+    execution_no INT NOT NULL,
+    purpose VARCHAR(16) NOT NULL,
+    batch_no INT NOT NULL,
+    request_hash CHAR(64) COLLATE utf8mb4_bin NOT NULL,
+    response_object_key VARCHAR(512) NULL,
+    created_at DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
+    PRIMARY KEY (task_id,execution_no,purpose,batch_no),
+    CONSTRAINT fk_text_call_execution FOREIGN KEY (task_id,execution_no) REFERENCES analysis_execution(task_id,execution_no),
+    CONSTRAINT ck_text_call_key CHECK (batch_no >= 0 AND purpose IN ('SCREEN','SUMMARY'))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文本模型调用留痕，不用于调度';

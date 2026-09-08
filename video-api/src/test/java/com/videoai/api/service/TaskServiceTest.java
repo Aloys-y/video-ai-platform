@@ -53,6 +53,7 @@ class TaskServiceTest {
         task.setUserId(7L);
         task.setStatusEnum(TaskStatus.PENDING);
         task.setRetryCount(1);
+        task.setAnalysisMode("AUDIO_PREFILTER");
 
         when(analysisTaskMapper.resetForManualRetry("task-1", 7L)).thenReturn(1);
         when(analysisTaskMapper.selectOne(any())).thenReturn(task);
@@ -60,6 +61,7 @@ class TaskServiceTest {
         AnalysisTask result = taskService.retryTask("task-1", 7L);
 
         assertEquals(1, result.getRetryCount());
+        assertEquals("AUDIO_PREFILTER", result.getAnalysisMode());
         verify(taskOutboxService).createExecuteOutbox(
                 eq(task), eq(1), any(LocalDateTime.class));
     }

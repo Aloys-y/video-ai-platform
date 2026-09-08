@@ -1,0 +1,25 @@
+{
+  "baseline_version": "p0-accepted-20260907",
+  "acceptance": "user_confirmed_development_candidates_basic_correct",
+  "asr_model": "fun-asr-2025-11-07",
+  "asr_parameters": {
+    "channel_id": [
+      0
+    ],
+    "diarization_enabled": false
+  },
+  "text_model": "qwen3-vl-flash",
+  "prompt_version": "apex-transcript-prefilter-p0-v1",
+  "prompt_hash": "cbeb5e12334c30a317aa7a6ee6892f5eace4effed8a255adf272696498456520",
+  "batch_size": 80,
+  "overlap": 10,
+  "merge_gap_ms": 5000,
+  "before_ms": 10000,
+  "after_ms": 15000,
+  "audio": {
+    "sample_rate": 16000,
+    "channels": 1,
+    "codec": "pcm_s16le"
+  },
+  "holdout_validation": "pending_before_release"
+}

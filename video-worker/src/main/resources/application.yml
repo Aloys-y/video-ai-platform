@@ -10,6 +10,7 @@ spring:
 
   kafka:
     consumer:
+      enable-auto-commit: false
       # 同步处理长任务时一次只拉取一条，避免同批任务耗时累加到下一次 poll。
       max-poll-records: ${KAFKA_CONSUMER_MAX_POLL_RECORDS:1}
       properties:
@@ -35,6 +36,8 @@ videoai:
   worker:
     # 并发处理数
     concurrency: ${VIDEOAI_WORKER_CONCURRENCY:3}
+    # 完成V1.8迁移与停机切换后显式开启。
+    async-enabled: ${VIDEOAI_ASYNC_ENABLED:false}
     # 每秒最大AI请求数
     ai-qps-limit: 2
     # 单任务超时（分钟）
@@ -107,6 +110,60 @@ videoai:
       timeout-seconds: 30
       dashscope:
         text-type: ${RAG_DASHSCOPE_TEXT_TYPE:document}
+
+analysis:
+  segments:
+    threads: 4
+    # 待压测起点；队列只缓存轻量工作，满时由父线程等待，实际等待受整局期限约束。
+    queue-capacity: 16
+    # 实例级限速；多实例共享账户限额在 P7 验收。
+    request-interval-ms: 1000
+    cancellation-grace-ms: 2000
+    max-response-bytes: 1048576
+  text:
+    base-url: ${TEXT_BASE_URL:https://dashscope.aliyuncs.com/compatible-mode/v1}
+    model: ${TEXT_MODEL:qwen3-vl-flash}
+    api-key: ${TEXT_API_KEY:}
+    timeout-seconds: 120
+    batch-size: 80
+    overlap: 10
+    max-request-bytes: 30000
+    max-output-tokens: 4096
+    max-batches: 64
+    max-candidates: 500
+    merge-gap-ms: 5000
+    before-ms: 10000
+    after-ms: 15000
+    input-cny-per-million: 0.15
+    output-cny-per-million: 1.5
+    asr-cny-per-second: 0.00022
+    # 工程费用预留；P4已记录实际tokens，P7以长片段及账户计价校准。
+    video-reserve-cny-per-minute: 0.20
+    max-estimated-task-cny: 10
+  # P2 仅提供准备服务，Kafka 主处理链路在后续阶段统一接入。
+  media:
+    ffmpeg: ${FFMPEG_PATH:ffmpeg}
+    ffprobe: ${FFPROBE_PATH:ffprobe}
+    max-source-bytes: 10737418240
+    max-workspace-bytes: 15032385536
+    min-free-bytes: 536870912
+    max-concurrent-workspaces: 2
+    process-timeout-seconds: 600
+    audio-part-ms: 1800000
+    max-audio-parts: 64
+    max-segment-ms: 180000
+    max-selected-ms: 1800000
+    # 合并扩展并拆分后，按时间顺序最多分析前8个片段。
+    max-segments: 8
+  asr:
+    base-url: ${ASR_BASE_URL:https://dashscope.aliyuncs.com/api/v1}
+    model: ${ASR_MODEL:fun-asr-2025-11-07}
+    # 为空时复用 ai.dashscope.api-key；不写入执行快照。
+    api-key: ${ASR_API_KEY:}
+    request-timeout-seconds: 45
+    poll-interval-seconds: 5
+    max-wait-seconds: 1800
+    signed-url-hours: 24
 
 logging:
   level:

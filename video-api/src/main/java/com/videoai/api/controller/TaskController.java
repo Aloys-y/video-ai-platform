@@ -20,14 +20,26 @@ import org.springframework.web.bind.annotation.*;
 public class TaskController {
 
     private final TaskService taskService;
+    private final com.videoai.api.service.TaskSegmentService taskSegments;
 
     /**
      * 查询任务详情
      */
     @GetMapping("/{taskId}")
     public ApiResponse<AnalysisTask> getTask(@PathVariable("taskId") String taskId) {
-        AnalysisTask task = taskService.getTask(taskId);
+        AnalysisTask task = taskSegments.ownedTask(taskId, UserContext.getUserId());
         return ApiResponse.success(task);
+    }
+
+    @GetMapping("/{taskId}/segments")
+    public ApiResponse<com.videoai.api.service.TaskSegmentService.Result> segments(@PathVariable("taskId") String taskId) {
+        return ApiResponse.success(taskSegments.list(taskId, UserContext.getUserId()));
+    }
+
+    @GetMapping("/{taskId}/segments/{segmentNo}/play")
+    public ApiResponse<com.videoai.api.service.TaskSegmentService.Playback> playback(@PathVariable("taskId") String taskId,
+            @PathVariable("segmentNo") int segmentNo, @RequestParam("executionNo") int executionNo) {
+        return ApiResponse.success(taskSegments.playback(taskId, segmentNo, executionNo, UserContext.getUserId()));
     }
 
     /**

@@ -47,6 +47,7 @@ public enum TaskStatus {
      * 处理失败 - 等待用户手动重新分析
      */
     FAILED("FAILED", "处理失败", 4),
+    PARTIALLY_COMPLETED("PARTIALLY_COMPLETED", "部分完成", 8),
 
     /**
      * 历史兼容状态，新流程不再写入
@@ -83,7 +84,7 @@ public enum TaskStatus {
      * FAILED 虽可由用户手动重新提交，但在用户操作前属于稳定状态。
      */
     public boolean isFinalState() {
-        return this == COMPLETED || this == FAILED || this == CANCELLED || this == DEAD;
+        return this == PARTIALLY_COMPLETED || this == COMPLETED || this == FAILED || this == CANCELLED || this == DEAD;
     }
 
     /**
@@ -98,8 +99,8 @@ public enum TaskStatus {
         return switch (this) {
             case PENDING -> target == QUEUED || target == CANCELLED;
             case QUEUED -> target == PROCESSING || target == CANCELLED;
-            case PROCESSING -> target == COMPLETED || target == FAILED || target == CANCELLED;
-            case FAILED -> target == PENDING || target == CANCELLED;
+            case PROCESSING -> target == PARTIALLY_COMPLETED || target == COMPLETED || target == FAILED || target == CANCELLED;
+            case FAILED, PARTIALLY_COMPLETED -> target == PENDING || target == CANCELLED;
             case RETRYING -> target == FAILED || target == CANCELLED; // 兼容升级前遗留任务
             case DEAD -> target == PENDING || target == CANCELLED; // 允许历史任务手动重新分析
             case COMPLETED, CANCELLED -> false;

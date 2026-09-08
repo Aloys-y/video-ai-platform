@@ -47,6 +47,7 @@ public class UploadService {
     private final StringRedisTemplate redisTemplate;
     private final RedissonClient redissonClient;
     private final TaskOutboxService taskOutboxService;
+    private final com.videoai.api.config.AnalysisModePolicy analysisModePolicy;
 
     @Value("${videoai.upload.chunk-size:5242880}")
     private long defaultChunkSize;
@@ -368,6 +369,7 @@ public class UploadService {
         task.setStatusEnum(TaskStatus.PENDING);
         task.setProgress(0);
         task.setRetryCount(0);
+        task.setAnalysisMode(analysisModePolicy.forUser(userId));
 
         analysisTaskMapper.insert(task);
         taskOutboxService.createExecuteOutbox(task, 0, java.time.LocalDateTime.now());
