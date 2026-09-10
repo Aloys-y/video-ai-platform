@@ -28,6 +28,7 @@ import com.videoai.rag.service.KnowledgeIndexJobService;
 import com.videoai.rag.service.LegendKnowledgeAuditService;
 import com.videoai.rag.service.LegendShadowIndexService;
 import com.videoai.rag.service.KnowledgeRetrievalService;
+import com.videoai.rag.model.RagRetrievalTrace;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -219,7 +220,8 @@ public class AdminRagController {
     @PostMapping("/rag/retrieve-test")
     public ApiResponse<RagRetrieveDebugResponse> retrieveDebug(@Valid @RequestBody RagRetrieveDebugRequest request) {
         assertAdmin();
-        RagContext context = knowledgeRetrievalService.retrieve(request.getQuery());
+        RagRetrievalTrace trace = knowledgeRetrievalService.retrieveTrace(request.getQuery());
+        RagContext context = trace.getContext();
         PromptEnvelope envelope = PromptEnvelope.builder()
                 .systemPrompt(apexPromptTemplateService.systemPrompt())
                 .retrievalContext(apexPromptTemplateService.retrievalBlock(context.getContextText()))
@@ -240,13 +242,46 @@ public class AdminRagController {
                 .maxChunksPerCard(ragProperties.getMaxChunksPerCard())
                 .maxContextChars(ragProperties.getMaxContextChars())
                 .minScore(ragProperties.getMinScore())
+                .rerankEnabled(ragProperties.isRerankEnabled())
+                .rerankModel(ragProperties.getRerankModel())
+                .rerankMinScore(ragProperties.getRerankMinScore())
+                .rerankApplied(trace.isRerankApplied())
+                .rerankFallback(trace.isRerankFallback())
+                .rerankLatencyMs(trace.getRerankLatencyMs())
+                .rerankFailureReason(trace.getRerankFailureReason())
                 .legendPcGameplayFilterEnabled(ragProperties.isLegendPcGameplayFilterEnabled())
                 .legendAliasEnhancementEnabled(ragProperties.isLegendAliasEnhancementEnabled())
+                .embeddingHeadingPathEnabled(ragProperties.isEmbeddingHeadingPathEnabled())
+                .hybridRetrievalEnabled(ragProperties.isHybridRetrievalEnabled())
+                .hybridConditionalRescueEnabled(ragProperties.isHybridConditionalRescueEnabled())
+                .hybridConditionalRescueMinDenseScore(
+                        ragProperties.getHybridConditionalRescueMinDenseScore())
+                .hybridConditionalRescueMaxChunks(
+                        ragProperties.getHybridConditionalRescueMaxChunks())
+                .hybridLexicalUnionEnabled(ragProperties.isHybridLexicalUnionEnabled())
+                .lexicalTopK(ragProperties.getLexicalTopK())
+                .rrfK(ragProperties.getRrfK())
+                .denseRrfWeight(ragProperties.getDenseRrfWeight())
+                .lexicalRrfWeight(ragProperties.getLexicalRrfWeight())
                 .hitCount(context.getHits() != null ? context.getHits().size() : 0)
+                .rawCandidateCount(trace.getRawCandidates().size())
+                .lexicalCandidateCount(trace.getLexicalCandidates().size())
+                .fusedCandidateCount(trace.getFusedCandidates().size())
+                .rerankedCandidateCount(trace.getRerankedCandidates().size())
+                .scorePassedCount(trace.getScorePassedCandidates().size())
+                .diversifiedCount(trace.getDiversifiedCandidates().size())
+                .selectedCount(trace.getSelectedCandidates().size())
                 .contextChars(context.getContextText() != null ? context.getContextText().length() : 0)
                 .latencyMs(context.getLatencyMs())
                 .contextPreview(contextPreview)
                 .promptPreview(envelope.buildFullPrompt())
+                .rawCandidates(trace.getRawCandidates())
+                .lexicalCandidates(trace.getLexicalCandidates())
+                .fusedCandidates(trace.getFusedCandidates())
+                .rerankedCandidates(trace.getRerankedCandidates())
+                .scorePassedCandidates(trace.getScorePassedCandidates())
+                .diversifiedCandidates(trace.getDiversifiedCandidates())
+                .selectedCandidates(trace.getSelectedCandidates())
                 .hits(context.getHits())
                 .build());
     }

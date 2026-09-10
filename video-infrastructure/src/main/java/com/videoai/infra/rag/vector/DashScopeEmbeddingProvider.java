@@ -77,6 +77,7 @@ public class DashScopeEmbeddingProvider implements EmbeddingProvider {
             }
 
             JsonNode root = objectMapper.readTree(response.body());
+            com.videoai.common.analysis.ExternalUsageReceipt.report(root.path("usage").toString(), root.path("request_id").asText(root.path("id").asText()));
             JsonNode vectorNode = root.path("output").path("embeddings").path(0).path("embedding");
             if (!vectorNode.isArray() || vectorNode.isEmpty()) {
                 throw new IllegalStateException("DashScope embedding response missing vector data");

@@ -67,17 +67,37 @@ videoai:
 # 日志配置
   rag:
     legend-alias-enhancement-enabled: ${RAG_LEGEND_ALIAS_ENHANCEMENT_ENABLED:true}
+    # 与 API 保持一致：heading_path 只作为元数据保存，不参与新任务的 Embedding
+    embedding-heading-path-enabled: ${RAG_EMBEDDING_HEADING_PATH_ENABLED:false}
     enabled: true
     fail-open: true
     knowledge-base: apex-default
     query-expansion-enabled: false
     # 与 API 保持一致，实验确认后统一切换默认值
     legend-pc-gameplay-filter-enabled: ${RAG_LEGEND_PC_GAMEPLAY_FILTER_ENABLED:true}
+    # 与 API 使用同一实验开关，默认保持纯向量基准
+    hybrid-retrieval-enabled: ${RAG_HYBRID_RETRIEVAL_ENABLED:false}
+    hybrid-lexical-union-enabled: ${RAG_HYBRID_LEXICAL_UNION_ENABLED:false}
+    lexical-top-k: ${RAG_LEXICAL_TOP_K:20}
+    rrf-k: ${RAG_RRF_K:60}
+    dense-rrf-weight: ${RAG_DENSE_RRF_WEIGHT:1.0}
+    lexical-rrf-weight: ${RAG_LEXICAL_RRF_WEIGHT:1.0}
+    lexical-index-ttl-seconds: ${RAG_LEXICAL_INDEX_TTL_SECONDS:300}
     top-k: ${RAG_TOP_K:20}
     final-top-k: ${RAG_FINAL_TOP_K:3}
+    # 与 API 调试链路保持一致，真实视频分析同样使用 Top20 中文重排
+    rerank-enabled: ${RAG_RERANK_ENABLED:true}
+    rerank-base-url: ${RAG_RERANK_BASE_URL:https://dashscope.aliyuncs.com/compatible-api/v1/reranks}
+    # 未单独配置时复用 embedding.api-key
+    rerank-api-key: ${RAG_RERANK_API_KEY:}
+    rerank-model: ${RAG_RERANK_MODEL:qwen3-rerank}
+    rerank-min-score: ${RAG_RERANK_MIN_SCORE:0.59}
+    rerank-connect-timeout-millis: ${RAG_RERANK_CONNECT_TIMEOUT_MILLIS:1000}
+    rerank-timeout-millis: ${RAG_RERANK_TIMEOUT_MILLIS:2000}
+    rerank-fail-open: ${RAG_RERANK_FAIL_OPEN:true}
     max-chunks-per-card: ${RAG_MAX_CHUNKS_PER_CARD:2}
-    # LEGEND 正负样本开发集标定值；扩大知识类别或更换 Embedding 后需重测
-    min-score: ${RAG_MIN_SCORE:0.61}
+    # 与 API 保持一致，仅用于纯向量模式和重排失败回退
+    min-score: ${RAG_MIN_SCORE:0.62}
     max-context-chars: ${RAG_MAX_CONTEXT_CHARS:3500}
     chunk-target-chars: 650
     chunk-min-chars: 400
@@ -92,7 +112,7 @@ videoai:
       base-url: ${MILVUS_BASE_URL:http://localhost:19530}
       token: ${MILVUS_TOKEN:}
       database: default
-      collection: ${VIDEOAI_RAG_VECTOR_COLLECTION:apex_knowledge_chunk_l03_v1}
+      collection: ${VIDEOAI_RAG_VECTOR_COLLECTION:apex_knowledge_chunk_experiment_no_heading_v1}
       metric-type: COSINE
       index-type: HNSW
       connect-timeout-seconds: 10

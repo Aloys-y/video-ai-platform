@@ -57,6 +57,7 @@ public class OpenAiCompatibleEmbeddingProvider implements EmbeddingProvider {
             }
 
             JsonNode root = objectMapper.readTree(response.body());
+            com.videoai.common.analysis.ExternalUsageReceipt.report(root.path("usage").toString(), root.path("request_id").asText(root.path("id").asText()));
             JsonNode vectorNode = root.path("data").path(0).path("embedding");
             if (!vectorNode.isArray() || vectorNode.isEmpty()) {
                 throw new IllegalStateException("Embedding response missing vector data");

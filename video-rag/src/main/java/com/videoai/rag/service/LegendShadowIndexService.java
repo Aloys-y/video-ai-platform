@@ -22,7 +22,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class LegendShadowIndexService {
 
-    private static final String BASELINE_COLLECTION = "apex_knowledge_chunk";
+    private static final String BASELINE_COLLECTION = "apex_knowledge_chunk_experiment_no_heading_v1";
+    private static final String EXPERIMENT_COLLECTION_PREFIX = "apex_knowledge_chunk_experiment_";
 
     private final KnowledgeBaseService knowledgeBaseService;
     private final KnowledgeCardMapper knowledgeCardMapper;
@@ -56,6 +57,7 @@ public class LegendShadowIndexService {
         lengths.sort(Comparator.naturalOrder());
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("collectionName", milvusProperties.getCollection());
+        result.put("embeddingHeadingPathEnabled", ragProperties.isEmbeddingHeadingPathEnabled());
         result.put("cardCount", cards.size());
         result.put("vectorCount", vectorCount);
         result.put("minChars", lengths.isEmpty() ? 0 : lengths.get(0));
@@ -78,7 +80,7 @@ public class LegendShadowIndexService {
 
         int embeddedVectors = 0;
         int persistedChunks = 0;
-        String promotionId = "l03-shadow-promote-" + LocalDateTime.now();
+        String promotionId = "rag-experiment-promote-" + LocalDateTime.now();
         for (KnowledgeCard card : cards) {
             List<ChunkedSegment> segments = knowledgeChunkingService.chunkMarkdown(
                     card.getTitle(), card.getContentMarkdown());
@@ -110,7 +112,7 @@ public class LegendShadowIndexService {
         }
         if (collection == null || collection.isBlank()
                 || BASELINE_COLLECTION.equals(collection)
-                || !collection.startsWith(BASELINE_COLLECTION + "_l03_")) {
+                || !collection.startsWith(EXPERIMENT_COLLECTION_PREFIX)) {
             throw new IllegalStateException("Refusing shadow build for unsafe collection: " + collection);
         }
     }
