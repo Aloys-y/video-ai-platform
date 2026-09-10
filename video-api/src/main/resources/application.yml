@@ -65,10 +65,6 @@ logging:
 
 # 业务配置
 videoai:
-  analysis:
-    # 只影响新任务，白名单为空时全部沿用整片模式。
-    prefilter-enabled: ${AUDIO_PREFILTER_ENABLED:false}
-    prefilter-user-ids: ${AUDIO_PREFILTER_USER_IDS:}
   upload:
     # 分片大小（字节）：5MB
     chunk-size: 5242880

@@ -13,7 +13,7 @@
 
     <artifactId>video-infrastructure</artifactId>
     <packaging>jar</packaging>
-    <description>基础设施层 - 数据库、Redis、Kafka、OSS配置</description>
+    <description>基础设施层 - 数据库、Redis、对象存储配置</description>
 
     <dependencies>
         <dependency>
@@ -60,11 +60,8 @@
             <artifactId>redisson-spring-boot-starter</artifactId>
         </dependency>
 
-        <!-- Kafka -->
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
-        </dependency>
+
+
 
         <!-- AWS S3 SDK（对象存储，兼容 MinIO / Backblaze B2） -->
         <dependency>

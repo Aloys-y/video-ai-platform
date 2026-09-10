@@ -50,13 +50,13 @@ const TaskDetail = {
       if (task.analysisMode === 'AUDIO_PREFILTER') {
         try {
           segmentData = await Api.get(`/task/${encodeURIComponent(id)}/segments`);
-          if (segmentData.executionNo !== (task.retryCount || 0)) throw new Error('任务已重试，请刷新查看当前结果');
+          if (segmentData.executionNo !== (task.attemptNo || 0)) throw new Error('任务已重试，请刷新查看当前结果');
           task.status = segmentData.taskStatus;
           task.currentStep = segmentData.currentStep;
         } catch (err) { segmentData = null; segmentError = err.message; }
       }
       if (version !== this.loadVersion || id !== this.taskId) return;
-      if (this.task && (this.task.retryCount || 0) !== (task.retryCount || 0)) {
+      if (this.task && (this.task.attemptNo || 0) !== (task.attemptNo || 0)) {
         this.activeSegmentNo = null;
         this.playRequest++;
         document.getElementById('segment-player')?.pause();
@@ -91,7 +91,7 @@ const TaskDetail = {
    * 判断是否终态
    */
   isFinalState(status) {
-    return ['COMPLETED', 'PARTIALLY_COMPLETED', 'FAILED', 'DEAD', 'CANCELLED'].includes(status);
+    return ['SUCCEEDED', 'PARTIAL', 'FAILED', 'CANCELLED'].includes(status);
   },
 
   /**
@@ -143,14 +143,14 @@ const TaskDetail = {
     const isFinal = this.isFinalState(task.status);
     const displayName = task.taskName || this.extractFileName(task.videoUrl);
     const stage = TaskStage.describe(task);
-    const canRetry = task.status === 'FAILED' || task.status === 'DEAD' || task.status === 'PARTIALLY_COMPLETED';
+    const canRetry = task.status === 'FAILED' || task.status === 'PARTIAL';
     const isStuck = !isFinal && this._isStuck(task);
     const canDelete = isFinal || isStuck;
     const deleteLabel = isFinal ? '删除' : '强制取消';
     const previousPlayer = document.getElementById('segment-player');
 
     let resultHtml = '';
-    if (task.status === 'COMPLETED' && task.result) {
+    if (task.status === 'SUCCEEDED' && task.result) {
       const segmentNotice = task.analysisMode === 'AUDIO_PREFILTER' && this.segmentData?.total > 0
         && task.result.startsWith('已完成 ');
       resultHtml = segmentNotice ? '' : this.renderResult(task.result);
@@ -166,15 +166,15 @@ const TaskDetail = {
           </div>
         </div>
       `;
-    } else if (task.status === 'FAILED' || task.status === 'DEAD' || task.status === 'PARTIALLY_COMPLETED') {
+    } else if (task.status === 'FAILED' || task.status === 'PARTIAL') {
       resultHtml = `
         <div class="card result-section" style="text-align:center;padding:48px 24px">
           <div style="font-size:48px;margin-bottom:16px;opacity:0.3">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent-red)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
           </div>
           <div class="badge badge--${statusClass}" style="margin-bottom:16px">${statusText}</div>
-          <div class="result-section__title">${task.status === 'PARTIALLY_COMPLETED' ? '部分片段未完成，已保存结果见下方' : '错误信息'}</div>
-          <p style="color:var(--accent-red);margin-top:8px">${this.escapeHtml(task.errorMessage || '未知错误')}</p>
+          <div class="result-section__title">${task.status === 'PARTIAL' ? '部分片段未完成，已保存结果见下方' : '错误信息'}</div>
+          <p style="color:var(--accent-red);margin-top:8px">${this.escapeHtml(task.errorMessage || ({EXECUTION_INTERRUPTED: '执行中断或租约失效，已保存的片段结果仍可查看，请按需重试。', ANALYSIS_FAILED: '分析未全部完成，请查看各片段结果。'}[task.errorCode]) || '未知错误')}</p>
           ${canRetry ? `<button class="btn btn--primary btn--small mt-lg" onclick="TaskDetail.confirmRetry()">重新分析</button>` : ''}
         </div>
       `;
@@ -228,10 +228,10 @@ const TaskDetail = {
               <span class="task-sidebar__label">完成时间</span>
               <span class="task-sidebar__value">${this.formatDate(task.completedAt)}</span>
             </div>` : ''}
-            ${task.retryCount > 0 ? `
+            ${task.attemptNo > 0 ? `
             <div class="task-sidebar__row">
               <span class="task-sidebar__label">重新分析次数</span>
-              <span class="task-sidebar__value">${task.retryCount}</span>
+              <span class="task-sidebar__value">${task.attemptNo}</span>
             </div>` : ''}
           </div>
 
@@ -261,7 +261,7 @@ const TaskDetail = {
     `;
     const playerSlot = document.getElementById(`segment-player-slot-${this.activeSegmentNo}`);
     if (playerSlot && previousPlayer && previousPlayer.dataset.taskId === this.taskId
-        && previousPlayer.dataset.executionNo === String(task.retryCount || 0)) playerSlot.appendChild(previousPlayer);
+        && previousPlayer.dataset.executionNo === String(task.attemptNo || 0)) playerSlot.appendChild(previousPlayer);
   },
 
   renderSegments() {
@@ -539,9 +539,8 @@ const TaskDetail = {
 
   getStatusText(status) {
     const map = {
-      'PENDING': '等待中', 'QUEUED': '排队中', 'PROCESSING': '分析中',
-      'COMPLETED': '已完成', 'PARTIALLY_COMPLETED': '部分完成', 'FAILED': '失败', 'RETRYING': '重试中',
-      'DEAD': '已终止', 'CANCELLED': '已取消',
+      'PENDING': '等待中', 'RUNNING': '分析中',
+      'SUCCEEDED': '已完成', 'PARTIAL': '部分完成', 'FAILED': '失败', 'CANCELLED': '已取消',
     };
     return map[status] || status || '未知';
   },

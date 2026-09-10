@@ -8,16 +8,6 @@ spring:
   profiles:
     active: dev
 
-  kafka:
-    consumer:
-      enable-auto-commit: false
-      # 同步处理长任务时一次只拉取一条，避免同批任务耗时累加到下一次 poll。
-      max-poll-records: ${KAFKA_CONSUMER_MAX_POLL_RECORDS:1}
-      properties:
-        # AI 任务最长30分钟，预留10分钟用于存储、数据库和网络抖动。
-        "[max.poll.interval.ms]": ${KAFKA_CONSUMER_MAX_POLL_INTERVAL_MS:2400000}
-
-# MyBatis-Plus配置
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
   type-aliases-package: com.videoai.common.domain
@@ -26,34 +16,8 @@ mybatis-plus:
 
 # Worker配置
 videoai:
-  kafka:
-    task-topic:
-      # 分区数决定同一消费组的视频分析并行上限。
-      partitions: ${VIDEOAI_KAFKA_TASK_PARTITIONS:6}
-      # 本地默认单副本；三Broker生产集群建议通过环境变量设为3。
-      replicas: ${VIDEOAI_KAFKA_TASK_REPLICAS:1}
-
-  worker:
-    # 并发处理数
-    concurrency: ${VIDEOAI_WORKER_CONCURRENCY:3}
-    # 完成V1.8迁移与停机切换后显式开启。
-    async-enabled: ${VIDEOAI_ASYNC_ENABLED:false}
-    # 每秒最大AI请求数
-    ai-qps-limit: 2
-    # 单任务超时（分钟）
-    task-timeout-minutes: 30
-
-  # Transactional Outbox 投递参数（经 2026-08-31 缩时全链路压测标定）。
-  outbox:
-    # 10 条/秒对照中，Batch=100 相比 50 未降低 p95，因此取收益拐点处的较小值。
-    dispatch-batch-size: ${VIDEOAI_OUTBOX_DISPATCH_BATCH_SIZE:50}
-    # 3 条/秒稳态下 p95=1.38s；500ms 虽降至 0.85s，但空闲轮询频率翻倍。
-    dispatch-interval-ms: ${VIDEOAI_OUTBOX_DISPATCH_INTERVAL_MS:1000}
-    callback-threads: ${VIDEOAI_OUTBOX_CALLBACK_THREADS:10}
-    send-timeout-ms: ${VIDEOAI_OUTBOX_SEND_TIMEOUT_MS:10000}
-    recovery-interval-ms: ${VIDEOAI_OUTBOX_RECOVERY_INTERVAL_MS:60000}
-
-  # 视频处理配置
+  dispatch:
+    video-concurrency: 3
   video:
     # 抽帧间隔（秒）
     frame-interval: 2
@@ -138,6 +102,9 @@ analysis:
     queue-capacity: 16
     # 实例级限速；多实例共享账户限额在 P7 验收。
     request-interval-ms: 1000
+    # 仅重试模型调用；最多尝试3次，退避约10/30秒并加入20%抖动。
+    model-max-attempts: 3
+    model-retry-initial-delay-ms: 10000
     cancellation-grace-ms: 2000
     max-response-bytes: 1048576
   text:
@@ -160,7 +127,7 @@ analysis:
     # 工程费用预留；P4已记录实际tokens，P7以长片段及账户计价校准。
     video-reserve-cny-per-minute: 0.20
     max-estimated-task-cny: 10
-  # P2 仅提供准备服务，Kafka 主处理链路在后续阶段统一接入。
+  # 音频转写与候选片段准备配置。
   media:
     ffmpeg: ${FFMPEG_PATH:ffmpeg}
     ffprobe: ${FFPROBE_PATH:ffprobe}

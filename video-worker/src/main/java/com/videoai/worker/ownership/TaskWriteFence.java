@@ -7,12 +7,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Aspect @Component @RequiredArgsConstructor
-@ConditionalOnProperty(name="videoai.worker.async-enabled",havingValue="true")
 public class TaskWriteFence {
- private final TaskLeaseService leases;
+ private final com.videoai.worker.scheduler.TaskDispatchRepository leases;
  private final java.util.concurrent.atomic.LongAdder rejectedWrites = new java.util.concurrent.atomic.LongAdder();
  public long rejectedWrites(){return rejectedWrites.sum();}
- @jakarta.annotation.PostConstruct public void verifySchema(){leases.verifySchema();}
  // 只拦截Mapper产品，不能代理MapperFactoryBean本身，否则类型探测会触发切面循环创建。
  @Around("execution(* com.videoai.infra.mysql.mapper.*.*(..)) || execution(* com.baomidou.mybatisplus.core.mapper.BaseMapper.*(..))")
  public Object guard(ProceedingJoinPoint point) throws Throwable {
@@ -26,11 +24,13 @@ public class TaskWriteFence {
        || mapper instanceof com.videoai.infra.mysql.mapper.AnalysisAsrPartMapper
        || mapper instanceof com.videoai.infra.mysql.mapper.AnalysisTextCallMapper;
   if(token==null) {
-   if(protectedMapper && !name.equals("markQueued")){rejectedWrites.increment();throw new IllegalStateException("视频写入缺少执行令牌");}
-   return point.proceed(); // Outbox标记入队、独立知识索引不属于视频执行写入。
+   if(protectedMapper){rejectedWrites.increment();throw new IllegalStateException("视频写入缺少执行令牌");}
+   return point.proceed(); // 独立知识索引不属于视频执行写入。
   }
   if(protectedMapper) verifyTarget(point.getArgs(),token);
-  return leases.fenced(token,()->{try{return point.proceed();}catch(RuntimeException e){throw e;}catch(Throwable e){throw new IllegalStateException("Mapper写入失败",e);}});
+  if(!protectedMapper)return point.proceed();
+  token.check();
+  return leases.fenced(new com.videoai.worker.scheduler.TaskDispatchRepository.Lease(token.taskId,token.executionNo,token.owner),()->{try{token.check();return point.proceed();}catch(RuntimeException e){throw e;}catch(Throwable e){throw new IllegalStateException("Mapper写入失败",e);}});
  }
  private void verifyTarget(Object[] args,ExecutionOwnership.Token token) {
   String taskId=null;Integer executionNo=null;

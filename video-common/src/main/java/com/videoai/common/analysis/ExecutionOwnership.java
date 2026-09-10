@@ -6,10 +6,16 @@ public final class ExecutionOwnership implements AutoCloseable {
  public static final class Token {
   public final String taskId,owner; public final int executionNo;
   private final AtomicBoolean invalid=new AtomicBoolean(); private volatile long validUntil;
+  private java.util.function.BooleanSupplier externalValidity=()->true;
+  private java.util.function.Supplier<AutoCloseable> children=()->()->{};
   public Token(String taskId,int executionNo,String owner,long validUntil) {this.taskId=taskId;this.executionNo=executionNo;this.owner=owner;this.validUntil=validUntil;}
   public void renewed(long until) {validUntil=until;}
   public void invalidate() {invalid.set(true);}
-  public boolean valid() {return !invalid.get() && System.nanoTime()<validUntil;}
+  public Token(String taskId,int executionNo,String owner,java.util.function.BooleanSupplier valid,java.util.function.Supplier<AutoCloseable> children) {
+   this(taskId,executionNo,owner,Long.MAX_VALUE);this.externalValidity=valid;this.children=children;
+  }
+  public AutoCloseable retainChild(){return children.get();}
+  public boolean valid() {return !invalid.get() && System.nanoTime()<validUntil && externalValidity.getAsBoolean();}
   public void check() throws InterruptedIOException {if(!valid())throw new InterruptedIOException("执行所有权已失效");}
  }
  private static final ThreadLocal<Token> CURRENT=new ThreadLocal<>();private final Token previous;

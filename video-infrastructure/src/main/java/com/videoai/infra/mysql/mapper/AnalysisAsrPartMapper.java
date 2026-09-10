@@ -16,7 +16,7 @@ public interface AnalysisAsrPartMapper {
                 #{asrTaskId}, #{transcriptObjectKey}, #{usageJson}, #{reusedExecutionNo}
             FROM analysis_execution e JOIN analysis_task t ON t.task_id = e.task_id
             WHERE e.task_id = #{taskId} AND e.execution_no = #{executionNo}
-              AND t.retry_count = e.execution_no AND t.status = 'PROCESSING'
+              AND t.attempt_no = e.execution_no AND t.status='RUNNING'
             """)
     int insert(AnalysisAsrPart part);
 
@@ -35,7 +35,7 @@ public interface AnalysisAsrPartMapper {
             UPDATE analysis_asr_part SET asr_task_id = 'SUBMITTING'
             WHERE task_id = #{taskId} AND execution_no = #{executionNo} AND part_no = #{partNo} AND asr_task_id IS NULL
               AND EXISTS (SELECT 1 FROM analysis_task t WHERE t.task_id = analysis_asr_part.task_id
-                AND t.retry_count = analysis_asr_part.execution_no AND t.status = 'PROCESSING')
+                AND t.attempt_no = analysis_asr_part.execution_no AND t.status='RUNNING')
             """)
     int claimSubmission(AnalysisAsrPart part);
 
@@ -52,7 +52,7 @@ public interface AnalysisAsrPartMapper {
             WHERE task_id = #{taskId} AND execution_no = #{executionNo} AND part_no = #{partNo}
               AND asr_task_id = #{asrTaskId} AND asr_task_id <> 'SUBMITTING' AND transcript_object_key IS NULL
               AND EXISTS (SELECT 1 FROM analysis_task t WHERE t.task_id = analysis_asr_part.task_id
-                AND t.retry_count = analysis_asr_part.execution_no AND t.status = 'PROCESSING')
+                AND t.attempt_no = analysis_asr_part.execution_no AND t.status='RUNNING')
             """)
     int recordResult(AnalysisAsrPart part);
 }

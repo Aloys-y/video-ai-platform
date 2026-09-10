@@ -37,7 +37,7 @@ public class TaskSegmentService {
 
     public Result list(String taskId, Long userId) {
         var task = ownedTask(taskId, userId);
-        int no = task.getRetryCount() == null ? 0 : task.getRetryCount();
+        int no = task.getAttemptNo() == null ? 0 : task.getAttemptNo();
         var items = new ArrayList<Item>();
         for (var row : segments.selectExecution(taskId, no)) {
             SegmentReview review = null; String error = row.getErrorMessage();
@@ -58,7 +58,7 @@ public class TaskSegmentService {
 
     public Playback playback(String taskId, int segmentNo, int executionNo, Long userId) {
         var task = ownedTask(taskId, userId);
-        int no = task.getRetryCount() == null ? 0 : task.getRetryCount();
+        int no = task.getAttemptNo() == null ? 0 : task.getAttemptNo();
         if (no != executionNo) throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
         var row = segments.selectExecution(taskId, no).stream().filter(s -> s.getSegmentNo() == segmentNo)
                 .findFirst().orElseThrow(() -> new BusinessException(ErrorCode.TASK_NOT_FOUND));

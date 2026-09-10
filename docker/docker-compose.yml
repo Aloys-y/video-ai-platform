@@ -41,49 +41,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # Zookeeper (Kafka依赖)
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.5.0
-    container_name: videoai-zookeeper
-    restart: unless-stopped
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    volumes:
-      - zookeeper_data:/var/lib/zookeeper/data
-      - zookeeper_logs:/var/lib/zookeeper/log
-
-  # Kafka
-  kafka:
-    image: confluentinc/cp-kafka:7.5.0
-    container_name: videoai-kafka
-    restart: unless-stopped
-    depends_on:
-      - zookeeper
-    ports:
-      - "19092:9092"
-      - "19093:9093"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093,PLAINTEXT_HOST://0.0.0.0:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9093,PLAINTEXT_HOST://${KAFKA_PUBLIC_IP}:19092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      # 自动创建Topic
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-    volumes:
-      - kafka_data:/var/lib/kafka/data
-    healthcheck:
-      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-
-  # MinIO (对象存储) - 仅本地开发时启用：docker compose --profile minio up -d
   minio:
     image: minio/minio:latest
     container_name: videoai-minio
@@ -104,20 +61,6 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
-
-  # Kafka UI (可选，用于查看消息)
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: videoai-kafka-ui
-    restart: unless-stopped
-    depends_on:
-      - kafka
-    ports:
-      - "8090:8080"
-    environment:
-      KAFKA_CLUSTERS_0_NAME: videoai-kafka
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
-      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
 
   milvus-etcd:
     image: quay.io/coreos/etcd:v3.5.5
@@ -170,9 +113,6 @@ services:
 volumes:
   mysql_data:
   redis_data:
-  zookeeper_data:
-  zookeeper_logs:
-  kafka_data:
   minio_data:
   milvus_etcd_data:
   milvus_minio_data:

@@ -8,6 +8,7 @@ import com.videoai.infra.mysql.mapper.*;
 import com.videoai.worker.media.*;
 import com.videoai.worker.screening.SegmentReviewParser;
 import com.videoai.worker.service.provider.AiVideoProvider;
+import com.videoai.worker.service.provider.AiProviderException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.io.*;
@@ -15,11 +16,14 @@ import java.nio.file.*;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /** P4 服务组件：只返回收齐的片段结果，不汇总、不改父终态、不 ACK。 */
 @Service
 @RequiredArgsConstructor
+@lombok.extern.slf4j.Slf4j
 public class SegmentAnalysisService {
     private final SegmentAnalysisExecutor executor;
     private final SegmentAnalysisProperties config;
@@ -99,7 +103,6 @@ public class SegmentAnalysisService {
         // 已保存的响应只重新解析；PROCESSING 且无响应的请求绝不自动重发。
         boolean resumed = "PROCESSING".equals(row.getStatus());
         if (!resumed) {
-            executor.awaitRequestPermit(scope);
             scope.write(() -> { persistence.start(row); return null; });
         }
         try {
@@ -107,8 +110,7 @@ public class SegmentAnalysisService {
             if (resumed) response = readResponse(row, scope.deadline());
             else {
                 scope.check();
-                String url = storage.getPresignedUrl(segment.objectKey(), provider.getPresignedUrlExpireHours());
-                response = provider.callDetailed(url, analysisPrompt);
+                response = callModelWithRetry(row, segment, scope, analysisPrompt);
                 scope.check();
                 saveResponse(row, response, scope);
             }
@@ -118,6 +120,10 @@ public class SegmentAnalysisService {
             row.setStatus("SUCCEEDED"); row.setResult(json.writeValueAsString(review)); row.setErrorMessage(null);
             scope.write(() -> { persistence.finish(row); return null; });
             return new Completed(review, usage, resumed);
+        } catch (InterruptedException e) {
+            // sleep 会清除中断标志；恢复后向执行器传播，禁止继续调用或写入失败终态。
+            Thread.currentThread().interrupt();
+            throw e;
         } catch (org.springframework.dao.DataAccessException | org.springframework.transaction.TransactionException e) {
             // 响应已绑定时保留PROCESSING，恢复只重新解析/保存，不重新调用模型。
             throw new com.videoai.worker.processor.UnsettledTaskException("片段数据库写入尚未收敛");
@@ -127,6 +133,40 @@ public class SegmentAnalysisService {
                     ? e.getMessage() : "片段模型调用、解析或结果保存失败；请检查响应记录");
             scope.write(() -> { persistence.finish(row); return null; });
             throw new IOException("片段分析失败");
+        }
+    }
+
+    /** 重试边界仅含模型调用；响应保存、解析、数据库提交失败不会重新调用模型。 */
+    private AiVideoProvider.DetailedResult callModelWithRetry(AnalysisSegment row, PreparedSegment segment,
+            SegmentAnalysisExecutor.Scope scope, String prompt) throws Exception {
+        for (int attempt = 1; ; attempt++) {
+            scope.check(); check(row.getTaskId(), row.getExecutionNo(), scope.deadline());
+            executor.awaitRequestPermit(scope);
+            String url = storage.getPresignedUrl(segment.objectKey(), provider.getPresignedUrlExpireHours());
+            scope.check(); check(row.getTaskId(), row.getExecutionNo(), scope.deadline());
+            try {
+                return provider.callDetailed(url, prompt);
+            } catch (AiProviderException e) {
+                scope.check();
+                if (!e.isRetryable() || attempt >= config.getModelMaxAttempts()) throw e;
+                long base = Math.min(60000L, config.getModelRetryInitialDelayMs() * (attempt == 1 ? 1 : 3));
+                long delay = Math.max(1, Math.round(base * ThreadLocalRandom.current().nextDouble(0.8, 1.2)));
+                log.info("片段模型调用退避重试: taskId={}, segment={}, nextAttempt={}, delayMs={}",
+                        row.getTaskId(), row.getSegmentNo(), attempt + 1, delay);
+                awaitRetry(row, scope, delay);
+            }
+        }
+    }
+
+    private void awaitRetry(AnalysisSegment row, SegmentAnalysisExecutor.Scope scope, long delayMs) throws Exception {
+        long until = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(delayMs);
+        while (true) {
+            scope.check();
+            check(row.getTaskId(), row.getExecutionNo(), scope.deadline());
+            long remaining = until - System.nanoTime();
+            if (remaining <= 0) return;
+            // 中断立即唤醒；无中断的取消/代次失效最多每 200ms 检查一次，不持有事务。
+            TimeUnit.NANOSECONDS.sleep(Math.min(remaining, TimeUnit.MILLISECONDS.toNanos(200)));
         }
     }
 

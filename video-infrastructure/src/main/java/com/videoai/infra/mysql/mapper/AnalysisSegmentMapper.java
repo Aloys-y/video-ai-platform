@@ -7,13 +7,15 @@ import java.util.List;
 /** 数据记录用途，没有领取队列或扫描重派接口。唯一键冲突应读取原记录核对，不能覆盖。 */
 @Mapper
 public interface AnalysisSegmentMapper {
+    @Update("UPDATE analysis_segment SET status='FAILED',error_message='片段未完成',completed_at=NOW(3) WHERE task_id=#{taskId} AND execution_no=#{attempt} AND status IN ('PREPARED','PROCESSING') AND EXISTS(SELECT 1 FROM analysis_task t WHERE t.task_id=#{taskId} AND t.attempt_no=#{attempt} AND t.status='RUNNING')")
+    int failUnfinishedRunning(@Param("taskId") String taskId,@Param("attempt") int attempt);
     /** 父任务明确失败时收尾未完成片段；保留成功结果和原始响应引用。 */
     @Update("""
             UPDATE analysis_segment SET status='FAILED',
                 error_message='父任务已停止，未完成片段需核对后重试', completed_at=NOW(3)
             WHERE task_id=#{taskId} AND execution_no=#{executionNo} AND status IN ('PREPARED','PROCESSING')
               AND EXISTS (SELECT 1 FROM analysis_task t WHERE t.task_id=analysis_segment.task_id
-                AND t.retry_count=analysis_segment.execution_no AND t.status IN ('FAILED','PARTIALLY_COMPLETED'))
+                AND t.attempt_no=analysis_segment.execution_no AND t.status IN ('FAILED','PARTIAL'))
             """)
     @Options(timeout = 5)
     int stopUnfinished(@Param("taskId") String taskId, @Param("executionNo") int executionNo);
@@ -23,7 +25,7 @@ public interface AnalysisSegmentMapper {
             SELECT e.task_id, e.execution_no, #{segmentNo}, #{startMs}, #{endMs}, #{objectKey}, 'PREPARED'
             FROM analysis_execution e JOIN analysis_task t ON t.task_id = e.task_id
             WHERE e.task_id = #{taskId} AND e.execution_no = #{executionNo}
-              AND t.retry_count = e.execution_no AND t.status = 'PROCESSING'
+              AND t.attempt_no = e.execution_no AND t.status='RUNNING'
             """)
     int insertPrepared(AnalysisSegment segment);
 
@@ -35,7 +37,7 @@ public interface AnalysisSegmentMapper {
             WHERE task_id = #{taskId} AND execution_no = #{executionNo} AND segment_no = #{segmentNo}
               AND status = 'PREPARED'
               AND EXISTS (SELECT 1 FROM analysis_task t WHERE t.task_id = analysis_segment.task_id
-                AND t.retry_count = analysis_segment.execution_no AND t.status = 'PROCESSING')
+                AND t.attempt_no = analysis_segment.execution_no AND t.status='RUNNING')
             """)
     @Options(timeout = 5)
     int markProcessing(@Param("taskId") String taskId, @Param("executionNo") int executionNo,
@@ -47,7 +49,7 @@ public interface AnalysisSegmentMapper {
             WHERE task_id = #{taskId} AND execution_no = #{executionNo} AND segment_no = #{segmentNo}
               AND status = 'PROCESSING' AND #{status} IN ('SUCCEEDED', 'FAILED')
               AND EXISTS (SELECT 1 FROM analysis_task t WHERE t.task_id = analysis_segment.task_id
-                AND t.retry_count = analysis_segment.execution_no AND t.status = 'PROCESSING')
+                AND t.attempt_no = analysis_segment.execution_no AND t.status='RUNNING')
             """)
     @Options(timeout = 5)
     int finish(AnalysisSegment segment);
@@ -58,7 +60,7 @@ public interface AnalysisSegmentMapper {
             WHERE task_id=#{taskId} AND execution_no=#{executionNo} AND segment_no=#{segmentNo}
               AND status='PROCESSING' AND usage_json IS NULL
               AND EXISTS (SELECT 1 FROM analysis_task t WHERE t.task_id=analysis_segment.task_id
-                AND t.retry_count=analysis_segment.execution_no AND t.status='PROCESSING')
+                AND t.attempt_no=analysis_segment.execution_no AND t.status='RUNNING')
             """)
     @Options(timeout = 5)
     int recordResponse(AnalysisSegment segment);
@@ -85,10 +87,10 @@ public interface AnalysisSegmentMapper {
             FROM analysis_segment s
             JOIN analysis_execution old ON old.task_id = s.task_id AND old.execution_no = s.execution_no
             JOIN analysis_execution e ON e.task_id = s.task_id AND e.execution_no = #{executionNo}
-            JOIN analysis_task t ON t.task_id = e.task_id AND t.retry_count = e.execution_no
+            JOIN analysis_task t ON t.task_id = e.task_id AND t.attempt_no = e.execution_no
             WHERE s.task_id = #{taskId} AND s.execution_no = #{sourceExecutionNo}
               AND s.segment_no = #{sourceSegmentNo} AND s.status = 'SUCCEEDED'
-              AND s.execution_no < e.execution_no AND t.status = 'PROCESSING'
+              AND s.execution_no < e.execution_no AND t.status='RUNNING'
               AND old.input_hash = e.input_hash AND old.config_hash = e.config_hash
               AND old.config_snapshot = e.config_snapshot AND old.analysis_mode = e.analysis_mode
               AND s.start_ms = #{startMs} AND s.end_ms = #{endMs}

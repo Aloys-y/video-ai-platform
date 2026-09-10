@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.videoai.common.domain.AnalysisTask;
 import com.videoai.common.enums.TaskStatus;
 import com.videoai.infra.mysql.mapper.AnalysisTaskMapper;
-import com.videoai.infra.service.TaskOutboxService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,33 +25,26 @@ class TaskServiceTest {
     @Mock
     private AnalysisTaskMapper analysisTaskMapper;
 
-    @Mock
-    private StringRedisTemplate redisTemplate;
 
-    @Mock
-    private ObjectMapper objectMapper;
 
-    @Mock
-    private TaskOutboxService taskOutboxService;
+
+
+
 
     private TaskService taskService;
 
     @BeforeEach
     void setUp() {
-        taskService = new TaskService(
-                analysisTaskMapper,
-                redisTemplate,
-                objectMapper,
-                taskOutboxService);
+        taskService = new TaskService(analysisTaskMapper);
     }
 
     @Test
-    void shouldCreateOutboxWithIncrementedExecutionNoForManualRetry() {
+    void shouldReturnPendingTaskWithIncrementedAttemptForManualRetry() {
         AnalysisTask task = new AnalysisTask();
         task.setTaskId("task-1");
         task.setUserId(7L);
         task.setStatusEnum(TaskStatus.PENDING);
-        task.setRetryCount(1);
+        task.setAttemptNo(1);
         task.setAnalysisMode("AUDIO_PREFILTER");
 
         when(analysisTaskMapper.resetForManualRetry("task-1", 7L)).thenReturn(1);
@@ -60,9 +52,8 @@ class TaskServiceTest {
 
         AnalysisTask result = taskService.retryTask("task-1", 7L);
 
-        assertEquals(1, result.getRetryCount());
+        assertEquals(1, result.getAttemptNo());
         assertEquals("AUDIO_PREFILTER", result.getAnalysisMode());
-        verify(taskOutboxService).createExecuteOutbox(
-                eq(task), eq(1), any(LocalDateTime.class));
+        verify(analysisTaskMapper).resetForManualRetry("task-1", 7L);
     }
 }

@@ -3,12 +3,12 @@
 # VideoAIPlatform - 智能视频内容理解平台
 
 <p>
-  <strong>分片断点续传 / Kafka异步解耦 / RAG知识增强 / AI视频分析</strong>
+  <strong>分片断点续传 / 数据库异步调度 / RAG知识增强 / AI视频分析</strong>
 </p>
 
 <p>
   <img src="https://img.shields.io/badge/Spring%20Boot-3.2.4-brightgreen" alt="Spring Boot">
-  <img src="https://img.shields.io/badge/Kafka-3.6.x-orange" alt="Kafka">
+  <img src="https://img.shields.io/badge/MySQL-8.0-blue" alt="MySQL">
   <img src="https://img.shields.io/badge/Redis-Redisson-red" alt="Redisson">
   <img src="https://img.shields.io/badge/AWS%20S3-Backblaze%20B2-blue" alt="S3">
   <img src="https://img.shields.io/badge/AI-Qwen--VL%20%2F%20GLM-blueviolet" alt="AI">
@@ -21,7 +21,7 @@
 
 **VideoAIPlatform** 是一个面向视频内容理解的 AI 分析平台。用户上传视频后，系统自动调用大模型进行内容分析，返回结构化的场景描述、关键帧、标签等结果。
 
-针对视频处理场景中常见的 **"大文件上传不稳定"**、**"长耗时任务阻塞"**、**"重复消息导致重复执行"** 等痛点，本项目采用 **分片续传 + Outbox + Kafka + 状态机幂等** 的异步架构，实现上传与分析解耦。
+针对视频处理场景中常见的 **"大文件上传不稳定"**、**"长耗时任务阻塞"**、**"执行中断与迟到结果"** 等痛点，本项目采用 **分片续传 + 数据库任务表 + 后台调度器 + 租约保护** 的异步架构，实现上传与分析解耦。
 
 ## 界面预览
 
@@ -80,9 +80,9 @@ Todo：
 
 **2. 异步任务处理**
 
-Kafka 解耦：用户确认后，API 将任务与 Outbox 事件原子落库并立即返回 taskId，后续 AI 分析由 Worker 异步完成。
+数据库调度：用户确认后，API 将 PENDING 任务落库并立即返回 taskId。Worker 有空闲视频容量时才条件领取，耗时分析在线程池中执行。
 
-状态机驱动：TaskStatus 状态机严格控制任务流转（PENDING → QUEUED → PROCESSING → COMPLETED/FAILED），结合执行代次实现幂等，避免重复消息触发重复处理。
+状态流转：PENDING → RUNNING → SUCCEEDED/PARTIAL/FAILED，可取消为 CANCELLED。独立定时续租，结果写入校验 owner、执行代次和租约；过期任务标记失败，由用户决定是否重试。
 
 **3. 并发一致性**
 
@@ -90,7 +90,7 @@ Kafka 解耦：用户确认后，API 将任务与 Outbox 事件原子落库并�
 
 **4. AI 视频分析**
 
-集成多模态视频理解模型，通过 Provider 接口解耦底层大模型厂商，支持 **阿里云 DashScope（Qwen-VL）**、**智谱 GLM** 和 **OpenAI-compatible** 服务按配置切换。用户可自定义 Prompt，例如**游戏复盘分析、课程内容总结等**。每个执行代次只调用一次 AI，失败后记录原因并由用户决定是否重新分析。
+集成多模态视频理解模型，通过 Provider 接口解耦底层大模型厂商，支持 **阿里云 DashScope（Qwen-VL）**、**智谱 GLM** 和 **OpenAI-compatible** 服务按配置切换。用户可自定义 Prompt，例如**游戏复盘分析、课程内容总结等**。音频转写和文本粗筛确定候选区间，再裁剪视频、检索领域知识、并行分析片段。模型调用对明确可重试错误做有限重试，保留各片段结果，不额外调用模型汇总。
 
 **5. RAG 知识增强**
 
@@ -122,26 +122,18 @@ JWT Bearer Token + API Key 双模式认证，灵活适配 Web 端和 API 调用�
 
 ```mermaid
 graph TD
-    A[用户上传视频] --> D[分片并发上传至S3/B2]
-    D --> E[MySQL记录上传会话与分片状态]
-    E --> F[S3 Multipart Upload 服务端合并]
-
-    F --> G[用户确认并输入Prompt]
-    G --> H[事务写入任务与Outbox]
-    H --> I[接口立即返回]
-
-    H --> R[Outbox可靠投递Kafka]
-    R --> J[Worker异步消费]
-    J --> K{状态机校验（UPDATE WHERE status）}
-    K --> L[生成S3预签名URL]
-    L --> T[Milvus检索相关知识]
-    T --> M[调用AI Provider API（单次调用）]
-    M --> N{分析成功?}
-    N -- 是 --> O[存储结果到MySQL]
-    N -- 否 --> P[记录FAILED及错误原因]
-    P --> Q{用户是否重新分析?}
-    Q -- 是 --> S[执行代次加1并写入新Outbox]
-    S --> R
+    A[分片上传至对象存储] --> B[用户确认与 Prompt]
+    B --> C[事务写入 PENDING 任务]
+    C --> D[API 返回 taskId]
+    C --> E[后台扫描与容量许可]
+    E --> F[条件领取 RUNNING 与租约]
+    F --> G[下载本地文件 / FFmpeg 提取音轨]
+    G --> H[云端 ASR / 文本筛选交战区间]
+    H --> I[裁剪片段 / RAG 知识增强]
+    I --> J[共享片段线程池 / 有限模型重试]
+    J --> K[保存片段结果与任务终态]
+    F -. 独立续租 .-> L[数据库 owner 与有效期]
+    L -. 过期 .-> M[FAILED / 用户手动重试]
 ```
 
 <br>
@@ -153,7 +145,7 @@ graph TD
 | 核心框架 | Spring Boot 3.2.4 | Java 17 |
 | 数据库 | MySQL 8.0 + MyBatis-Plus | Druid 连接池 |
 | 缓存与锁 | Redis 7.0 + Redisson | 分布式锁、上传并发互斥 |
-| 消息队列 | Kafka 3.6.x | 手动 ack + Outbox 可靠投递 |
+| 后台调度 | MySQL 任务表 + Java 线程池 | 条件领取、独立续租、条件写入 |
 | 对象存储 | AWS S3 SDK / Backblaze B2 | S3 Multipart Upload + 预签名 URL，兼容 MinIO |
 | 向量数据库 | Milvus 2.4.x | HNSW + COSINE 向量检索 |
 | AI 服务 | 阿里 Qwen-VL / 智谱 GLM / OpenAI-compatible | Provider 接口解耦，配置化切换 |
@@ -171,8 +163,8 @@ VideoAIPlatform/
 ├── video-api/              # API 服务（REST 入口，port 8080）
 ├── video-worker/           # Worker 服务（异步任务处理，port 8081）
 ├── video-rag/              # RAG 领域服务（分块、索引、检索与编排）
-├── video-common/           # 公共模块（领域模型、DTO、枚举、消息类型）
-├── video-infrastructure/   # 基础设施（MySQL、Redis、Kafka、S3、Milvus）
+├── video-common/           # 公共模块（领域模型、DTO、枚举、执行上下文）
+├── video-infrastructure/   # 基础设施（MySQL、Redis、S3、Milvus）
 ├── frontend/               # 前端 SPA（HTML/CSS/JS）
 ├── architecture/           # 架构决策与参数设计文档
 ├── rag-data/               # 结构化领域知识与检索评估数据
@@ -191,7 +183,7 @@ VideoAIPlatform/
 cd docker && docker-compose up -d
 ```
 
-默认启动 MySQL(13306)、Redis(16379)、Kafka(19092) 和 Kafka UI(8090)。如需本地 MinIO(9000/9001)：`docker compose --profile minio up -d`；如需本地 Milvus(19530)：`docker compose --profile milvus up -d`。
+默认启动 MySQL(13306)、Redis(16379)。如需本地 MinIO(9000/9001)：`docker compose --profile minio up -d`；如需本地 Milvus(19530)：`docker compose --profile milvus up -d`。
 
 ### 2. 配置文件
 
@@ -213,34 +205,16 @@ cp video-worker/src/main/resources/application-dev.yml.example \
 | :--- | :--- |
 | `spring.datasource.*` | MySQL 连接信息（地址、用户名、密码） |
 | `spring.data.redis.*` | Redis 连接信息 |
-| `spring.kafka.bootstrap-servers` | Kafka 地址 |
-| `VIDEOAI_KAFKA_TASK_PARTITIONS` | 视频分析 Topic 分区数，默认 `6` |
-| `VIDEOAI_KAFKA_TASK_REPLICAS` | Topic 副本数，本地默认 `1`，多 Broker 生产集群按规划调整 |
-| `VIDEOAI_WORKER_CONCURRENCY` | 单个 Worker 内 Consumer 数，默认 `3` |
-| `VIDEOAI_OUTBOX_DISPATCH_BATCH_SIZE` | Outbox 每轮候选批次，默认 `50` |
-| `VIDEOAI_OUTBOX_DISPATCH_INTERVAL_MS` | Outbox 扫描间隔，默认 `1000ms` |
+| `videoai.dispatch.video-concurrency` | 单 Worker 同时在途视频数，默认 `3` |
 | `minio.*` | 对象存储配置（MinIO / Backblaze B2 地址和凭证）|
 | `ai.dashscope.api-key` | 阿里云 DashScope API Key，[点这里申请](https://dashscope.console.aliyun.com/) |
 | `ai.zhipu.api-key` | 智谱 AI API Key，[点这里申请](https://open.bigmodel.cn/) |
 | `ai.provider` | 底层大模型选择：`dashscope`（默认）/ `zhipu` / `openai-compatible` |
 | `videoai.rag.*` | RAG 开关、Embedding、Milvus 和检索参数 |
 
-> **Kafka 长任务配置：** Worker 的 AI 任务最长可能运行 30 分钟。Consumer 默认一次只拉取 1 条任务，并将 `max.poll.interval.ms` 设置为 40 分钟，避免同步处理期间因长时间不 poll 被移出消费组。两个参数分别支持通过 `KAFKA_CONSUMER_MAX_POLL_RECORDS` 和 `KAFKA_CONSUMER_MAX_POLL_INTERVAL_MS` 覆盖；嵌入式 Kafka 集成测试和配置绑定测试共同覆盖该边界。
+后台调度默认每秒扫描，先取得视频容量再领取任务；独立线程每 20 秒续租，租约为 90 秒。任务耗时不受消息消费间隔限制，但各外部请求仍有超时。失效执行者不能覆盖当前结果，过期任务不会自动重放付费调用。
 
-```yaml
-spring:
-  kafka:
-    consumer:
-      max-poll-records: ${KAFKA_CONSUMER_MAX_POLL_RECORDS:1}
-      properties:
-        "[max.poll.interval.ms]": ${KAFKA_CONSUMER_MAX_POLL_INTERVAL_MS:2400000}
-```
-
-`max-poll-records=1` 只限制单个 Consumer 每次领取的任务数量，不会把整个 Worker 变成单线程。监听器默认通过 `videoai.worker.concurrency=3` 启动 3 个 Consumer；初期生产建议部署 2 个 Worker 副本，与默认 6 个 Partition 组成最多 6 路并行消费。Worker 副本数属于部署平台配置，不写死在应用代码中。
-
-项目通过 Spring Kafka `NewTopic` 显式声明 `videoai.task.analyze`，Topic 不存在时按配置创建；已有 Topic 分区不足时会增加到配置值，不再依赖 Broker 自动建 Topic 的默认分区数。完整的参数计算、扩缩容和幂等边界见 [Kafka 分区、Consumer Group 与 Worker 部署参数设计](architecture/kafka-partition-consumer-sizing.md)。
-
-Outbox 调度器采用“批量扫描 + 数据库抢占 + 异步发送”：每轮最多读取 50 条候选消息，通过条件更新把消息从 `NEW` 抢占为 `SENDING`，再异步发送 Kafka；回调线程把成功消息更新为 `SENT`，失败消息退回可重试状态，超时停留在 `SENDING` 的消息由恢复扫描重新接管。Kafka 负责消息入队后的削峰填谷，Outbox 负责 ACK 前的持久化。最新对照中，10 条/秒下 Batch 50 与 100 的 Outbox p95 分别为 `3.34s` 和 `3.54s`，扩大批次没有收益；3 条/秒稳态下，Batch 50、1 秒扫描的 Outbox p95 为 `1.38s`。因此 `50/1s` 是当前规模的起始值，不是行业固定值。完整压测方法、原始参数矩阵和生产扩展方案见 [全链路压测指南](architecture/load-test/README.md) 与 [压测实测报告](architecture/load-test/RESULTS.md)。
+新版本使用 `sql/schema.sql` 的新表结构，不兼容旧任务状态。已有开发数据库应保留，另建隔离库验证，不能直接用旧表启动新版本。设计与阶段验收见 [数据库调度实施方案](architecture/database-task-scheduler-implementation.md)。
 
 ### 3. 编译项目
 
@@ -254,7 +228,7 @@ mvn clean install -DskipTests
 mvn test
 ```
 
-当前长任务相关测试包括配置绑定测试、Outbox 异步发送状态测试和嵌入式 KRaft Kafka 对照测试，覆盖“超过最大 poll 间隔时提交失败”“处理时间在安全范围内时提交成功”以及发送成功、失败和抢占冲突等边界。
+调度测试覆盖并发领取、容量控制、独立续租、过期失败、迟到写入拦截和片段实际退出。真实 MySQL 验收默认跳过，显式启用后创建并清理专用测试库，要求建库权限。历史 Kafka 实验仅用于记录架构演进，不代表当前运行方式。
 
 ### 4. 启动服务
 
@@ -297,14 +271,12 @@ python -m http.server 5173 --directory frontend
 | :--- | :--- | :--- |
 | 分片上传 + 断点续传 + 秒传 | S3 Multipart Upload，MySQL 记录分片状态，Redisson 分布式锁，默认 5MB 分片 3 并发 | ✅ |
 | 两阶段任务创建 | 上传与任务解耦，用户确认 + 自定义 Prompt 后才创建任务 | ✅ |
-| Kafka 异步解耦 | 削峰填谷，手动 ack，Outbox 保证最终投递 | ✅ |
-| Kafka 消费拓扑 | 默认 6 分区；单 Worker 3 Consumer；同组多 Worker 可横向扩容 | ✅ |
-| Kafka 长任务消费 | 单条拉取，最大 poll 间隔 40 分钟，集成测试验证超时与正常提交边界 | ✅ |
-| 状态机与执行代次 | 条件更新控制状态流转，隔离重复消息和旧执行消息 | ✅ |
+| 数据库任务调度 | 容量控制、原子领取、独立续租与过期失败 | ✅ |
+| 状态机与执行代次 | owner + attempt + 有效租约保护结果写入 | ✅ |
 | 双认证体系 | JWT Bearer + API Key | ✅ |
 | 统一响应 | ApiResponse + ErrorCode 结构化错误码 | ✅ |
 | AI Provider 解耦 | 接口抽象，支持 DashScope、智谱和 OpenAI-compatible 服务 | ✅ |
-| AI 失败手动重试 | 单次执行只调用一次 AI，失败落库后由用户重新提交，执行代次隔离迟到消息 | ✅ |
+| AI 失败处理 | 片段内部有限重试；整局失败由用户决定重试，隔离旧执行结果 | ✅ |
 | RAG 知识增强 | 28 个 PC 英雄中文知识、层级感知分块、Milvus 检索、别名增强、评估页面与 fail-open | ✅ |
 
 <br>
