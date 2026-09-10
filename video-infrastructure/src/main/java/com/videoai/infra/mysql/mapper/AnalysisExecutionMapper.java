@@ -9,9 +9,9 @@ public interface AnalysisExecutionMapper {
     @Insert("""
             INSERT INTO analysis_execution
               (task_id, execution_no, analysis_mode, config_snapshot, config_hash, input_hash)
-            SELECT task_id, retry_count, analysis_mode, #{configSnapshot}, #{configHash}, #{inputHash}
-            FROM analysis_task WHERE task_id = #{taskId} AND retry_count = #{executionNo}
-              AND status = 'PROCESSING' AND analysis_mode = #{analysisMode}
+            SELECT task_id, attempt_no, analysis_mode, #{configSnapshot}, #{configHash}, #{inputHash}
+            FROM analysis_task WHERE task_id = #{taskId} AND attempt_no = #{executionNo}
+              AND status = 'RUNNING' AND analysis_mode = #{analysisMode}
             """)
     int insert(AnalysisExecution execution);
 
@@ -52,7 +52,7 @@ public interface AnalysisExecutionMapper {
             return "UPDATE analysis_execution SET " + column + " = #{value} "
                     + "WHERE task_id = #{taskId} AND execution_no = #{executionNo} AND " + column + " IS NULL "
                     + "AND EXISTS (SELECT 1 FROM analysis_task t WHERE t.task_id = analysis_execution.task_id "
-                    + "AND t.retry_count = analysis_execution.execution_no AND t.status = 'PROCESSING')";
+                    + "AND t.attempt_no = analysis_execution.execution_no AND t.status='RUNNING')";
         }
     }
 }

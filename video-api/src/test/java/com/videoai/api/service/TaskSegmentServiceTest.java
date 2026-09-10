@@ -20,7 +20,7 @@ class TaskSegmentServiceTest {
     final TaskSegmentService service = new TaskSegmentService(tasks, rows, storage, json);
     AnalysisTask task;
     @BeforeEach void setup() {
-        task = new AnalysisTask(); task.setTaskId("task"); task.setUserId(7L); task.setRetryCount(2);
+        task = new AnalysisTask(); task.setTaskId("task"); task.setUserId(7L); task.setAttemptNo(2);
         task.setStatus("FAILED"); task.setCurrentStep("ANALYZING_SEGMENTS");
         when(tasks.selectOne(any())).thenReturn(task);
     }

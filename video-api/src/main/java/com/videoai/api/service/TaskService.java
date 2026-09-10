@@ -7,26 +7,16 @@ import com.videoai.common.enums.ErrorCode;
 import com.videoai.common.enums.TaskStatus;
 import com.videoai.common.exception.BusinessException;
 import com.videoai.infra.mysql.mapper.AnalysisTaskMapper;
-import com.videoai.infra.redis.key.RedisKey;
-import com.videoai.infra.service.TaskOutboxService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.concurrent.TimeUnit;
 
 /**
  * 任务服务
  *
- * 设计要点：
- * 1. Redis 缓存 + DB 回源：减少数据库压力
- * 2. 终态任务缓存1小时，非终态缓存30秒
- * 3. 查询失败不影响主流程（缓存降级）
- * 4. 归属校验在 SQL WHERE 中完成（原子操作）
+ * 直接查询任务表；重试、取消通过条件更新校验归属与当前状态。
  */
 @Slf4j
 @Service
@@ -34,40 +24,13 @@ import java.util.concurrent.TimeUnit;
 public class TaskService {
 
     private final AnalysisTaskMapper analysisTaskMapper;
-    private final StringRedisTemplate redisTemplate;
-    private final ObjectMapper objectMapper;
-    private final TaskOutboxService taskOutboxService;
 
     /**
      * 查询任务详情
      */
     public AnalysisTask getTask(String taskId) {
-        // 1. 查缓存
-        String cacheKey = RedisKey.taskDetail(taskId);
-        String cached = redisTemplate.opsForValue().get(cacheKey);
-        if (cached != null) {
-            try {
-                return objectMapper.readValue(cached, AnalysisTask.class);
-            } catch (JsonProcessingException e) {
-                log.warn("Task cache deserialize failed: {}", taskId, e);
-            }
-        }
-
-        // 2. 查数据库
         AnalysisTask task = queryTaskFromDatabase(taskId);
-
-        if (task == null) {
-            throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
-        }
-
-        // 3. 写缓存（终态缓存久一点）
-        try {
-            long ttl = task.isFinalState() ? 3600 : 30;
-            redisTemplate.opsForValue().set(cacheKey, objectMapper.writeValueAsString(task), ttl, TimeUnit.SECONDS);
-        } catch (JsonProcessingException e) {
-            log.warn("Task cache write failed: {}", taskId, e);
-        }
-
+        if (task == null) throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
         return task;
     }
 
@@ -101,7 +64,6 @@ public class TaskService {
             throw new BusinessException(ErrorCode.TASK_STATUS_ERROR);
         }
 
-        evictTaskCache(taskId);
         return getTask(taskId);
     }
 
@@ -118,13 +80,12 @@ public class TaskService {
             throw new BusinessException(ErrorCode.TASK_STATUS_ERROR);
         }
 
-        evictTaskCache(taskId);
         log.info("Task deleted: taskId={}, userId={}", taskId, userId);
     }
 
     /**
-     * 用户手动重新分析（仅 FAILED 或历史 DEAD 状态）。
-     * 每次递增执行代次并创建新的 Outbox，旧 Outbox 保留用于审计和隔离迟到消息。
+     * 用户手动重新分析（仅 FAILED 或 PARTIAL 状态）。
+     * 递增执行代次并清空旧租约，提交后由后台调度器领取。
      */
     @Transactional
     public AnalysisTask retryTask(String taskId, Long userId) {
@@ -135,20 +96,18 @@ public class TaskService {
                 throw new BusinessException(ErrorCode.USER_FORBIDDEN);
             }
             TaskStatus status = task.getStatusEnum();
-            if (status != TaskStatus.FAILED && status != TaskStatus.DEAD && status != TaskStatus.PARTIALLY_COMPLETED) {
+            if (status != TaskStatus.FAILED && status != TaskStatus.PARTIAL) {
                 throw new BusinessException(ErrorCode.TASK_STATUS_ERROR, "只有失败或部分完成的任务可以重新分析");
             }
             throw new BusinessException(ErrorCode.TASK_STATUS_ERROR);
         }
 
-        evictTaskCache(taskId);
-        // 事务提交前不通过 getTask 写 Redis，避免 Outbox 插入失败回滚后缓存仍显示 PENDING。
+        // 在当前事务中返回更新后的数据库记录。
         AnalysisTask task = queryTaskFromDatabase(taskId);
         if (task == null) {
             throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
         }
-        int executionNo = task.getRetryCount() == null ? 0 : task.getRetryCount();
-        taskOutboxService.createExecuteOutbox(task, executionNo, java.time.LocalDateTime.now());
+        int executionNo = task.getAttemptNo() == null ? 0 : task.getAttemptNo();
         log.info("Task manually resubmitted: taskId={}, executionNo={}", taskId, executionNo);
         return task;
     }
@@ -159,14 +118,5 @@ public class TaskService {
         return analysisTaskMapper.selectOne(wrapper);
     }
 
-    /**
-     * 清除任务缓存
-     */
-    private void evictTaskCache(String taskId) {
-        try {
-            redisTemplate.delete(RedisKey.taskDetail(taskId));
-        } catch (Exception e) {
-            log.warn("Cache eviction failed for taskId={}", taskId, e);
-        }
-    }
+
 }

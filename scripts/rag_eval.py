@@ -25,7 +25,7 @@ from pathlib import Path
 from typing import Any
 
 
-DEFAULT_DATASET = "rag-data/eval/retrieval_gold_v1.jsonl"
+DEFAULT_DATASET = "rag-data/eval/legend_zh_bench_v1.jsonl"
 DEFAULT_OUTPUT_DIR = "docs/rag-experiments"
 
 
@@ -34,12 +34,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--api", default=os.getenv("VIDEOAI_API_URL", "http://localhost:8080/api"))
     parser.add_argument("--dataset", default=DEFAULT_DATASET)
     parser.add_argument("--output-dir", default=DEFAULT_OUTPUT_DIR)
-    parser.add_argument("--label", default="vector-baseline")
+    parser.add_argument("--label", default="legend-zh-bench")
     parser.add_argument("--token", default=os.getenv("VIDEOAI_ADMIN_TOKEN"))
     parser.add_argument("--email", default=os.getenv("VIDEOAI_ADMIN_EMAIL"))
     parser.add_argument("--password", default=os.getenv("VIDEOAI_ADMIN_PASSWORD"))
     parser.add_argument("--timeout", type=float, default=45.0)
-    parser.add_argument("--k", type=int, default=6)
+    parser.add_argument("--k", type=int, default=3)
+    parser.add_argument("--threshold-start", type=float, default=0.45)
+    parser.add_argument("--threshold-end", type=float, default=0.75)
+    parser.add_argument("--threshold-step", type=float, default=0.01)
     return parser.parse_args()
 
 
@@ -92,9 +95,17 @@ def load_dataset(path: Path) -> list[dict[str, Any]]:
             query = str(case.get("query", "")).strip()
             answerable = bool(case.get("answerable", True))
             relevant_titles = case.get("relevant_titles", [])
+            required_evidence = case.get("required_evidence", [])
             if (not case_id or not query or not isinstance(relevant_titles, list)
                     or (answerable and not relevant_titles)):
                 raise ValueError(f"Invalid case at {path}:{line_no}")
+            if not isinstance(required_evidence, list) or any(
+                    not isinstance(item, dict)
+                    or not str(item.get("title", "")).strip()
+                    or not str(item.get("section", "")).strip()
+                    for item in required_evidence
+            ):
+                raise ValueError(f"Invalid required_evidence at {path}:{line_no}")
             if case_id in seen_ids:
                 raise ValueError(f"Duplicate case id '{case_id}' at {path}:{line_no}")
             seen_ids.add(case_id)
@@ -127,8 +138,31 @@ def relevance_vector(hits: list[dict[str, Any]], relevant_titles: list[str], k: 
     return relevance, found
 
 
+def evidence_metrics(
+        hits: list[dict[str, Any]], required_evidence: list[dict[str, Any]], k: int
+) -> tuple[float | None, float | None, float | None]:
+    if not required_evidence:
+        return None, None, None
+    gold = [
+        (normalize(item["title"]), normalize(item["section"]))
+        for item in required_evidence
+    ]
+    found: set[int] = set()
+    returned = hits[:k]
+    for hit in returned:
+        title = normalize(hit.get("title"))
+        heading = normalize(hit.get("headingPath"))
+        for index, (gold_title, gold_section) in enumerate(gold):
+            if index not in found and title == gold_title and gold_section in heading:
+                found.add(index)
+    coverage = len(found) / len(gold)
+    complete = float(len(found) == len(gold))
+    precision = len(found) / len(returned) if returned else 0.0
+    return coverage, complete, precision
+
+
 def pollution_kind(hit: dict[str, Any]) -> str | None:
-    """Classify frozen L01 cards that must not enter PC gameplay context."""
+    """Detect content that must not re-enter the PC-only Legend corpus."""
     card_code = normalize(hit.get("cardCode"))
     if card_code.endswith("-mobile"):
         return "mobile"
@@ -172,6 +206,128 @@ def safe_label(label: str) -> str:
     return value or "rag-eval"
 
 
+def compact_candidate(hit: dict[str, Any], rank: int) -> dict[str, Any]:
+    return {
+        "rank": rank,
+        "vector_id": hit.get("vectorId"),
+        "card_code": hit.get("cardCode"),
+        "title": hit.get("title"),
+        "score": hit.get("score"),
+        "dense_score": hit.get("denseScore"),
+        "lexical_score": hit.get("lexicalScore"),
+        "fusion_score": hit.get("fusionScore"),
+        "dense_rank": hit.get("denseRank"),
+        "lexical_rank": hit.get("lexicalRank"),
+        "heading_path": hit.get("headingPath"),
+    }
+
+
+def select_at_threshold(case: dict[str, Any], threshold: float) -> list[dict[str, Any]]:
+    config = case["runtime_config"]
+    max_per_card = max(1, int(config.get("max_chunks_per_card") or 1))
+    final_top_k = max(1, int(config.get("final_top_k") or 1))
+    per_card: dict[str, int] = {}
+    selected: list[dict[str, Any]] = []
+    for hit in case.get("raw_candidates", []):
+        if float(hit.get("score") or 0.0) < threshold:
+            continue
+        card_code = normalize(hit.get("card_code"))
+        if per_card.get(card_code, 0) >= max_per_card:
+            continue
+        selected.append(hit)
+        per_card[card_code] = per_card.get(card_code, 0) + 1
+        if len(selected) >= final_top_k:
+            break
+    return selected
+
+
+def threshold_sweep(cases: list[dict[str, Any]], args: argparse.Namespace) -> dict[str, Any]:
+    if any(bool(case.get("runtime_config", {}).get("hybrid_retrieval_enabled")) for case in cases):
+        return {
+            "available": False,
+            "reason": "Hybrid RRF order cannot be reproduced by changing the dense threshold alone",
+        }
+    trace_cases = [case for case in cases if case.get("trace_available")]
+    if len(trace_cases) != len(cases):
+        return {
+            "available": False,
+            "reason": "API did not return rawCandidates for every successful case",
+        }
+    if args.threshold_step <= 0 or args.threshold_end < args.threshold_start:
+        raise ValueError("Invalid threshold range")
+
+    thresholds: list[float] = []
+    value = args.threshold_start
+    while value <= args.threshold_end + 1e-9:
+        thresholds.append(round(value, 6))
+        value += args.threshold_step
+
+    answerable = [case for case in trace_cases if case["answerable"]]
+    no_answer = [case for case in trace_cases if not case["answerable"]]
+    points: list[dict[str, Any]] = []
+    for threshold in thresholds:
+        entity_hit_at_1: list[float] = []
+        hit_at_k: list[float] = []
+        section_hit_at_k: list[float] = []
+        for case in answerable:
+            selected = select_at_threshold(case, threshold)
+            relevance, found = relevance_vector(selected, case["relevant_titles"], args.k)
+            entity_hit_at_1.append(float(bool(relevance and relevance[0])))
+            hit_at_k.append(float(bool(found)))
+            if case.get("relevant_sections"):
+                gold_titles = {normalize(title) for title in case["relevant_titles"]}
+                gold_sections = [normalize(section) for section in case["relevant_sections"]]
+                section_hit_at_k.append(float(any(
+                    normalize(hit.get("title")) in gold_titles
+                    and any(section in normalize(hit.get("heading_path")) for section in gold_sections)
+                    for hit in selected[: args.k]
+                )))
+
+        rejection = [float(not select_at_threshold(case, threshold)) for case in no_answer]
+        hit_rate = statistics.fmean(hit_at_k) if hit_at_k else 0.0
+        rejection_rate = statistics.fmean(rejection) if rejection else 0.0
+        points.append({
+            "threshold": threshold,
+            "entity_hit_at_1": statistics.fmean(entity_hit_at_1) if entity_hit_at_1 else 0.0,
+            "hit_at_k": hit_rate,
+            "section_hit_at_k": statistics.fmean(section_hit_at_k) if section_hit_at_k else None,
+            "no_answer_rejection_rate": rejection_rate if no_answer else None,
+            "no_answer_false_positive_rate": (1.0 - rejection_rate) if no_answer else None,
+            "balanced_success": statistics.fmean([hit_rate, rejection_rate]) if no_answer else hit_rate,
+        })
+
+    # 相同指标保留更低阈值，给正例留下更大的分数余量；随后只保留非支配解。
+    metric_names = ("entity_hit_at_1", "section_hit_at_k", "no_answer_rejection_rate")
+    distinct_points: list[dict[str, Any]] = []
+    seen_metrics: set[tuple[float, ...]] = set()
+    for point in points:
+        signature = tuple(float(point[name] or 0.0) for name in metric_names)
+        if signature not in seen_metrics:
+            seen_metrics.add(signature)
+            distinct_points.append(point)
+
+    def dominates(left: dict[str, Any], right: dict[str, Any]) -> bool:
+        left_metrics = [float(left[name] or 0.0) for name in metric_names]
+        right_metrics = [float(right[name] or 0.0) for name in metric_names]
+        return all(a >= b for a, b in zip(left_metrics, right_metrics)) and any(
+            a > b for a, b in zip(left_metrics, right_metrics)
+        )
+
+    pareto_candidates = [
+        point for point in distinct_points
+        if not any(dominates(other, point) for other in distinct_points if other is not point)
+    ]
+    return {
+        "available": True,
+        "start": args.threshold_start,
+        "end": args.threshold_end,
+        "step": args.threshold_step,
+        "selection_rule": "Pareto frontier of entity_hit_at_1, section_hit_at_k and rejection_rate",
+        "pareto_candidates": pareto_candidates,
+        "points": points,
+    }
+
+
 def evaluate(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
     dataset_path = Path(args.dataset)
     cases = load_dataset(dataset_path)
@@ -186,8 +342,14 @@ def evaluate(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             data = post_json(endpoint, {"query": case["query"]}, args.timeout, token)
             client_latency_ms = round((time.perf_counter() - started) * 1000, 2)
             hits = data.get("hits") or []
+            raw_candidates = data.get("rawCandidates") or []
+            lexical_candidates = data.get("lexicalCandidates") or []
+            fused_candidates = data.get("fusedCandidates") or []
             answerable = bool(case["answerable"])
             relevance, found = relevance_vector(hits, case["relevant_titles"], args.k)
+            evidence_coverage, complete_evidence, evidence_precision = evidence_metrics(
+                hits, case.get("required_evidence", []), args.k
+            )
             relevant_sections = [normalize(value) for value in case.get("relevant_sections", [])]
             section_relevance = []
             if relevant_sections:
@@ -211,6 +373,7 @@ def evaluate(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                 "category": case.get("category", "uncategorized"),
                 "answerable": answerable,
                 "relevant_titles": case["relevant_titles"],
+                "required_evidence": case.get("required_evidence", []),
                 "hit_at_k": (1.0 if found else 0.0) if answerable else None,
                 "entity_hit_at_1": float(bool(relevance and relevance[0])) if answerable else None,
                 "recall_at_k": (len(found) / gold_count) if answerable else None,
@@ -230,16 +393,35 @@ def evaluate(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                     sum(section_relevance) / len(hits[: args.k])
                     if relevant_sections and hits[: args.k] else (0.0 if relevant_sections else None)
                 ),
+                "evidence_coverage_at_k": evidence_coverage,
+                "complete_evidence_at_k": complete_evidence,
+                "evidence_precision_at_k": evidence_precision,
                 "server_latency_ms": data.get("latencyMs"),
                 "client_latency_ms": client_latency_ms,
                 "context_chars": data.get("contextChars"),
                 "expanded_query": data.get("expandedQuery"),
+                "trace_available": "rawCandidates" in data,
+                "raw_candidates": [
+                    compact_candidate(hit, rank)
+                    for rank, hit in enumerate(raw_candidates, start=1)
+                ],
+                "lexical_candidates": [
+                    compact_candidate(hit, rank)
+                    for rank, hit in enumerate(lexical_candidates, start=1)
+                ],
+                "fused_candidates": [
+                    compact_candidate(hit, rank)
+                    for rank, hit in enumerate(fused_candidates, start=1)
+                ],
                 "hits": [
                     {
                         "rank": rank,
                         "card_code": hit.get("cardCode"),
                         "title": hit.get("title"),
                         "score": hit.get("score"),
+                        "dense_score": hit.get("denseScore"),
+                        "lexical_score": hit.get("lexicalScore"),
+                        "fusion_score": hit.get("fusionScore"),
                         "heading_path": hit.get("headingPath"),
                         "relevant": relevance[rank - 1] == 1,
                     }
@@ -253,8 +435,28 @@ def evaluate(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                     "min_score": data.get("minScore"),
                     "legend_pc_gameplay_filter_enabled": data.get("legendPcGameplayFilterEnabled"),
                     "legend_alias_enhancement_enabled": data.get("legendAliasEnhancementEnabled"),
+                    "embedding_heading_path_enabled": data.get("embeddingHeadingPathEnabled"),
+                    "hybrid_retrieval_enabled": data.get("hybridRetrievalEnabled"),
+                    "hybrid_conditional_rescue_enabled": data.get("hybridConditionalRescueEnabled"),
+                    "hybrid_conditional_rescue_min_dense_score": data.get(
+                        "hybridConditionalRescueMinDenseScore"
+                    ),
+                    "hybrid_conditional_rescue_max_chunks": data.get(
+                        "hybridConditionalRescueMaxChunks"
+                    ),
+                    "hybrid_lexical_union_enabled": data.get("hybridLexicalUnionEnabled"),
+                    "lexical_top_k": data.get("lexicalTopK"),
+                    "rrf_k": data.get("rrfK"),
+                    "dense_rrf_weight": data.get("denseRrfWeight"),
+                    "lexical_rrf_weight": data.get("lexicalRrfWeight"),
                     "collection_name": data.get("collectionName"),
                     "returned_hit_count": data.get("hitCount"),
+                    "raw_candidate_count": data.get("rawCandidateCount"),
+                    "lexical_candidate_count": data.get("lexicalCandidateCount"),
+                    "fused_candidate_count": data.get("fusedCandidateCount"),
+                    "score_passed_count": data.get("scorePassedCount"),
+                    "diversified_count": data.get("diversifiedCount"),
+                    "selected_count": data.get("selectedCount"),
                 },
             })
             outcome = f"rank={first_rank or '-'}" if answerable else ("rejected" if not hits else "false-positive")
@@ -278,6 +480,9 @@ def evaluate(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         category_cases = [item for item in evaluated if item["category"] == category]
         category_answerable = [item for item in category_cases if item["answerable"]]
         category_no_answer = [item for item in category_cases if not item["answerable"]]
+        category_evidence = [
+            item for item in category_cases if item["evidence_coverage_at_k"] is not None
+        ]
         categories[category] = {
             "cases": len(category_cases),
             "answerable_cases": len(category_answerable),
@@ -291,6 +496,17 @@ def evaluate(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                          if category_answerable else None)
                 for metric in metric_names
             },
+            **{
+                metric: (
+                    statistics.fmean(item[metric] for item in category_evidence)
+                    if category_evidence else None
+                )
+                for metric in (
+                    "evidence_coverage_at_k",
+                    "complete_evidence_at_k",
+                    "evidence_precision_at_k",
+                )
+            },
         }
     server_latencies = [float(item["server_latency_ms"]) for item in evaluated if item["server_latency_ms"] is not None]
     client_latencies = [float(item["client_latency_ms"]) for item in evaluated]
@@ -302,9 +518,10 @@ def evaluate(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         statistics.fmean(float(item["excluded_content_polluted"]) for item in evaluated) if evaluated else 0.0
     )
     section_cases = [item for item in evaluated if item["section_hit_at_k"] is not None]
+    evidence_cases = [item for item in evaluated if item["evidence_coverage_at_k"] is not None]
 
     report = {
-        "schema_version": 2,
+        "schema_version": 4,
         "run": {
             "label": args.label,
             "timestamp_utc": datetime.now(timezone.utc).isoformat(),
@@ -338,6 +555,19 @@ def evaluate(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             "section_precision_at_k": (
                 statistics.fmean(item["section_precision_at_k"] for item in section_cases) if section_cases else None
             ),
+            "evidence_cases": len(evidence_cases),
+            "evidence_coverage_at_k": (
+                statistics.fmean(item["evidence_coverage_at_k"] for item in evidence_cases)
+                if evidence_cases else None
+            ),
+            "complete_evidence_at_k": (
+                statistics.fmean(item["complete_evidence_at_k"] for item in evidence_cases)
+                if evidence_cases else None
+            ),
+            "evidence_precision_at_k": (
+                statistics.fmean(item["evidence_precision_at_k"] for item in evidence_cases)
+                if evidence_cases else None
+            ),
             "server_latency_ms": {
                 "p50": percentile(server_latencies, 0.50),
                 "p95": percentile(server_latencies, 0.95),
@@ -358,6 +588,7 @@ def evaluate(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         },
         "errors": errors,
         "cases": evaluated,
+        "threshold_sweep": threshold_sweep(evaluated, args),
     }
     return report, 0 if not errors else (2 if not evaluated else 1)
 
@@ -421,6 +652,34 @@ def markdown_report(report: dict[str, Any], json_name: str) -> str:
             f"| Section Precision@{run['k']} | {summary['section_precision_at_k']:.4f} |",
             "",
         ]
+    if summary.get("evidence_cases"):
+        insert_at = next(index for index, line in enumerate(lines) if line == "## 分类指标")
+        lines[insert_at:insert_at] = [
+            f"| 必需证据覆盖率@{run['k']} | {summary['evidence_coverage_at_k']:.4f} |",
+            f"| 必需证据完整命中率@{run['k']} | {summary['complete_evidence_at_k']:.4f} |",
+            f"| 必需证据 Precision@{run['k']} | {summary['evidence_precision_at_k']:.4f} |",
+            "",
+        ]
+    sweep = report.get("threshold_sweep", {})
+    if sweep.get("available") and sweep.get("pareto_candidates"):
+        insert_at = next(index for index, line in enumerate(lines) if line == "## 分类指标")
+        sweep_lines = [
+            "## 阈值扫描",
+            "",
+            "> 候选值使用同一次查询返回的原始候选离线模拟。脚本只给出非支配解，不替业务决定召回与拒答的权重。",
+            "",
+            f"- 扫描范围：`{sweep['start']:.2f}`～`{sweep['end']:.2f}`，步长 `{sweep['step']:.2f}`",
+            "",
+            "| 候选阈值 | Entity Hit@1 | Section Hit@K | 无答案拒绝率 |",
+            "|---:|---:|---:|---:|",
+        ]
+        for candidate in sweep["pareto_candidates"]:
+            sweep_lines.append(
+                f"| {candidate['threshold']:.2f} | {candidate['entity_hit_at_1']:.4f} | "
+                f"{metric(candidate['section_hit_at_k'])} | {metric(candidate['no_answer_rejection_rate'])} |"
+            )
+        sweep_lines.append("")
+        lines[insert_at:insert_at] = sweep_lines
     for category, metrics in summary["categories"].items():
         lines.append(
             f"| {category} | {metrics['cases']} | {metric(metrics['hit_at_k'])} | "
@@ -467,6 +726,18 @@ def main() -> int:
     md_path.write_text(markdown_report(report, json_path.name), encoding="utf-8")
     print(f"JSON report: {json_path}")
     print(f"Markdown report: {md_path}")
+    candidates = report.get("threshold_sweep", {}).get("pareto_candidates", [])
+    for candidate in candidates:
+        section_value = candidate.get("section_hit_at_k")
+        rejection_value = candidate.get("no_answer_rejection_rate")
+        section_text = f"{section_value:.4f}" if section_value is not None else "-"
+        rejection_text = f"{rejection_value:.4f}" if rejection_value is not None else "-"
+        print(
+            "Pareto threshold candidate: "
+            f"{candidate['threshold']:.2f} "
+            f"(EntityHit@1={candidate['entity_hit_at_1']:.4f}, "
+            f"SectionHit@K={section_text}, Rejection={rejection_text})"
+        )
     return exit_code
 
 

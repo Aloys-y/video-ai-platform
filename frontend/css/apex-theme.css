@@ -577,12 +577,12 @@ h4 { font-size: 1.1rem; }
 }
 .badge--queued::before { background: #EAB308; }
 
-.badge--processing {
+.badge--running {
   color: #0891B2;
   background: rgba(6, 182, 212, 0.1);
   animation: badge-pulse 2s ease-in-out infinite;
 }
-.badge--processing::before {
+.badge--running::before {
   background: #06B6D4;
   animation: dot-pulse 1.5s ease-in-out infinite;
 }
@@ -595,11 +595,11 @@ h4 { font-size: 1.1rem; }
   50% { opacity: 0.4; }
 }
 
-.badge--completed {
+.badge--succeeded {
   color: #16A34A;
   background: rgba(34, 197, 94, 0.1);
 }
-.badge--completed::before { background: #22C55E; }
+.badge--succeeded::before { background: #22C55E; }
 
 .badge--failed {
   color: var(--accent-red);
@@ -2048,4 +2048,4 @@ h4 { font-size: 1.1rem; }
 }
 
 /* 部分完成仍可查看已保存结果。 */
-.badge--partially_completed { color: var(--text-primary); background: rgba(245,158,11,.14); border-color: rgba(245,158,11,.3); }
+.badge--partial { color: var(--text-primary); background: rgba(245,158,11,.14); border-color: rgba(245,158,11,.3); }

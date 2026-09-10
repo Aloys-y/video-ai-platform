@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
  *    - 一个上传可能产生多个任务（不同分析类型）
  *    - 解耦上传和分析的生命周期
  *
- * 2. 为什么要记录retry_count？
- *    - 作为单调递增的执行代次，隔离迟到或重复的 Kafka 消息
+ * 2. 为什么要记录attempt_no？
+ *    - 作为单调递增的执行代次，隔离手动重试前的旧执行结果
  *    - 记录用户手动重新分析的次数
  *
  * 3. 为什么用JSON存储result？
@@ -84,14 +84,14 @@ public class AnalysisTask {
 
     /**
      * 执行代次：首次执行为0，每次用户手动重新分析后递增。
-     * 字段名为兼容现有数据库保留 retry_count。
+     * 字段名为兼容现有数据库保留 attempt_no。
      */
-    private Integer retryCount;
+    private Integer attemptNo;
 
     /** DIRECT_VIDEO 为现有流程，AUDIO_PREFILTER 为语音粗筛流程。 */
     private String analysisMode;
 
-    /** 当前执行步骤；配置和中间结果通过 task_id + retry_count 查询执行快照。 */
+    /** 当前执行步骤；配置和中间结果通过 task_id + attempt_no 查询执行快照。 */
     private String currentStep;
 
     /**
@@ -151,7 +151,9 @@ public class AnalysisTask {
     /**
      * 完成时间
      */
+    @TableField("finished_at")
     private LocalDateTime completedAt;
+    private String errorCode;
 
     // ==================== 业务方法 ====================
 

@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS user (
     UNIQUE KEY uk_api_key (api_key),
     UNIQUE KEY uk_email (email),
     INDEX idx_status (status)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户表';
 
 -- 注意：测试用户由 DataInitializer（@Profile("dev")）在应用启动时自动创建
 -- 不在 SQL 中硬编码任何凭证，避免泄露到版本控制
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS upload_session (
     INDEX idx_user_id (user_id),
     INDEX idx_status_created (status, created_at),
     INDEX idx_file_hash (file_hash)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='上传会话表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='上传会话表';
 
 -- 分析任务表
 CREATE TABLE IF NOT EXISTS analysis_task (
@@ -69,16 +69,16 @@ CREATE TABLE IF NOT EXISTS analysis_task (
     prompt          TEXT COMMENT '用户自定义分析提示词',
 
     -- 状态管理
-    status          VARCHAR(20) NOT NULL DEFAULT 'PENDING' COMMENT '任务状态',
+    status VARCHAR(20) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING/RUNNING/SUCCEEDED/PARTIAL/FAILED/CANCELLED',
     progress        INT DEFAULT 0 COMMENT '进度百分比(0-100)',
 
     -- 执行代次（首次为0，用户每次手动重新分析后递增）
-    retry_count     INT NOT NULL DEFAULT 0 COMMENT '执行代次/用户手动重新分析次数',
-    analysis_mode   VARCHAR(32) NOT NULL DEFAULT 'DIRECT_VIDEO' COMMENT '分析模式',
+    attempt_no     INT NOT NULL DEFAULT 0 COMMENT '执行代次/用户手动重新分析次数',
+    analysis_mode   VARCHAR(32) NOT NULL DEFAULT 'AUDIO_PREFILTER' COMMENT '分析模式',
     current_step    VARCHAR(32) NULL COMMENT '当前执行步骤，不用于领取任务',
-    execution_owner VARCHAR(64) NULL COMMENT '当前执行所有者令牌',
-    execution_lease_until DATETIME(3) NULL COMMENT '数据库时间租约',
-    execution_heartbeat_at DATETIME(3) NULL COMMENT '最后续租时间',
+    owner_token VARCHAR(64) NULL COMMENT '当前执行所有者令牌',
+    lease_until DATETIME(3) NULL COMMENT '数据库时间租约',
+    error_code VARCHAR(64) NULL COMMENT '固定错误分类',
     error_message   TEXT COMMENT '错误信息',
 
     -- AI分析结果
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS analysis_task (
     -- 时间记录
     created_at      DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
     started_at      DATETIME(3) COMMENT '开始处理时间',
-    completed_at    DATETIME(3) COMMENT '完成时间',
+    finished_at    DATETIME(3) COMMENT '完成时间',
     updated_at      DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
 
     UNIQUE KEY uk_task_id (task_id),
@@ -99,30 +99,10 @@ CREATE TABLE IF NOT EXISTS analysis_task (
     INDEX idx_upload_id (upload_id),
     INDEX idx_status (status),
     INDEX idx_created_at (created_at),
-    INDEX idx_status_started (status, started_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='分析任务表';
-
--- 任务投递Outbox表
-CREATE TABLE IF NOT EXISTS task_outbox (
-    id                  BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
-    event_id            VARCHAR(64) NOT NULL COMMENT '事件ID',
-    task_id             VARCHAR(64) NOT NULL COMMENT '任务ID',
-    event_type          VARCHAR(32) NOT NULL COMMENT '事件类型',
-    business_retry_no   INT NOT NULL DEFAULT 0 COMMENT '任务执行代次（仅用户手动重新分析时递增）',
-    payload             LONGTEXT NOT NULL COMMENT '消息快照',
-    status              VARCHAR(16) NOT NULL DEFAULT 'NEW' COMMENT '投递状态: NEW/SENDING/SENT/FAILED/CANCELLED',
-    available_at        DATETIME(3) NOT NULL COMMENT '最早可投递时间',
-    send_attempt_count  INT NOT NULL DEFAULT 0 COMMENT 'Kafka投递尝试次数',
-    last_error          TEXT COMMENT '最近一次投递错误',
-    sent_at             DATETIME(3) NULL COMMENT '成功投递时间',
-    created_at          DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
-    updated_at          DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
-
-    UNIQUE KEY uk_event_id (event_id),
-    UNIQUE KEY uk_task_retry (task_id, event_type, business_retry_no),
-    INDEX idx_status_available (status, available_at),
-    INDEX idx_task_id (task_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='任务投递Outbox表';
+    INDEX idx_status_started (status, started_at),
+    INDEX idx_dispatch_pending(status, created_at, task_id),
+    INDEX idx_dispatch_expired(status, lease_until, task_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='分析任务表';
 
 -- 用户配额表（成本控制）
 CREATE TABLE IF NOT EXISTS user_quota (
@@ -138,7 +118,7 @@ CREATE TABLE IF NOT EXISTS user_quota (
     updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 
     UNIQUE KEY uk_user_id (user_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户配额表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户配额表';
 
 -- AI调用日志表（成本审计）
 CREATE TABLE IF NOT EXISTS ai_call_log (
@@ -158,7 +138,7 @@ CREATE TABLE IF NOT EXISTS ai_call_log (
     INDEX idx_task_id (task_id),
     INDEX idx_user_id (user_id),
     INDEX idx_created_at (created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI调用日志表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='AI调用日志表';
 
 -- ==================== RAG 知识库 ====================
 
@@ -173,7 +153,7 @@ CREATE TABLE IF NOT EXISTS knowledge_base (
     updated_at          DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 
     UNIQUE KEY uk_base_code (base_code)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='知识库表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='知识库表';
 
 CREATE TABLE IF NOT EXISTS knowledge_card (
     id               BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
@@ -200,7 +180,7 @@ CREATE TABLE IF NOT EXISTS knowledge_card (
     INDEX idx_card_category (base_code, category),
     INDEX idx_card_enabled_version (base_code, enabled, version_tag),
     INDEX idx_card_updated_at (updated_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='知识卡片表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='知识卡片表';
 
 CREATE TABLE IF NOT EXISTS knowledge_chunk (
     id             BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
@@ -224,7 +204,7 @@ CREATE TABLE IF NOT EXISTS knowledge_chunk (
     UNIQUE KEY uk_card_chunk (base_code, card_code, chunk_no),
     INDEX idx_chunk_card (base_code, card_code),
     INDEX idx_chunk_version (base_code, version_tag)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='知识分块表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='知识分块表';
 
 CREATE TABLE IF NOT EXISTS knowledge_index_job (
     id             BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
@@ -248,7 +228,7 @@ CREATE TABLE IF NOT EXISTS knowledge_index_job (
     UNIQUE KEY uk_knowledge_job_id (job_id),
     INDEX idx_knowledge_job_status (status, created_at),
     INDEX idx_knowledge_job_card (base_code, card_code)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='知识索引任务表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='知识索引任务表';
 
 CREATE TABLE IF NOT EXISTS task_rag_context (
     id             BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
@@ -267,7 +247,7 @@ CREATE TABLE IF NOT EXISTS task_rag_context (
     updated_at     DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 
     INDEX idx_task_rag_task (task_id, created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='任务RAG上下文表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='任务RAG上下文表';
 
 -- 每代一行；不承担任务领取，配置只插入一次，产物引用只从 NULL 写入一次。
 CREATE TABLE IF NOT EXISTS analysis_execution (
@@ -286,7 +266,7 @@ CREATE TABLE IF NOT EXISTS analysis_execution (
     UNIQUE KEY uk_execution (task_id, execution_no),
     CONSTRAINT fk_execution_task FOREIGN KEY (task_id) REFERENCES analysis_task(task_id),
     CONSTRAINT ck_execution_no CHECK (execution_no >= 0),
-    CONSTRAINT ck_execution_mode CHECK (analysis_mode IN ('DIRECT_VIDEO', 'AUDIO_PREFILTER')),
+    CONSTRAINT ck_execution_mode CHECK (analysis_mode IN ('AUDIO_PREFILTER')),
     CONSTRAINT ck_execution_hash CHECK (CHAR_LENGTH(config_hash) = 64 AND CHAR_LENGTH(input_hash) = 64)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='按代次保存的分析配置及产物引用';
 

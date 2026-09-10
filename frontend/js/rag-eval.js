@@ -51,8 +51,24 @@ const RagEval = {
     document.getElementById('rev-expanded').textContent = r.expandedQuery || '-';
     document.getElementById('rev-version').textContent = r.versionTag || '-';
     document.getElementById('rev-topk').textContent = r.topK || '-';
-    document.getElementById('rev-minscore').textContent = r.minScore != null ? r.minScore.toFixed(2) : '-';
+    document.getElementById('rev-minscore').textContent = r.rerankApplied
+      ? `Rerank ${Number(r.rerankMinScore).toFixed(2)}`
+      : `Dense ${r.minScore != null ? Number(r.minScore).toFixed(2) : '-'}`;
+    const rerankStatus = !r.rerankEnabled ? '关闭'
+      : r.rerankApplied ? `${r.rerankModel} / ${r.rerankLatencyMs || 0} ms`
+      : r.rerankFallback ? `已回退纯向量：${r.rerankFailureReason || '调用失败'}`
+      : '未执行';
+    document.getElementById('rev-rerank').textContent = rerankStatus;
     document.getElementById('rev-hitcount').textContent = r.hitCount || 0;
+    const pipeline = r.rerankApplied
+      ? [r.rawCandidateCount, r.rerankedCandidateCount, r.scorePassedCount,
+          r.diversifiedCount, r.selectedCount, r.hitCount]
+      : r.hybridRetrievalEnabled
+      ? [`${r.rawCandidateCount ?? '-'} + ${r.lexicalCandidateCount ?? '-'}`, r.fusedCandidateCount,
+          r.scorePassedCount, r.diversifiedCount, r.selectedCount, r.hitCount]
+      : [r.rawCandidateCount, r.scorePassedCount, r.diversifiedCount, r.selectedCount, r.hitCount];
+    document.getElementById('rev-pipeline').textContent = pipeline
+      .map(v => v == null ? '-' : v).join(' → ');
     document.getElementById('rev-latency').textContent = (r.latencyMs || 0) + ' ms';
 
     // Context preview
@@ -65,7 +81,9 @@ const RagEval = {
       ? '<tr><td colspan="5" style="text-align:center;color:var(--text-secondary);padding:20px">No hits — try a different query</td></tr>'
       : hits.map(h => `
         <tr>
-          <td class="rev-score" style="color:${h.score >= 0.85 ? 'var(--accent-green)' : h.score >= 0.75 ? 'var(--accent-gold)' : 'var(--accent-orange)'}">${(h.score * 100).toFixed(1)}%</td>
+          <td class="rev-score">${h.rerankScore != null
+            ? `R ${Number(h.rerankScore).toFixed(3)}<br><small>D ${Number(h.score || 0).toFixed(3)}</small>`
+            : `${(Number(h.score || 0) * 100).toFixed(1)}%`}</td>
           <td><code>${this.esc(h.cardCode)}</code></td>
           <td>${this.esc(h.title)}</td>
           <td><span class="rc-tag" style="background:${this.catColor(h.category)};color:#fff">${this.esc(h.category)}</span></td>
@@ -73,13 +91,60 @@ const RagEval = {
         </tr>
         <tr>
           <td colspan="5" style="padding:4px 12px 12px;font-size:0.82rem;line-height:1.5;color:var(--text-primary);border-bottom:1px solid var(--border-default)">
-            ${(h.contentText || '').substring(0, 300)}${(h.contentText || '').length > 300 ? '...' : ''}
+            ${this.esc((h.contentText || '').substring(0, 300))}${(h.contentText || '').length > 300 ? '...' : ''}
           </td>
         </tr>
       `).join('');
 
+    this.renderTrace(r);
+
     // Full prompt preview
     document.getElementById('rev-prompt').textContent = r.promptPreview || '';
+  },
+
+  renderTrace(r) {
+    const raw = r.rerankApplied
+      ? (r.rerankedCandidates || [])
+      : r.hybridRetrievalEnabled ? (r.fusedCandidates || []) : (r.rawCandidates || []);
+    const scorePassed = new Set((r.scorePassedCandidates || []).map(h => h.vectorId));
+    const diversified = new Set((r.diversifiedCandidates || []).map(h => h.vectorId));
+    const selected = new Set((r.selectedCandidates || []).map(h => h.vectorId));
+    const included = new Set((r.hits || []).map(h => h.vectorId));
+    const tbody = document.getElementById('rev-trace-body');
+    if (!tbody) return;
+
+    tbody.innerHTML = raw.length === 0
+      ? '<tr><td colspan="6" style="text-align:center;color:var(--text-secondary);padding:20px">No raw candidates</td></tr>'
+      : raw.map((h, index) => {
+        let outcome = '进入上下文';
+        let color = 'var(--accent-green)';
+        if (!scorePassed.has(h.vectorId)) {
+          outcome = r.rerankApplied ? '低于重排门槛' : '低于向量门槛';
+          color = 'var(--text-secondary)';
+        } else if (!diversified.has(h.vectorId)) {
+          outcome = '单卡限额';
+          color = 'var(--accent-orange)';
+        } else if (!selected.has(h.vectorId)) {
+          outcome = 'Final TopK';
+          color = 'var(--accent-gold)';
+        } else if (!included.has(h.vectorId)) {
+          outcome = '上下文超长';
+          color = 'var(--accent-orange)';
+        }
+        return `
+          <tr>
+            <td>${index + 1}</td>
+            <td class="rev-score">${r.rerankApplied
+              ? `R ${Number(h.rerankScore || 0).toFixed(4)} / D ${Number(h.denseScore || 0).toFixed(4)}`
+              : r.hybridRetrievalEnabled
+              ? `RRF ${Number(h.fusionScore || 0).toFixed(4)} / D ${Number(h.denseScore || 0).toFixed(4)}`
+              : Number(h.score || 0).toFixed(4)}</td>
+            <td><code>${this.esc(h.cardCode)}</code></td>
+            <td>${this.esc(h.title)}</td>
+            <td style="font-size:0.82rem;color:var(--text-secondary)">${this.esc(h.headingPath || '-')}</td>
+            <td style="color:${color}">${outcome}</td>
+          </tr>`;
+      }).join('');
   },
 
   catColor(c) {

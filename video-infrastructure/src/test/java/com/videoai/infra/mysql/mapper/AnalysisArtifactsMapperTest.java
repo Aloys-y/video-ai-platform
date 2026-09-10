@@ -35,7 +35,7 @@ class AnalysisArtifactsMapperTest {
         session = new SqlSessionFactoryBuilder().build(config).openSession(true);
         execute("""
                 CREATE TABLE analysis_task (task_id VARCHAR(64) PRIMARY KEY, user_id BIGINT DEFAULT 1,
-                  retry_count INT DEFAULT 0, status VARCHAR(20) DEFAULT 'PROCESSING', progress INT DEFAULT 0,
+                  attempt_no INT DEFAULT 0, owner_token VARCHAR(64),lease_until TIMESTAMP,error_code VARCHAR(64),finished_at TIMESTAMP,status VARCHAR(20) DEFAULT 'RUNNING', progress INT DEFAULT 0,
                   error_message TEXT, started_at TIMESTAMP, completed_at TIMESTAMP, updated_at TIMESTAMP)
                 """);
         Path root = Files.exists(Path.of("sql")) ? Path.of(".") : Path.of("..");
@@ -83,7 +83,7 @@ class AnalysisArtifactsMapperTest {
         executions.bindOnce("task-test", 0, AnalysisExecutionMapper.Artifact.SEGMENTS, "segments");
         var old = segment(0); segments.insertPrepared(old); segments.markProcessing("task-test", 0, 0);
         old.setStatus("SUCCEEDED"); old.setResult("saved"); old.setUsageJson("{\"tokens\":10}"); segments.finish(old);
-        execute("UPDATE analysis_task SET retry_count=1"); executions.insert(execution(1, "b"));
+        execute("UPDATE analysis_task SET attempt_no=1"); executions.insert(execution(1, "b"));
         assertEquals(0, executions.selectReusable("task-test", 1).getExecutionNo());
         var target = segment(1); target.setObjectKey(old.getObjectKey());
         assertEquals(0, segments.selectReusable(target).getExecutionNo());
@@ -91,7 +91,7 @@ class AnalysisArtifactsMapperTest {
         var reused = segments.selectExecution("task-test", 1).get(0);
         assertEquals(0, reused.getReusedExecutionNo()); assertNull(reused.getUsageJson());
         target.setEndMs(4000L); assertNull(segments.selectReusable(target));
-        execute("UPDATE analysis_task SET retry_count=2"); executions.insert(execution(2, "c"));
+        execute("UPDATE analysis_task SET attempt_no=2"); executions.insert(execution(2, "c"));
         assertNull(executions.selectReusable("task-test", 2));
         target.setExecutionNo(2); target.setEndMs(3000L); assertNull(segments.selectReusable(target));
     }
@@ -106,7 +106,7 @@ class AnalysisArtifactsMapperTest {
         execute("UPDATE analysis_task SET status='CANCELLED'");
         assertEquals(0, tasks.isCurrentProcessing("task-test", 0));
         s.setStatus("SUCCEEDED"); s.setResult("late"); assertEquals(0, segments.finish(s));
-        execute("UPDATE analysis_task SET status='PROCESSING', retry_count=1");
+        execute("UPDATE analysis_task SET status='RUNNING', attempt_no=1");
         assertEquals(0, segments.finish(s)); assertEquals(0, segments.recordResponse(s));
         assertEquals("PROCESSING", segments.selectExecution("task-test", 0).get(0).getStatus());
     }
@@ -138,7 +138,7 @@ class AnalysisArtifactsMapperTest {
         assertEquals(1, mapper.recordSubmitted(part));
         assertEquals("remote-id", mapper.selectExecution("task-test", 0).get(0).getAsrTaskId());
         part.setTranscriptObjectKey("transcript.json"); assertEquals(0, mapper.recordResult(part));
-        execute("UPDATE analysis_task SET status = 'PROCESSING', retry_count = 1");
+        execute("UPDATE analysis_task SET status='RUNNING', attempt_no = 1");
         executions.insert(execution(1, "b"));
         assertEquals(1, mapper.selectReusablePlan("task-test", 1, "a".repeat(64), execution(1, "b").getConfigSnapshot()).size());
         assertEquals(0, mapper.selectReusablePlan("task-test", 1, "c".repeat(64), execution(1, "b").getConfigSnapshot()).size());
@@ -153,12 +153,12 @@ class AnalysisArtifactsMapperTest {
         assertEquals(1, tasks.updateStep("task-test", 0, "TRANSCRIBING"));
         execute("UPDATE analysis_task SET status = 'FAILED'");
         assertEquals(1, tasks.resetForManualRetry("task-test", 1L));
-        try (var st = session.getConnection().createStatement(); var rs = st.executeQuery("SELECT retry_count, current_step FROM analysis_task")) {
+        try (var st = session.getConnection().createStatement(); var rs = st.executeQuery("SELECT attempt_no, current_step FROM analysis_task")) {
             assertTrue(rs.next()); assertEquals(1, rs.getInt(1)); assertNull(rs.getString(2));
         }
         assertEquals(0, tasks.updateStep("task-test", 0, "SCREENING"));
         assertEquals(0, executions.bindOnce("task-test", 0, AnalysisExecutionMapper.Artifact.CANDIDATES, "late.json"));
-        execute("UPDATE analysis_task SET status = 'PROCESSING'");
+        execute("UPDATE analysis_task SET status='RUNNING'");
         assertEquals(1, executions.insert(execution(1, "b")));
         assertEquals("v0/transcript.json", executions.selectExecution("task-test", 0).getTranscriptObjectKey());
         assertNull(executions.selectExecution("task-test", 1).getTranscriptObjectKey());
@@ -177,7 +177,7 @@ class AnalysisArtifactsMapperTest {
         s.setResult("late overwrite");
         assertEquals(0, segments.finish(s));
         assertEquals("original", segments.selectExecution("task-test", 0).get(0).getResult());
-        execute("UPDATE analysis_task SET retry_count = 1");
+        execute("UPDATE analysis_task SET attempt_no = 1");
         assertEquals(0, segments.insertPrepared(segment(0)));
     }
 
@@ -186,17 +186,17 @@ class AnalysisArtifactsMapperTest {
         executions.insert(execution(0, "b"));
         var s = segment(0); segments.insertPrepared(s); segments.markProcessing("task-test", 0, 0);
         s.setStatus("SUCCEEDED"); s.setResult("kept"); s.setUsageJson("{\"tokens\":100}"); segments.finish(s);
-        execute("UPDATE analysis_task SET retry_count = 1");
+        execute("UPDATE analysis_task SET attempt_no = 1");
         executions.insert(execution(1, "b"));
         assertEquals(0, segments.reuseSucceeded("task-test", 1, 0, 0, 0, 1000, 4000));
         assertEquals(1, segments.reuseSucceeded("task-test", 1, 0, 0, 0, 1000, 3000));
         var reused = segments.selectExecution("task-test", 1).get(0);
         assertEquals("kept", reused.getResult()); assertEquals(0, reused.getReusedExecutionNo());
         assertEquals(0, reused.getReusedSegmentNo()); assertNull(reused.getUsageJson());
-        execute("UPDATE analysis_task SET retry_count = 2");
+        execute("UPDATE analysis_task SET attempt_no = 2");
         executions.insert(execution(2, "c"));
         assertEquals(0, segments.reuseSucceeded("task-test", 2, 0, 0, 0, 1000, 3000));
-        execute("UPDATE analysis_task SET retry_count = 3");
+        execute("UPDATE analysis_task SET attempt_no = 3");
         var changedInput = execution(3, "b"); changedInput.setInputHash("d".repeat(64));
         executions.insert(changedInput);
         assertEquals(0, segments.reuseSucceeded("task-test", 3, 0, 0, 0, 1000, 3000));

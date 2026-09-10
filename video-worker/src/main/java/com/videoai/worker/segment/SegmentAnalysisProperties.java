@@ -14,11 +14,15 @@ public class SegmentAnalysisProperties {
     private long requestIntervalMs = 1000;
     private long cancellationGraceMs = 2000;
     private int maxResponseBytes = 1024 * 1024;
+    private int modelMaxAttempts = 3;
+    private long modelRetryInitialDelayMs = 10000;
     public void validate() {
         if (threads < 1 || threads > 64 || queueCapacity < 1 || queueCapacity > 1024
                 || requestIntervalMs < 1 || requestIntervalMs > 60000
                 || cancellationGraceMs < 0 || cancellationGraceMs > 10000
-                || maxResponseBytes < 1024 || maxResponseBytes > 16 * 1024 * 1024)
+                || maxResponseBytes < 1024 || maxResponseBytes > 16 * 1024 * 1024
+                || modelMaxAttempts < 1 || modelMaxAttempts > 3
+                || modelRetryInitialDelayMs < 1 || modelRetryInitialDelayMs > 60000)
             throw new IllegalArgumentException("片段并发、队列、期限或响应预算配置无效");
     }
 }

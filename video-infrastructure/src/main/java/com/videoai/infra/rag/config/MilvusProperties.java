@@ -17,7 +17,7 @@ public class MilvusProperties {
 
     private String database = "default";
 
-    private String collection = "apex_knowledge_chunk_l03_v1";
+    private String collection = "apex_knowledge_chunk_experiment_no_heading_v1";
 
     private String metricType = "COSINE";
 

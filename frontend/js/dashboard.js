@@ -103,7 +103,7 @@ const Dashboard = {
     const stage = TaskStage.describe(task);
     const displayName = task.taskName || this.extractFileName(task.videoUrl);
     const time = task.createdAt ? this.formatTime(task.createdAt) : '';
-    const canRetry = task.status === 'FAILED' || task.status === 'DEAD' || task.status === 'PARTIALLY_COMPLETED';
+    const canRetry = task.status === 'FAILED' || task.status === 'PARTIAL';
     const canDelete = this.isFinalState(task.status) || this.isStuck(task);
     const deleteLabel = this.isFinalState(task.status) ? '删除' : '强制取消';
 
@@ -123,7 +123,7 @@ const Dashboard = {
           </div>
           <div class="task-card__meta">
             <span class="badge badge--${statusClass}">${statusText}</span>
-            ${task.retryCount > 0 ? `<span class="text-muted" style="margin-left:8px">已重新分析 ${task.retryCount} 次</span>` : ''}
+            ${task.attemptNo > 0 ? `<span class="text-muted" style="margin-left:8px">已重新分析 ${task.attemptNo} 次</span>` : ''}
           </div>
         </div>
         <div class="task-card__progress" style="color:var(--text-secondary);line-height:1.6">
@@ -273,7 +273,7 @@ const Dashboard = {
   },
 
   isFinalState(status) {
-    return ['COMPLETED', 'PARTIALLY_COMPLETED', 'FAILED', 'DEAD', 'CANCELLED'].includes(status);
+    return ['SUCCEEDED', 'PARTIAL', 'FAILED', 'CANCELLED'].includes(status);
   },
 
   /**
@@ -292,12 +292,9 @@ const Dashboard = {
   getStatusText(status) {
     const map = {
       'PENDING': '等待中',
-      'QUEUED': '排队中',
-      'PROCESSING': '分析中',
-      'COMPLETED': '已完成', 'PARTIALLY_COMPLETED': '部分完成',
+      'RUNNING': '分析中',
+      'SUCCEEDED': '已完成', 'PARTIAL': '部分完成',
       'FAILED': '失败',
-      'RETRYING': '重试中',
-      'DEAD': '已终止',
       'CANCELLED': '已取消',
     };
     return map[status] || status || '未知';

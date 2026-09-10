@@ -12,7 +12,7 @@ public interface AnalysisTextCallMapper {
             INSERT INTO analysis_text_call (task_id,execution_no,purpose,batch_no,request_hash)
             SELECT e.task_id,e.execution_no,#{purpose},#{batchNo},#{requestHash} FROM analysis_execution e
             JOIN analysis_task t ON t.task_id=e.task_id WHERE e.task_id=#{taskId} AND e.execution_no=#{executionNo}
-              AND t.retry_count=e.execution_no AND t.status='PROCESSING'
+              AND t.attempt_no=e.execution_no AND t.status='RUNNING'
             """)
     int claim(AnalysisTextCall call);
 

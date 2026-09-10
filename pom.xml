@@ -41,7 +41,6 @@
 
         <!-- 中间件版本 -->
         <redisson.version>3.27.0</redisson.version>
-        <kafka.version>3.6.1</kafka.version>
 
         <!-- 工具库版本 -->
         <hutool.version>5.8.26</hutool.version>
@@ -149,12 +148,8 @@
                 <version>${redisson.version}</version>
             </dependency>
 
-            <!-- ==================== Kafka ==================== -->
-            <dependency>
-                <groupId>org.springframework.kafka</groupId>
-                <artifactId>spring-kafka</artifactId>
-                <version>3.1.2</version>
-            </dependency>
+
+
 
             <!-- ==================== 工具库 ==================== -->
             <!-- Hutool：Java工具包，减少重复代码 -->
@@ -252,7 +247,7 @@
                 <version>2.4.5</version>
             </dependency>
 
-            <!-- 统一 protobuf 版本: milvus-sdk 需要 3.24+, Kafka/gRPC 自带较低版本, 统一到 3.25 -->
+
             <dependency>
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>

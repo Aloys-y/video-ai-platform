@@ -16,7 +16,6 @@ import com.videoai.infra.minio.service.StorageService;
 import com.videoai.infra.mysql.mapper.AnalysisTaskMapper;
 import com.videoai.infra.mysql.mapper.UploadSessionMapper;
 import com.videoai.infra.redis.key.RedisKey;
-import com.videoai.infra.service.TaskOutboxService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.annotation.PostConstruct;
@@ -46,8 +45,6 @@ public class UploadService {
     private final StorageService storageService;
     private final StringRedisTemplate redisTemplate;
     private final RedissonClient redissonClient;
-    private final TaskOutboxService taskOutboxService;
-    private final com.videoai.api.config.AnalysisModePolicy analysisModePolicy;
 
     @Value("${videoai.upload.chunk-size:5242880}")
     private long defaultChunkSize;
@@ -335,7 +332,7 @@ public class UploadService {
         LambdaQueryWrapper<AnalysisTask> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(AnalysisTask::getUploadId, uploadId)
                .notIn(AnalysisTask::getStatus,
-                       TaskStatus.COMPLETED.getCode(),
+                       TaskStatus.SUCCEEDED.getCode(),
                        TaskStatus.CANCELLED.getCode())
                .orderByDesc(AnalysisTask::getCreatedAt)
                .last("LIMIT 1");
@@ -368,11 +365,10 @@ public class UploadService {
         task.setPrompt(prompt);
         task.setStatusEnum(TaskStatus.PENDING);
         task.setProgress(0);
-        task.setRetryCount(0);
-        task.setAnalysisMode(analysisModePolicy.forUser(userId));
+        task.setAttemptNo(0);
+        task.setAnalysisMode("AUDIO_PREFILTER");
 
         analysisTaskMapper.insert(task);
-        taskOutboxService.createExecuteOutbox(task, 0, java.time.LocalDateTime.now());
 
         log.info("Analysis task created, taskId={}, uploadId={}", task.getTaskId(), uploadId);
         return task;

@@ -28,9 +28,11 @@ class SegmentAnalysisServiceTest {
     final AtomicBoolean active = new AtomicBoolean(true);
     SegmentAnalysisService service; SegmentAnalysisExecutor executor; AiVideoProvider provider;
     AnalysisSegmentMapper mapper; AnalysisExecution execution; StorageService storage;
+    SegmentAnalysisProperties properties;
 
     @BeforeEach void setup() throws Exception {
-        var properties = new SegmentAnalysisProperties(); properties.setRequestIntervalMs(1);
+        properties = new SegmentAnalysisProperties(); properties.setRequestIntervalMs(1);
+        properties.setModelRetryInitialDelayMs(5);
         executor = new SegmentAnalysisExecutor(properties);
         var mediaConfig = new MediaProperties(); mediaConfig.setTempRoot(root.toString()); mediaConfig.setMinFreeBytes(0);
         provider = mock(AiVideoProvider.class); mapper = mock(AnalysisSegmentMapper.class); storage = mock(StorageService.class);
@@ -88,6 +90,62 @@ class SegmentAnalysisServiceTest {
         objects.put("plan", json.writeValueAsBytes(new AudioPrefilterPreparationService.SegmentManifest(2, plan, new SegmentGuidance("复盘", "掩体使用参考"))));
     }
     SegmentAnalysisService.Result run() throws Exception { return service.analyze("task", 0, Instant.now().plusSeconds(5), p -> {}); }
+
+    @Test void retryableModelFailureRetriesWithoutRestartingPersistence() throws Exception {
+        plan(1);
+        when(provider.callDetailed(anyString(), anyString()))
+                .thenThrow(new com.videoai.worker.service.provider.AiProviderException("429", true))
+                .thenThrow(new com.videoai.worker.service.provider.AiProviderException("503", true))
+                .thenReturn(response("retried"));
+        assertEquals("retried", run().reviews().get(0).summary());
+        verify(provider, times(3)).callDetailed(anyString(), anyString());
+        verify(mapper, times(1)).markProcessing(anyString(), anyInt(), anyInt());
+        verify(mapper, times(1)).recordResponse(any());
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {false, true})
+    void nonRetryableOrExhaustedModelFailureStops(boolean retryable) throws Exception {
+        plan(1);
+        when(provider.callDetailed(anyString(), anyString()))
+                .thenThrow(new com.videoai.worker.service.provider.AiProviderException("failure", retryable));
+        assertThrows(SegmentAnalysisExecutor.BatchFailure.class, this::run);
+        verify(provider, times(retryable ? 3 : 1)).callDetailed(anyString(), anyString());
+        assertEquals("FAILED", rows.get(0).getStatus());
+    }
+
+    @Test void interruptDuringBackoffStopsWithoutAnotherCallOrFailureWrite() throws Exception {
+        plan(1); properties.setModelRetryInitialDelayMs(60000);
+        var started = new CountDownLatch(1);
+        var worker = new java.util.concurrent.atomic.AtomicReference<Thread>();
+        when(provider.callDetailed(anyString(), anyString())).thenAnswer(i -> {
+            worker.set(Thread.currentThread()); started.countDown();
+            throw new com.videoai.worker.service.provider.AiProviderException("429", true);
+        });
+        var parent = Executors.newSingleThreadExecutor();
+        try {
+            var future = parent.submit(this::run);
+            assertTrue(started.await(2, TimeUnit.SECONDS));
+            // 等待实际进入 sleep，而不是只验证调用前的中断检查。
+            long until = System.nanoTime() + TimeUnit.SECONDS.toNanos(2);
+            while (worker.get().getState() != Thread.State.TIMED_WAITING && System.nanoTime() < until) Thread.yield();
+            assertEquals(Thread.State.TIMED_WAITING, worker.get().getState());
+            worker.get().interrupt();
+            assertInstanceOf(SegmentAnalysisExecutor.BatchFailure.class,
+                    assertThrows(ExecutionException.class, () -> future.get(2, TimeUnit.SECONDS)).getCause());
+            verify(provider, times(1)).callDetailed(anyString(), anyString());
+            verify(mapper, never()).finish(any());
+        } finally { parent.shutdownNow(); }
+    }
+
+    @Test void deadlineDuringBackoffPreventsRetry() throws Exception {
+        plan(1); properties.setModelRetryInitialDelayMs(60000);
+        when(provider.callDetailed(anyString(), anyString()))
+                .thenThrow(new com.videoai.worker.service.provider.AiProviderException("429", true));
+        assertThrows(SegmentAnalysisExecutor.BatchFailure.class,
+                () -> service.analyze("task", 0, Instant.now().plusMillis(500), p -> {}));
+        verify(provider, times(1)).callDetailed(anyString(), anyString());
+    }
 
     @Test void outOfOrderCompletionReturnsOriginalTimelineAfterAllWritesAndCanResume() throws Exception {
         var releaseFirst = new CountDownLatch(1); var secondSaved = new CountDownLatch(1);

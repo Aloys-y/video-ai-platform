@@ -84,6 +84,11 @@ public class SegmentAnalysisExecutor implements AutoCloseable {
         private boolean reported;
         private T value;
         private Throwable error;
+        private AutoCloseable child;
+        synchronized void track() { if(child==null && scope.ownership!=null) child=scope.ownership.retainChild(); }
+        private void releaseChild() {
+            if(child!=null){try{child.close();}catch(Exception e){throw new IllegalStateException("片段收尾登记失败",e);}finally{child=null;}}
+        }
         Job(Work<T> work, Scope scope, CountDownLatch finished) {
             this.work = work; this.scope = scope; this.finished = finished;
         }
@@ -103,6 +108,7 @@ public class SegmentAnalysisExecutor implements AutoCloseable {
                     runner = null;
                     status = error == null ? OutcomeStatus.SUCCEEDED : OutcomeStatus.FAILED;
                     state = 2;
+                    releaseChild();
                     finished.countDown();
                 }
             }
@@ -115,7 +121,7 @@ public class SegmentAnalysisExecutor implements AutoCloseable {
                 pool.remove(this);
                 if (status == OutcomeStatus.QUEUED) status = OutcomeStatus.CANCELLED;
                 error = new CancellationException("片段未执行");
-                state = 2; finished.countDown();
+                state = 2; releaseChild(); finished.countDown();
             } else if (state == 1) {
                 // 与 run 的 finally 使用同一把锁，避免中断已复用该工作线程的其他任务。
                 runner.interrupt();
@@ -153,7 +159,7 @@ public class SegmentAnalysisExecutor implements AutoCloseable {
                     Job<T> job = jobs.get(next);
                     try {
                         long acceptedAt = System.nanoTime();
-                        pool.execute(job); job.accepted(); onAccepted.accept(next, acceptedAt); next++;
+                        job.track(); pool.execute(job); job.accepted(); onAccepted.accept(next, acceptedAt); next++;
                         continue;
                     } catch (RejectedExecutionException e) {
                         if (pool.isShutdown()) throw new InterruptedException("片段池已关闭");

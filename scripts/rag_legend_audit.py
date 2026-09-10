@@ -114,7 +114,7 @@ def markdown_summary(audit: dict[str, Any], json_name: str, csv_name: str) -> st
         lines.append(f"- `{card_code}`：ORPHAN_VECTOR，Milvus={count}，MySQL卡片不存在")
     lines.extend([
         "",
-        "## L01结论",
+        "## 审计结论",
         "",
         "- 待根据本次审计结果填写是否可以冻结该快照。",
         "",
