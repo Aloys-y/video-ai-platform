@@ -1,0 +1,71 @@
+/* TacEcho performance studio: dark surfaces, blue actions, restrained Apex accents. */
+:root { --bg-primary:#0d1118; --bg-secondary:#151c27; --bg-card:#151c27; --bg-card-hover:#1b2534; --bg-input:#101722; --text-heading:#f0f4fb; --text-primary:#d4dfed; --text-secondary:#9baac0; --text-tertiary:#8898b0; --border-default:#293447; --accent-primary:#6a9bff; --accent-primary-dark:#477be0; --accent-primary-light:#9bbcff; --border-accent:#6a9bff; --shadow-card:none; }
+body { background:#0d1118; color:var(--text-primary); }
+.navbar { background:#0b0f16f5; border-color:#242e3e; height:72px; }
+.navbar__logo { color:#fff; font-weight:800; }
+.navbar__logo span { color:#83abff; -webkit-text-fill-color:#83abff; }
+.navbar__link.active { background:#213454; color:#a9c7ff; border-color:transparent; }
+.navbar__link:hover { background:#1a2639; }
+.locale-select { border-color:#334158; background:#141e2c; color:#d8e4f5; }
+.main-content { padding-top:112px; }
+.hud-title { color:#f0f4fb; font-weight:700; letter-spacing:-1px; }
+.card,.task-card { background:#151c27; border-color:#293447; box-shadow:none; }
+.card:hover,.task-card:hover { background:#17202d; border-color:#3b506f; box-shadow:none; }
+.btn { border-radius:8px; }
+.btn--primary,.studio-upload-cta { background:#82aaff; color:#0b1932; box-shadow:none; }
+.btn--primary:hover:not(:disabled) { background:#a1bfff; color:#0b1932; }
+.btn--ghost { background:#1b2534; border-color:#334158; color:#d2deef; }
+.form-input { background:#0e1622; border-color:#344158; color:#edf3fd; }
+.auth-panel__logo h1 { color:#fff; -webkit-text-fill-color:#fff; }
+.auth-panel { max-width:430px; width:100%; }
+.auth-page.active { display:grid; grid-template-columns:minmax(0,1.25fr) minmax(320px,1fr); align-items:center; gap:80px; min-height:calc(100vh - 180px); }
+.auth-intro { max-width:650px; }
+.auth-intro h2 { font-size:clamp(36px,4.5vw,64px); line-height:1.2; letter-spacing:-2px; color:#f2f6fd; margin:20px 0; }
+.auth-intro h2 span { color:#8eb3ff; }
+.auth-intro > p { font-size:16px; line-height:1.9; color:#a2b1c7; max-width:480px; }
+.auth-intro__label { font-size:11px; letter-spacing:3px; color:#eb9c85; }
+.auth-intro__features { display:flex; flex-wrap:wrap; gap:10px; margin-top:30px; }
+.auth-intro__features span { padding:9px 13px; border:1px solid #344158; border-radius:6px; font-size:12px; color:#c5d4e9; }
+.apex-hero { min-height:370px; border:1px solid #2b3c54; border-radius:14px; background:#141f30; }
+.apex-hero__copy { padding:42px; }
+.apex-hero h2 { font-size:clamp(30px,3.5vw,48px); font-weight:700; line-height:1.25; }
+.apex-hero h2 span { color:#9cbdff; }
+.apex-hero__tag { color:#edab95; }
+.apex-focus span { border-color:#40526c; }
+#upload-zone { background:#151f2e; border-color:#465e80; }
+#upload-zone:hover,#upload-zone.dragover { background:#1b2a40; border-color:#91b5ff; }
+.studio-workflow { gap:16px; }
+.studio-workflow > div { padding:22px; border:1px solid #2c394c; border-radius:10px; background:#151c27; }
+.studio-workflow > div:first-child { border-left-color:#ad715f; }
+.studio-workflow h3 { font-size:16px; }
+.studio-workflow p { font-size:13px; }
+.task-card { border-left:3px solid #385880; }
+#page-task-detail .task-context { background:#151e2b; border-color:#2d3c52; }
+#page-task-detail .task-sidebar { background:transparent; }
+#page-task-detail .task-cost-shortcuts button { background:#111a28; border-color:#304059; color:#adbed6; }
+#page-task-detail .task-cost-shortcuts button:hover { background:#1a2940; border-color:#7097d4; }
+#page-task-detail .task-cost-shortcuts strong { color:#bed3ff; }
+#page-task-detail .task-view-tabs { background:#101823; border-color:#2a394e; }
+#page-task-detail .task-view-tabs button { color:#99abc4; }
+#page-task-detail .task-view-tabs button[aria-selected="true"] { background:#29436b; color:#e4eeff; box-shadow:none; }
+#page-task-detail .segment-picker__item { background:#141e2d; border-color:#2e3d53; color:#cad8ec; }
+#page-task-detail .segment-picker__item.is-selected { background:#294775; border-color:#7aa3eb; box-shadow:inset 0 0 0 1px #7aa3eb; }
+#page-task-detail .segment-count { background:#192a43; color:#acbed8; }
+#page-task-detail .segment-card { background:#151e2b; border-color:#2e3e55; }
+#page-task-detail .segment-card__header { background:#192536; border-color:#304159; }
+#page-task-detail .segment-number { background:#2b4367; color:#b9d0fa; }
+#page-task-detail .segment-summary { background:#1a2940; border-color:#729bdc; color:#e0eafa; }
+#page-task-detail .segment-advice { background:#141e2d; border-color:#304159; }
+#page-task-detail .segment-event,#page-task-detail .segment-basis { border-color:#304159; }
+#page-task-detail .segment-uncertainties { background:#302b24; border-color:#544834; }
+.segment-time,.segment-play { background:#223859; color:#b5cfff; border-color:#385784; }
+.segment-cost-summary { background:#141e2d; border-color:#304159; color:#a6b9d5; }
+.task-cost__metric { background:#19283e; border-color:#304159; }
+.task-cost table th,.task-cost table td { border-color:#304159; }
+.segment-dialog { background:#152032; border-color:#3a4c68; color:#e7effc; }
+.segment-dialog__header button { background:#2a3c58; color:#e7effc; }
+.empty-state { color:#a3b3ca; }
+@media(max-width:850px) { .auth-page.active { grid-template-columns:minmax(0,1fr); gap:30px; } .auth-intro { text-align:center; margin:auto; } .auth-intro h2 { font-size:36px; letter-spacing:-1px; } .auth-intro > p { margin:auto; } .auth-intro__features { justify-content:center; } .auth-panel { margin:auto; } }
+@media(max-width:760px) { .apex-hero__copy { padding:26px; } .apex-hero h2 { font-size:30px; } .main-content { padding-top:96px; } .studio-workflow > div { padding:18px; } }
+.auth-page.active { display:grid !important; }
+@media(max-width:850px) { .auth-page { padding:12px 0; } .auth-intro,.auth-panel { min-width:0; } }

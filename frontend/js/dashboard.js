@@ -154,7 +154,7 @@ const Dashboard = {
    * 重命名任务
    */
   async promptRename(taskId, currentName) {
-    const newName = prompt('请输入新的任务名称：', currentName);
+    const newName = prompt(I18n.t('请输入新的任务名称：'), currentName);
     if (!newName || newName.trim() === '' || newName === currentName) return;
     try {
       await Api.put(`/task/${taskId}/rename`, { taskName: newName.trim() });
@@ -169,7 +169,7 @@ const Dashboard = {
    * 用户手动重新分析失败任务
    */
   async confirmRetry(taskId) {
-    if (!confirm('确定要重新分析此任务吗？')) return;
+    if (!confirm(I18n.t('确定要重新分析此任务吗？'))) return;
     try {
       await Api.post(`/task/${taskId}/retry`);
       App.toast('任务已重新提交', 'success');
@@ -183,7 +183,7 @@ const Dashboard = {
    * 删除任务
    */
   async confirmDelete(taskId, name) {
-    if (!confirm(`确定要删除任务「${name}」吗？此操作不可恢复。`)) return;
+    if (!confirm(I18n.t(`确定要删除任务「${name}」吗？此操作不可恢复。`))) return;
     try {
       await Api.del(`/task/${taskId}`);
       App.toast('任务已删除', 'success');

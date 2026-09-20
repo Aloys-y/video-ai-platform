@@ -120,6 +120,10 @@ const App = {
     Auth.init();
   },
 
+  languagePicker() {
+    return `<label class="locale-control"><span aria-hidden="true">◎</span><select class="locale-select" aria-label="Language / 语言" onchange="I18n.set(this.value)"><option value="zh-CN">简体中文</option><option value="en">English</option></select></label>`;
+  },
+
   renderNavbar() {
     const nav = document.getElementById('navbar');
     if (!nav) return;
@@ -135,8 +139,9 @@ const App = {
             <polygon points="23 7 16 12 23 17 23 7"/>
             <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
           </svg>
-          Do<span>Video</span>AI
+          Tac<span>Echo</span>
         </div>
+        ${this.languagePicker()}
       `;
       return;
     }
@@ -147,7 +152,7 @@ const App = {
           <polygon points="23 7 16 12 23 17 23 7"/>
           <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
         </svg>
-        Do<span>Video</span>AI
+        Tac<span>Echo</span>
       </div>
       <button class="navbar__hamburger" aria-label="菜单" onclick="App.toggleMobileMenu()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -201,6 +206,7 @@ const App = {
           </a>
         ` : ''}
       </div>
+      ${this.languagePicker()}
       <div class="navbar__user">
         ${user ? this.escapeHtml(user.username) : ''}
         ${user && user.apiKey ? `<br><span style="font-size:0.7rem;color:var(--text-tertiary)">${this.escapeHtml(user.apiKey)}</span>` : ''}
