@@ -69,6 +69,19 @@ class KnowledgeRetrievalServiceTest {
         when(embeddingProvider.embedQuery(anyString())).thenReturn(List.of(0.1F, 0.2F));
     }
 
+    @Test void onlineRetrievalPassesOwnerToBothCallsAndCanDegrade() {
+        org.mockito.Mockito.reset(embeddingProvider);
+        var context=new com.videoai.common.analysis.AiCallContext("video",3,com.videoai.common.analysis.AiCallContext.Stage.RAG_EMBEDDING,0);
+        var rerankContext=new com.videoai.common.analysis.AiCallContext("video",3,com.videoai.common.analysis.AiCallContext.Stage.RAG_RERANK,0);
+        properties.setRerankEnabled(true);properties.setRerankFailOpen(true);
+        when(embeddingProvider.embedQuery(eq(context),anyString())).thenReturn(List.of(0.1F,0.2F));
+        when(vectorStoreClient.search(eq(List.of(0.1F,0.2F)),eq(12),anyString())).thenReturn(List.of(result("wraith_0","wraith",0.9)));
+        when(rerankService.rerank(eq(rerankContext),anyString(),anyList())).thenThrow(new IllegalStateException("failed receipt already recorded"));
+        assertEquals("HIT",service.retrieve(context,"query").getStatus());
+        verify(embeddingProvider).embedQuery(eq(context),anyString());verify(embeddingProvider,never()).embedQuery(anyString());
+        verify(rerankService).rerank(eq(rerankContext),anyString(),anyList());verify(rerankService,never()).rerank(anyString(),anyList());
+    }
+
     @Test
     void shouldUseQueryEmbeddingAndDiversifyCards() {
         when(vectorStoreClient.search(eq(List.of(0.1F, 0.2F)), eq(12), anyString()))

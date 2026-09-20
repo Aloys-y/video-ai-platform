@@ -11,7 +11,7 @@ import java.util.*;
 @ConfigurationProperties(prefix = "analysis.text")
 public class TextAnalysisProperties {
     private String baseUrl = "https://dashscope.aliyuncs.com/compatible-mode/v1";
-    private String model = "qwen3-vl-flash";
+    private String model = "qwen3.8-flash";
     @lombok.ToString.Exclude private String apiKey;
     private int timeoutSeconds = 120;
     private int batchSize = 80;
@@ -20,7 +20,8 @@ public class TextAnalysisProperties {
     private int maxOutputTokens = 4096;
     private int maxBatches = 64;
     private int maxCandidates = 500;
-    private long mergeGapMs = 5000;
+    private long mergeGapMs = 15000;
+    private long expandedMergeGapMs = 5000;
     private long beforeMs = 10000;
     private long afterMs = 15000;
     private BigDecimal inputCnyPerMillion = new BigDecimal("0.15");
@@ -34,6 +35,7 @@ public class TextAnalysisProperties {
         if (batchSize < 1 || overlap < 0 || overlap >= batchSize || maxRequestBytes < 2048 || maxRequestBytes > 30000
                 || maxOutputTokens < 1 || maxOutputTokens > 4096 || maxBatches < 1 || maxCandidates < 1
                 || beforeMs < 0 || beforeMs > 60000 || afterMs < 0 || afterMs > 60000 || mergeGapMs < 0 || mergeGapMs > 60000
+                || expandedMergeGapMs < 0 || expandedMergeGapMs > 60000
                 || timeoutSeconds < 1 || model == null || model.isBlank()) throw new IllegalArgumentException("文本筛选配置无效");
         for (BigDecimal value : List.of(inputCnyPerMillion, outputCnyPerMillion, asrCnyPerSecond, videoReserveCnyPerMinute, maxEstimatedTaskCny))
             if (value.signum() <= 0) throw new IllegalArgumentException("费用预算和单价预留必须大于0");
@@ -45,7 +47,7 @@ public class TextAnalysisProperties {
         result.put("screenPrompt", TextPrompts.SCREEN); result.put("summaryPrompt", TextPrompts.SUMMARY);
         result.put("batchSize", batchSize); result.put("overlap", overlap); result.put("maxRequestBytes", maxRequestBytes);
         result.put("maxOutputTokens", maxOutputTokens); result.put("maxBatches", maxBatches); result.put("maxCandidates", maxCandidates);
-        result.put("mergeGapMs", mergeGapMs); result.put("beforeMs", beforeMs); result.put("afterMs", afterMs);
+        result.put("expandedMergeGapMs", expandedMergeGapMs); result.put("mergeGapMs", mergeGapMs); result.put("beforeMs", beforeMs); result.put("afterMs", afterMs);
         result.put("inputCnyPerMillion", inputCnyPerMillion.toPlainString()); result.put("outputCnyPerMillion", outputCnyPerMillion.toPlainString());
         result.put("asrCnyPerSecond", asrCnyPerSecond.toPlainString()); result.put("videoReserveCnyPerMinute", videoReserveCnyPerMinute.toPlainString());
         result.put("maxEstimatedTaskCny", maxEstimatedTaskCny.toPlainString()); return result;

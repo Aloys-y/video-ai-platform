@@ -26,6 +26,20 @@ class BillingTest(unittest.TestCase):
         call = dict(service="DashScopeEmbeddingProvider", operation="embedQuery", model="text-embedding-v3", status="RETURNED", usage={"total_tokens": 120})
         self.assertEqual(Decimal("0.00006"), Decimal(price(call, set())["list_price_cny"]))
 
+    def test_selected_models_and_plus_tier(self):
+        call = self.call(usage={"input_tokens": 262144, "output_tokens": 1000})
+        call["model"] = "qwen3.7-plus"
+        self.assertEqual(Decimal("0.532288"), Decimal(price(call, set())["list_price_cny"]))
+        call["usage"]["input_tokens"] += 1
+        self.assertEqual(Decimal("1.59687"), Decimal(price(call, set())["list_price_cny"]))
+        call["model"] = "qwen3.8-flash"
+        call["usage"] = {"prompt_tokens": 6000, "completion_tokens": 400}
+        self.assertEqual(Decimal("0.00588"), Decimal(price(call, set())["list_price_cny"]))
+
+    def test_audio_3_receipt(self):
+        call = dict(service="DashScopeAsrClient", operation="query", model="qwen-audio-3.0-asr-flash-filetrans", status="RETURNED", remoteStatus="SUCCEEDED", remoteTaskId="audio3", usage={"duration": 393})
+        self.assertEqual(Decimal("0.08646"), Decimal(price(call, set())["list_price_cny"]))
+
 
 if __name__ == "__main__":
     unittest.main()

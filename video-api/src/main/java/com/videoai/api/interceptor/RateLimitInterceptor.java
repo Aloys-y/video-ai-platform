@@ -58,6 +58,9 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     @Value("${videoai.rate-limit.global-qps:1000}")
     private double globalQps;
 
+    @Value("${videoai.rate-limit.enabled:false}")
+    private boolean enabled;
+
     private static final int USER_WINDOW_SECONDS = 1;
 
     private volatile RateLimiter globalRateLimiter;
@@ -77,6 +80,8 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
                              Object handler) throws Exception {
+
+        if (!enabled) return true;
 
         // ========== Level 1: 全局限流 ==========
         if (!getGlobalRateLimiter().tryAcquire()) {

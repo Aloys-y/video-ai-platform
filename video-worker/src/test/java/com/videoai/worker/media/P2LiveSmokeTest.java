@@ -21,8 +21,12 @@ class P2LiveSmokeTest {
     @Test void existingAsrAndRealVideoStorageRoundTrip() throws Exception {
         var json = new ObjectMapper(); var asrConfig = new AsrProperties();
         asrConfig.setApiKey(System.getenv("ASR_API_KEY"));
-        var client = new DashScopeAsrClient(asrConfig, new DashScopeConfig(), json);
-        var query = client.query(System.getenv("P2_ASR_TASK_ID"));
+        // 此测试仅查询启用账本之前的 P0 回执，不验证费用；不发起 ASR 提交。
+        var recorder = org.mockito.Mockito.mock(com.videoai.infra.cost.AiCallRecorder.class);
+        org.mockito.Mockito.when(recorder.findAsrCall(org.mockito.ArgumentMatchers.any(),org.mockito.ArgumentMatchers.anyString()))
+                .thenReturn(java.util.UUID.randomUUID().toString());
+        var client = new DashScopeAsrClient(asrConfig, new DashScopeConfig(), json, recorder);
+        var query = client.query(new com.videoai.common.analysis.AiCallContext("historical-p0",0,com.videoai.common.analysis.AiCallContext.Stage.ASR,0),System.getenv("P2_ASR_TASK_ID"));
         assertEquals("SUCCEEDED", query.status());
         var transcript = client.downloadResult(query.resultUrl(), 0, 0, Long.parseLong(System.getenv("P2_ASR_DURATION_MS")));
         assertFalse(transcript.utterances().isEmpty());

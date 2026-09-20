@@ -27,7 +27,9 @@ public class RagOrchestrator {
     private final TaskRagContextMapper taskRagContextMapper;
     private final ObjectMapper objectMapper;
 
-    public PromptEnvelope buildPrompt(AnalysisTask task) {
+    public PromptEnvelope buildPrompt(AnalysisTask task, int executionNo) {
+        var callContext=new com.videoai.common.analysis.AiCallContext(task.getTaskId(),executionNo,
+                com.videoai.common.analysis.AiCallContext.Stage.RAG_EMBEDDING,0);
         String userPrompt = promptTemplateService.normalizeUserPrompt(task.getPrompt());
         if (!ragProperties.isEnabled()) {
             return PromptEnvelope.builder()
@@ -39,7 +41,7 @@ public class RagOrchestrator {
         }
 
         try {
-            RagContext ragContext = knowledgeRetrievalService.retrieve(userPrompt);
+            RagContext ragContext = knowledgeRetrievalService.retrieve(callContext,userPrompt);
             Map<String, Object> snapshot = new LinkedHashMap<>();
             snapshot.put("status", ragContext.getStatus());
             snapshot.put("baseCode", ragContext.getBaseCode());

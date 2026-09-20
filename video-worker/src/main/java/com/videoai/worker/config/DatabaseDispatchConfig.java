@@ -10,8 +10,11 @@ import javax.sql.DataSource;
 @Configuration
 public class DatabaseDispatchConfig {
     @Bean
-    TaskDispatchRepository taskDispatchRepository(DataSource source,PlatformTransactionManager transactions) {
-        return new TaskDispatchRepository(source,transactions,90);
+    TaskDispatchRepository taskDispatchRepository(DataSource source,PlatformTransactionManager transactions,
+            org.springframework.beans.factory.ObjectProvider<com.videoai.infra.notification.NotificationEventPublisher> publisher) {
+        return new TaskDispatchRepository(source,transactions,90,event -> {
+            var target=publisher.getIfAvailable(); if(target!=null) target.publish(event);
+        });
     }
     @Bean(initMethod="start",destroyMethod="close")
     DatabaseTaskScheduler databaseTaskScheduler(TaskDispatchRepository repository,VideoAnalysisService service,

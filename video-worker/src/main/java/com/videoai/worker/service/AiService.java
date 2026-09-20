@@ -20,12 +20,12 @@ public class AiService {
     /**
      * 单次调用 AI，不在此层处理业务重试。
      */
-    public String analyzeVideo(String videoUrl, PromptEnvelope promptEnvelope) {
+    public String analyzeVideo(com.videoai.common.analysis.AiCallContext context, String videoUrl, PromptEnvelope promptEnvelope) {
         String fullPrompt = promptEnvelope.buildFullPrompt();
 
         log.info("Calling {} API", aiVideoProvider.getName());
         try {
-            String result = aiVideoProvider.call(videoUrl, fullPrompt);
+            String result = aiVideoProvider.callDetailed(context,videoUrl,fullPrompt).text();
             log.info("{} API response received, length: {}", aiVideoProvider.getName(), result.length());
             return result;
         } catch (AiProviderException e) {

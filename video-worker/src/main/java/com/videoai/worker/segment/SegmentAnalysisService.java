@@ -130,8 +130,12 @@ public class SegmentAnalysisService {
         } catch (Exception e) {
             // 原始异常可能携带签名 URL；业务错误只保存固定说明，响应引用和用量仍保留。
             row.setStatus("FAILED"); row.setResult(null); row.setErrorMessage(e instanceof com.videoai.worker.screening.CandidatePlanner.InvalidTextResultException
-                    ? e.getMessage() : "片段模型调用、解析或结果保存失败；请检查响应记录");
+                    ? "VIDEO_RESULT_PARSE: " + e.getMessage()
+                    : e instanceof com.videoai.worker.service.provider.AiProviderException
+                    ? "VIDEO_MODEL_CALL: " + e.getMessage()
+                    : "VIDEO_RESPONSE_PROCESSING: " + e.getClass().getSimpleName());
             scope.write(() -> { persistence.finish(row); return null; });
+            log.warn("片段分析失败: taskId={}, segment={}, detail={}", row.getTaskId(), row.getSegmentNo(), row.getErrorMessage());
             throw new IOException("片段分析失败");
         }
     }
@@ -145,7 +149,8 @@ public class SegmentAnalysisService {
             String url = storage.getPresignedUrl(segment.objectKey(), provider.getPresignedUrlExpireHours());
             scope.check(); check(row.getTaskId(), row.getExecutionNo(), scope.deadline());
             try {
-                return provider.callDetailed(url, prompt);
+                return provider.callDetailed(new AiCallContext(row.getTaskId(),row.getExecutionNo(),
+                        AiCallContext.Stage.VIDEO_ANALYSIS,row.getSegmentNo()),url,prompt);
             } catch (AiProviderException e) {
                 scope.check();
                 if (!e.isRetryable() || attempt >= config.getModelMaxAttempts()) throw e;
@@ -204,7 +209,7 @@ public class SegmentAnalysisService {
         if (segments.size() > mediaConfig.getMaxSegments()) throw new IOException("片段数量超出预算");
         long end = 0, total = 0; int index = 0;
         for (var s : segments) {
-            if (s.segmentNo() != index++ || s.startMs() < end || s.endMs() - s.startMs() > mediaConfig.getMaxSegmentMs())
+            if (s.segmentNo() != index++ || s.startMs() < end)
                 throw new IOException("冻结片段必须连续编号、有序、不重叠且在时长预算内");
             total += s.endMs() - s.startMs(); end = s.endMs();
         }

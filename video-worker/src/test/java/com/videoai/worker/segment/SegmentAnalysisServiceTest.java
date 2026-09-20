@@ -72,7 +72,7 @@ class SegmentAnalysisServiceTest {
             String key = "raw/" + UUID.randomUUID(); objects.put(key, Files.readAllBytes(i.getArgument(0))); return key;
         });
         when(storage.getPresignedUrl(anyString(), anyInt())).thenAnswer(i -> "https://signed.example/" + i.getArgument(0));
-        when(provider.callDetailed(anyString(), anyString())).thenReturn(response("ok"));
+        when(provider.callDetailed(any(),anyString(), anyString())).thenReturn(response("ok"));
         service = new SegmentAnalysisService(executor, properties, settings, new SegmentPersistenceService(mapper), provider,
                 new SegmentReviewParser(json), executions, tasks, storage, new MediaPreparationService(mediaConfig, json), mediaConfig, json);
         plan(3);
@@ -93,12 +93,13 @@ class SegmentAnalysisServiceTest {
 
     @Test void retryableModelFailureRetriesWithoutRestartingPersistence() throws Exception {
         plan(1);
-        when(provider.callDetailed(anyString(), anyString()))
+        when(provider.callDetailed(any(),anyString(), anyString()))
                 .thenThrow(new com.videoai.worker.service.provider.AiProviderException("429", true))
                 .thenThrow(new com.videoai.worker.service.provider.AiProviderException("503", true))
                 .thenReturn(response("retried"));
         assertEquals("retried", run().reviews().get(0).summary());
-        verify(provider, times(3)).callDetailed(anyString(), anyString());
+        verify(provider,times(3)).callDetailed(eq(new AiCallContext("task",0,AiCallContext.Stage.VIDEO_ANALYSIS,0)),anyString(),anyString());
+        verify(provider, times(3)).callDetailed(any(),anyString(), anyString());
         verify(mapper, times(1)).markProcessing(anyString(), anyInt(), anyInt());
         verify(mapper, times(1)).recordResponse(any());
     }
@@ -107,10 +108,10 @@ class SegmentAnalysisServiceTest {
     @org.junit.jupiter.params.provider.ValueSource(booleans = {false, true})
     void nonRetryableOrExhaustedModelFailureStops(boolean retryable) throws Exception {
         plan(1);
-        when(provider.callDetailed(anyString(), anyString()))
+        when(provider.callDetailed(any(),anyString(), anyString()))
                 .thenThrow(new com.videoai.worker.service.provider.AiProviderException("failure", retryable));
         assertThrows(SegmentAnalysisExecutor.BatchFailure.class, this::run);
-        verify(provider, times(retryable ? 3 : 1)).callDetailed(anyString(), anyString());
+        verify(provider, times(retryable ? 3 : 1)).callDetailed(any(),anyString(), anyString());
         assertEquals("FAILED", rows.get(0).getStatus());
     }
 
@@ -118,7 +119,7 @@ class SegmentAnalysisServiceTest {
         plan(1); properties.setModelRetryInitialDelayMs(60000);
         var started = new CountDownLatch(1);
         var worker = new java.util.concurrent.atomic.AtomicReference<Thread>();
-        when(provider.callDetailed(anyString(), anyString())).thenAnswer(i -> {
+        when(provider.callDetailed(any(),anyString(), anyString())).thenAnswer(i -> {
             worker.set(Thread.currentThread()); started.countDown();
             throw new com.videoai.worker.service.provider.AiProviderException("429", true);
         });
@@ -133,23 +134,23 @@ class SegmentAnalysisServiceTest {
             worker.get().interrupt();
             assertInstanceOf(SegmentAnalysisExecutor.BatchFailure.class,
                     assertThrows(ExecutionException.class, () -> future.get(2, TimeUnit.SECONDS)).getCause());
-            verify(provider, times(1)).callDetailed(anyString(), anyString());
+            verify(provider, times(1)).callDetailed(any(),anyString(), anyString());
             verify(mapper, never()).finish(any());
         } finally { parent.shutdownNow(); }
     }
 
     @Test void deadlineDuringBackoffPreventsRetry() throws Exception {
         plan(1); properties.setModelRetryInitialDelayMs(60000);
-        when(provider.callDetailed(anyString(), anyString()))
+        when(provider.callDetailed(any(),anyString(), anyString()))
                 .thenThrow(new com.videoai.worker.service.provider.AiProviderException("429", true));
         assertThrows(SegmentAnalysisExecutor.BatchFailure.class,
                 () -> service.analyze("task", 0, Instant.now().plusMillis(500), p -> {}));
-        verify(provider, times(1)).callDetailed(anyString(), anyString());
+        verify(provider, times(1)).callDetailed(any(),anyString(), anyString());
     }
 
     @Test void outOfOrderCompletionReturnsOriginalTimelineAfterAllWritesAndCanResume() throws Exception {
         var releaseFirst = new CountDownLatch(1); var secondSaved = new CountDownLatch(1);
-        when(provider.callDetailed(contains("clip-0"), anyString())).thenAnswer(i -> { releaseFirst.await(); return response("first"); });
+        when(provider.callDetailed(any(),contains("clip-0"), anyString())).thenAnswer(i -> { releaseFirst.await(); return response("first"); });
         List<Integer> progress = new CopyOnWriteArrayList<>();
         var parent = Executors.newSingleThreadExecutor();
         try {
@@ -166,47 +167,47 @@ class SegmentAnalysisServiceTest {
             assertTrue(rows.values().stream().allMatch(r -> "SUCCEEDED".equals(r.getStatus())));
             for (var row : rows.values()) assertTrue(objects.containsKey(json.readTree(row.getUsageJson()).path("responseObjectKey").asText()));
             assertTrue(run().segments().stream().allMatch(SegmentAnalysisService.Completed::reused));
-            verify(provider, times(3)).callDetailed(anyString(), argThat(p -> p.startsWith(SegmentReviewParser.VIDEO_PROMPT) && p.contains("掩体使用参考") && p.contains("复盘")));
+            verify(provider, times(3)).callDetailed(any(),anyString(), argThat(p -> p.startsWith(SegmentReviewParser.VIDEO_PROMPT) && p.contains("掩体使用参考") && p.contains("复盘")));
         } finally { releaseFirst.countDown(); parent.shutdownNow(); }
     }
 
     @Test void invalidResultPreservesRawAndUsageWithoutRepeatingPaidCall() throws Exception {
         plan(1);
-        when(provider.callDetailed(anyString(), anyString())).thenReturn(new AiVideoProvider.DetailedResult("bad-json", "{\"tokens\":10}", "id", "stop"));
+        when(provider.callDetailed(any(),anyString(), anyString())).thenReturn(new AiVideoProvider.DetailedResult("bad-json", "{\"tokens\":10}", "id", "stop"));
         assertThrows(SegmentAnalysisExecutor.BatchFailure.class, this::run);
         assertEquals("FAILED", rows.get(0).getStatus());
         var receipt = json.readTree(rows.get(0).getUsageJson());
         assertTrue(objects.containsKey(receipt.path("responseObjectKey").asText())); assertEquals(10, receipt.path("reportedUsage").path("tokens").asInt());
-        assertThrows(Exception.class, this::run); verify(provider, times(1)).callDetailed(anyString(), anyString());
+        assertThrows(Exception.class, this::run); verify(provider, times(1)).callDetailed(any(),anyString(), anyString());
     }
 
     @Test void failedSegmentDoesNotPreventOtherResultsFromBeingPersisted() throws Exception {
-        when(provider.callDetailed(contains("clip-0"), anyString()))
+        when(provider.callDetailed(any(),contains("clip-0"), anyString()))
                 .thenReturn(new AiVideoProvider.DetailedResult("bad-json", "{}", "id", "stop"));
         var failure = assertThrows(SegmentAnalysisExecutor.BatchFailure.class, this::run);
         assertTrue(failure.converged()); assertEquals(2, failure.completed().size());
         assertEquals("FAILED", rows.get(0).getStatus());
         assertEquals("SUCCEEDED", rows.get(1).getStatus());
         assertEquals("SUCCEEDED", rows.get(2).getStatus());
-        verify(provider, times(3)).callDetailed(anyString(), anyString());
+        verify(provider, times(3)).callDetailed(any(),anyString(), anyString());
     }
 
     @Test void recordedResponseResumesParsingButUnknownProcessingDoesNotResubmit() throws Exception {
         plan(1); var segment = new PreparedSegment(0, 0, 1000, "clip-0");
         var row = SegmentPersistenceService.row("task", 0, segment); row.setStatus("PROCESSING"); rows.put(0, row);
-        assertThrows(Exception.class, this::run); verify(provider, never()).callDetailed(anyString(), anyString());
+        assertThrows(Exception.class, this::run); verify(provider, never()).callDetailed(any(),anyString(), anyString());
         objects.put("saved", json.writeValueAsBytes(response("saved"))); row.setUsageJson("{\"responseObjectKey\":\"saved\"}");
-        assertEquals("saved", run().reviews().get(0).summary()); verify(provider, never()).callDetailed(anyString(), anyString());
+        assertEquals("saved", run().reviews().get(0).summary()); verify(provider, never()).callDetailed(any(),anyString(), anyString());
     }
 
     @Test void changedConfigEmptyPlanAndMalformedPlanNeverCallModel() throws Exception {
         execution.setConfigSnapshot("{\"settings\":{}}"); assertThrows(Exception.class, this::run);
-        verify(provider, never()).callDetailed(anyString(), anyString());
+        verify(provider, never()).callDetailed(any(),anyString(), anyString());
         execution.setConfigSnapshot(json.writeValueAsString(Map.of("settings", Map.of("segments", new SegmentModelSettings(provider).snapshot()))));
         plan(0); assertTrue(run().reviews().isEmpty());
         objects.put("plan", json.writeValueAsBytes(new AudioPrefilterPreparationService.SegmentManifest(1,
                 List.of(new PreparedSegment(1, 0, 1000, "bad")))));
-        assertThrows(Exception.class, this::run); verify(provider, never()).callDetailed(anyString(), anyString());
+        assertThrows(Exception.class, this::run); verify(provider, never()).callDetailed(any(),anyString(), anyString());
     }
 
     @Test void databaseFailureOrCancellationCannotPublishSuccess() throws Exception {
@@ -214,7 +215,7 @@ class SegmentAnalysisServiceTest {
         assertThrows(SegmentAnalysisExecutor.BatchFailure.class, this::run);
         assertEquals("PROCESSING", rows.get(0).getStatus()); assertNotNull(rows.get(0).getUsageJson());
         active.set(false); assertThrows(Exception.class, this::run);
-        verify(provider, times(1)).callDetailed(anyString(), anyString());
+        verify(provider, times(1)).callDetailed(any(),anyString(), anyString());
     }
 
     @Test void savedResponseSurvivesDatabaseFailureAndRecoveryDoesNotCallModelAgain() throws Exception {
@@ -228,7 +229,7 @@ class SegmentAnalysisServiceTest {
         assertTrue(failure.persistenceUnsettled());
         assertEquals("PROCESSING", rows.get(0).getStatus()); assertNotNull(rows.get(0).getUsageJson());
         assertEquals(1, run().segments().size()); assertEquals("SUCCEEDED", rows.get(0).getStatus());
-        verify(provider, times(1)).callDetailed(anyString(), anyString());
+        verify(provider, times(1)).callDetailed(any(),anyString(), anyString());
     }
 
     @org.junit.jupiter.params.ParameterizedTest
@@ -248,6 +249,6 @@ class SegmentAnalysisServiceTest {
         assertEquals(committed ? "SUCCEEDED" : "PROCESSING", rows.get(0).getStatus());
         assertNotNull(rows.get(0).getUsageJson());
         assertEquals(1, run().segments().size());
-        verify(provider, times(1)).callDetailed(anyString(), anyString());
+        verify(provider, times(1)).callDetailed(any(),anyString(), anyString());
     }
 }

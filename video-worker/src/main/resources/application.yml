@@ -98,6 +98,8 @@ videoai:
 analysis:
   segments:
     threads: 4
+    max-threads: 8
+    keep-alive-ms: 60000
     # 待压测起点；队列只缓存轻量工作，满时由父线程等待，实际等待受整局期限约束。
     queue-capacity: 16
     # 实例级限速；多实例共享账户限额在 P7 验收。
@@ -109,7 +111,7 @@ analysis:
     max-response-bytes: 1048576
   text:
     base-url: ${TEXT_BASE_URL:https://dashscope.aliyuncs.com/compatible-mode/v1}
-    model: ${TEXT_MODEL:qwen3-vl-flash}
+    model: ${TEXT_MODEL:qwen3.8-flash}
     api-key: ${TEXT_API_KEY:}
     timeout-seconds: 120
     batch-size: 80
@@ -118,7 +120,8 @@ analysis:
     max-output-tokens: 4096
     max-batches: 64
     max-candidates: 500
-    merge-gap-ms: 5000
+    merge-gap-ms: 15000
+    expanded-merge-gap-ms: 5000
     before-ms: 10000
     after-ms: 15000
     input-cny-per-million: 0.15
@@ -138,13 +141,12 @@ analysis:
     process-timeout-seconds: 600
     audio-part-ms: 1800000
     max-audio-parts: 64
-    max-segment-ms: 180000
     max-selected-ms: 1800000
-    # 合并扩展并拆分后，按时间顺序最多分析前8个片段。
+    # 两轮合并与上下文扩展后，按时间顺序最多分析前8个片段。
     max-segments: 8
   asr:
     base-url: ${ASR_BASE_URL:https://dashscope.aliyuncs.com/api/v1}
-    model: ${ASR_MODEL:fun-asr-2025-11-07}
+    model: ${ASR_MODEL:qwen-audio-3.0-asr-flash-filetrans}
     # 为空时复用 ai.dashscope.api-key；不写入执行快照。
     api-key: ${ASR_API_KEY:}
     request-timeout-seconds: 45

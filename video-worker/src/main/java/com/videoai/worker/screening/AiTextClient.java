@@ -4,5 +4,5 @@ import java.io.IOException;
 
 /** 纯文本调用；返回原始响应，先持久化再做业务解析。 */
 public interface AiTextClient {
-    String complete(String systemPrompt, String userText) throws IOException;
+    String complete(com.videoai.common.analysis.AiCallContext context, String systemPrompt, String userText) throws IOException;
 }

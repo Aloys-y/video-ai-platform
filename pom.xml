@@ -37,7 +37,7 @@
         <!-- 数据库相关 -->
         <mysql.version>8.0.33</mysql.version>
         <mybatis-plus.version>3.5.5</mybatis-plus.version>
-        <druid.version>1.2.21</druid.version>
+        <druid.version>1.2.23</druid.version>
 
         <!-- 中间件版本 -->
         <redisson.version>3.27.0</redisson.version>

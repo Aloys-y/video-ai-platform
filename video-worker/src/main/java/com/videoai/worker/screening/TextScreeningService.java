@@ -37,7 +37,6 @@ public class TextScreeningService {
                                     BigDecimal estimatedTaskCny,List<BatchReceipt> batches) {
         public ScreeningManifest { candidates=List.copyOf(candidates);ranges=List.copyOf(ranges);batches=List.copyOf(batches); }
     }
-    public record SummaryResult(String markdown,String responseObjectKey,JsonNode usage) {}
     private record ResponseContent(String text,JsonNode usage,String objectKey) {}
 
     public ScreeningManifest screen(String taskId,int executionNo) throws IOException,InterruptedException {
@@ -62,7 +61,7 @@ public class TextScreeningService {
             for(int index=0;index<windows.size();index++) {
                 active(taskId,executionNo,"SCREENING");
                 var window=windows.get(index);
-                ResponseContent response=call(ws,execution,"SCREEN",index,TextPrompts.SCREEN,window.input());
+                ResponseContent response=call(ws,execution,index,TextPrompts.SCREEN,window.input());
                 candidates.addAll(planner.parse(response.text(),window));
                 if(candidates.size()>config.getMaxCandidates()) throw new IOException("候选总数量超出预算");
                 receipts.add(new BatchReceipt(index,response.objectKey(),response.usage()));
@@ -78,39 +77,10 @@ public class TextScreeningService {
         }
     }
 
-    /** 接收已验证的视频结果和调用方提供的知识上下文；本服务不在粗筛阶段调用 RAG。 */
-    public SummaryResult summarize(String taskId,int executionNo,List<SegmentReview> reviews,String knowledgeContext,String userPrompt)
-            throws IOException,InterruptedException {
-        active(taskId,executionNo,"SUMMARIZING");
-        AnalysisExecution execution=checkedExecution(taskId,executionNo);
-        if(execution.getSegmentsObjectKey()==null) throw new IOException("必须先冻结片段清单");
-        try(var ws=media.open()) {
-            var segments=readJson(ws,execution.getSegmentsObjectKey(),AudioPrefilterPreparationService.SegmentManifest.class).segments();
-            Map<Integer,SegmentReview> byNo=new HashMap<>();
-            for(var review:reviews) if(byNo.put(review.segmentNo(),review)!=null) throw new IOException("重复的片段分析结果");
-            if(segments.size()!=reviews.size()) throw new IOException("片段结果未全部收齐，不能汇总");
-            List<SegmentReview> ordered=new ArrayList<>();
-            for(var segment:segments) {
-                var review=byNo.get(segment.segmentNo());
-                if(review==null || review.startMs()!=segment.startMs() || review.endMs()!=segment.endMs())
-                    throw new IOException("汇总结果与冻结片段不匹配");
-                ordered.add(review);
-            }
-            ordered.sort(Comparator.comparingLong(SegmentReview::startMs));
-            String input=json.writeValueAsString(Map.of("segments",ordered,"knowledgeContext",knowledgeContext==null?"":knowledgeContext,
-                    "userPrompt",userPrompt==null?"":userPrompt));
-            if(CandidatePlanner.inputBytes(TextPrompts.SUMMARY,input)>config.getMaxRequestBytes())
-                throw new IOException("汇总输入超过预算，需要分层汇总，不能静默截断片段");
-            var response=call(ws,execution,"SUMMARY",0,TextPrompts.SUMMARY,input);
-            active(taskId,executionNo,"SUMMARIZING");
-            return new SummaryResult(response.text(),response.objectKey(),response.usage());
-        }
-    }
-
-    private ResponseContent call(MediaPreparationService.Workspace ws,AnalysisExecution execution,String purpose,int batch,
+    private ResponseContent call(MediaPreparationService.Workspace ws,AnalysisExecution execution,int batch,
                                  String system,String input) throws IOException {
         AnalysisTextCall key=new AnalysisTextCall();key.setTaskId(execution.getTaskId());key.setExecutionNo(execution.getExecutionNo());
-        key.setPurpose(purpose);key.setBatchNo(batch);
+        key.setPurpose("SCREEN");key.setBatchNo(batch);
         key.setRequestHash(hash(json.writeValueAsString(List.of(execution.getConfigHash(),system,input))));
         AnalysisTextCall saved=calls.select(key);String raw;
         if(saved!=null) {
@@ -119,7 +89,8 @@ public class TextScreeningService {
             key.setResponseObjectKey(saved.getResponseObjectKey());raw=readRaw(ws,saved.getResponseObjectKey());
         } else {
             if(calls.claim(key)!=1) throw new IOException("文本批次已存在或执行失效");
-            raw=client.complete(system,input);
+            raw=client.complete(new AiCallContext(execution.getTaskId(),execution.getExecutionNo(),
+                    AiCallContext.Stage.TEXT_SCREEN,batch),system,input);
             key.setResponseObjectKey(writeRaw(ws,raw));
             if(calls.recordResponse(key)!=1) throw new IOException("原始文本响应保存冲突，请核对记录");
         }

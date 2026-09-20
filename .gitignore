@@ -74,3 +74,10 @@ fine-tuning/output/
 fine-tuning/LLaMA-Factory/
 # 全链路压测运行结果（机器和时间相关，不提交）
 architecture/load-test/results/
+
+# 本地浏览器验收产物
+.playwright-cli/
+output/playwright/
+
+# 本机代码审查工具配置与会话
+.areview/

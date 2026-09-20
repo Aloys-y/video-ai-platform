@@ -132,8 +132,7 @@ public class MediaPreparationService {
 
     public Path clip(Workspace ws, Path source, VideoInfo info, int segmentNo, long startMs, long endMs)
             throws IOException, InterruptedException {
-        if (segmentNo < 0 || startMs < 0 || endMs <= startMs || endMs > info.durationMs()
-                || endMs - startMs > properties.getMaxSegmentMs()) throw new IOException("裁剪时间超出边界或单段预算");
+        if (segmentNo < 0 || startMs < 0 || endMs <= startMs || endMs > info.durationMs()) throw new IOException("裁剪时间超出边界");
         Path target = ws.file("segment-" + segmentNo + ".mp4");
         // 转码而非关键帧 copy，时间以原片播放零点计算；保留输入音视频相对时间差。
         run(ws, List.of(properties.getFfmpeg(), "-nostdin", "-n", "-v", "error", "-ss", seconds(startMs + info.videoLeadMs()),

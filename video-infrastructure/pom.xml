@@ -16,6 +16,7 @@
     <description>基础设施层 - 数据库、Redis、对象存储配置</description>
 
     <dependencies>
+        <dependency><groupId>org.springframework.kafka</groupId><artifactId>spring-kafka</artifactId></dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>

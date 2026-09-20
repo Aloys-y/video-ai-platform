@@ -1,79 +1,83 @@
 package com.videoai.infra.rag.vector;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
+import com.videoai.common.analysis.*;
+import com.videoai.infra.cost.AiCallRecorder;
+import com.videoai.infra.cost.AiCallRecorder.Outcome;
+import com.videoai.infra.http.OneShotJsonBody;
 import com.videoai.infra.rag.config.OpenAiEmbeddingProperties;
-import lombok.extern.slf4j.Slf4j;
+import okhttp3.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-@Slf4j
 @Component
-@ConditionalOnProperty(name = "videoai.rag.embedding.provider", havingValue = "openai-compatible")
+@ConditionalOnProperty(name="videoai.rag.embedding.provider",havingValue="openai-compatible")
 public class OpenAiCompatibleEmbeddingProvider implements EmbeddingProvider {
-
     private final OpenAiEmbeddingProperties properties;
     private final ObjectMapper objectMapper;
-    private final HttpClient httpClient;
+    private final AiCallRecorder recorder;
+    private final OkHttpClient httpClient;
 
-    public OpenAiCompatibleEmbeddingProvider(OpenAiEmbeddingProperties properties, ObjectMapper objectMapper) {
-        this.properties = properties;
-        this.objectMapper = objectMapper;
-        this.httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(properties.getConnectTimeoutSeconds()))
-                .build();
+    @org.springframework.beans.factory.annotation.Autowired
+    public OpenAiCompatibleEmbeddingProvider(OpenAiEmbeddingProperties properties,ObjectMapper objectMapper,AiCallRecorder recorder) {
+        this(properties,objectMapper,recorder,new OkHttpClient.Builder()
+                .connectTimeout(Duration.ofSeconds(properties.getConnectTimeoutSeconds())).build());
     }
-
-    @Override
-    public List<Float> embed(String text) {
+    OpenAiCompatibleEmbeddingProvider(OpenAiEmbeddingProperties properties,ObjectMapper objectMapper,AiCallRecorder recorder,OkHttpClient httpClient) {
+        this.properties=properties;this.objectMapper=objectMapper;this.recorder=Objects.requireNonNull(recorder);this.httpClient=httpClient;
+    }
+    @Override public List<Float> embed(String text) { return embedDocument(text); }
+    @Override public List<Float> embedDocument(String text) { return requestEmbedding(null,text); }
+    @Override public List<Float> embedQuery(String text) { return requestEmbedding(null,text); }
+    @Override public List<Float> embedQuery(AiCallContext context,String text) {
+        Objects.requireNonNull(context);
+        if(context.stage()!=AiCallContext.Stage.RAG_EMBEDDING) throw new IllegalArgumentException("Embedding调用阶段不匹配");
+        return requestEmbedding(context,text);
+    }
+    private List<Float> requestEmbedding(AiCallContext context,String text) {
         try {
-            String requestJson = objectMapper.writeValueAsString(Map.of(
-                    "model", properties.getModel(),
-                    "input", text
-            ));
-
-            HttpRequest.Builder builder = HttpRequest.newBuilder()
-                    .uri(URI.create(properties.getBaseUrl() + "/embeddings"))
-                    .timeout(Duration.ofSeconds(properties.getTimeoutSeconds()))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(requestJson));
-            if (properties.getApiKey() != null && !properties.getApiKey().isBlank()) {
-                builder.header("Authorization", "Bearer " + properties.getApiKey());
-            }
-
-            HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() >= 300) {
-                throw new IllegalStateException("Embedding request failed, status=" + response.statusCode() + ", body=" + response.body());
-            }
-
-            JsonNode root = objectMapper.readTree(response.body());
-            com.videoai.common.analysis.ExternalUsageReceipt.report(root.path("usage").toString(), root.path("request_id").asText(root.path("id").asText()));
-            JsonNode vectorNode = root.path("data").path(0).path("embedding");
-            if (!vectorNode.isArray() || vectorNode.isEmpty()) {
-                throw new IllegalStateException("Embedding response missing vector data");
-            }
-
-            List<Float> vector = new ArrayList<>(vectorNode.size());
-            for (JsonNode node : vectorNode) {
+            byte[] bytes=objectMapper.writeValueAsBytes(Map.of("model",properties.getModel(),"input",text));
+            String base=properties.getBaseUrl();
+            if(base==null || base.isBlank()) throw new IllegalArgumentException("Embedding接口地址为空");
+            base=base.replaceAll("/+$", "");
+            var request=new Request.Builder().url(base + "/embeddings").post(new OneShotJsonBody(bytes));
+            if(properties.getApiKey()!=null && !properties.getApiKey().isBlank()) request.header("Authorization","Bearer "+properties.getApiKey());
+            Duration timeout=ExecutionBudget.limit(Duration.ofSeconds(properties.getTimeoutSeconds()));
+            var call=httpClient.newBuilder().retryOnConnectionFailure(false).followRedirects(false).followSslRedirects(false)
+                    .readTimeout(timeout).writeTimeout(timeout).callTimeout(timeout).build().newCall(request.build());
+            String callId=context==null ? null : UUID.randomUUID().toString();
+            if(callId!=null) recorder.begin(callId,context,properties.getModel());
+            Outcome outcome=Outcome.UNKNOWN; AiUsage usage=AiUsage.unknown();
+            String requestId=null;String errorCode="TRANSPORT_OR_RECEIPT_UNKNOWN";JsonNode root=null;
+            try {
+                try {ExecutionBudget.check();} catch(IOException cancelled) {outcome=Outcome.NOT_SENT;errorCode="CANCELLED_BEFORE_SEND";throw cancelled;}
+                try(var response=call.execute()) {
+                    if(response.body()==null) throw new IOException("Embedding响应为空");
+                    byte[] body=response.body().byteStream().readNBytes(1024*1024+1);
+                    if(body.length>1024*1024) throw new IOException("Embedding响应过大");
+                    outcome=response.isSuccessful()?Outcome.SUCCEEDED:Outcome.FAILED;
+                    errorCode="HTTP_"+response.code();
+                    try {
+                        root=objectMapper.readTree(body);
+                        if(root!=null) {usage=AiCallRecorder.inputUsage(root.get("usage"));requestId=root.path("request_id").asText(root.path("id").asText(null));}
+                    } catch(com.fasterxml.jackson.core.JsonProcessingException malformed) { /* 缺失用量保持未知。 */ }
+                    if(!response.isSuccessful()) throw new IOException("Embedding HTTP请求失败");
+                    errorCode=null;
+                }
+            } finally {if(callId!=null) recorder.finish(callId,outcome,usage,requestId,errorCode);}
+            if(root==null) throw new IOException("Embedding响应无效");
+            ExternalUsageReceipt.report(root.path("usage").toString(),requestId);
+            var vectorNode=root.path("data").path(0).path("embedding");
+            if(!vectorNode.isArray() || vectorNode.isEmpty()) throw new IllegalStateException("Embedding response missing vector data");
+            List<Float> vector=new ArrayList<>(vectorNode.size());
+            for(JsonNode node:vectorNode) {
+                if(!node.isNumber() || !Float.isFinite(node.floatValue())) throw new IllegalStateException("Embedding response contains invalid vector");
                 vector.add(node.floatValue());
             }
             return vector;
-        } catch (IOException | InterruptedException e) {
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
-            log.error("Embedding request failed", e);
-            throw new IllegalStateException("Embedding request failed: " + e.getMessage(), e);
-        }
+        } catch(IOException e) {throw new IllegalStateException("Embedding请求失败或响应无效，费用以账本回执为准");}
     }
 }

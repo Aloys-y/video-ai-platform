@@ -13,7 +13,7 @@ class SegmentAnalysisExecutorTest {
     private final ExecutorService parents = Executors.newCachedThreadPool();
     @AfterEach void close() { parents.shutdownNow(); }
     private SegmentAnalysisProperties config(int threads, int queue) {
-        var p = new SegmentAnalysisProperties(); p.setThreads(threads); p.setQueueCapacity(queue);
+        var p = new SegmentAnalysisProperties(); p.setThreads(threads); p.setMaxThreads(threads); p.setQueueCapacity(queue);
         p.setRequestIntervalMs(1); p.setCancellationGraceMs(100); return p;
     }
     private Instant deadline() { return Instant.now().plusSeconds(5); }
@@ -21,6 +21,24 @@ class SegmentAnalysisExecutorTest {
         long until = System.nanoTime() + TimeUnit.SECONDS.toNanos(2);
         while (!condition.getAsBoolean() && System.nanoTime() < until) Thread.sleep(2);
         assertTrue(condition.getAsBoolean());
+    }
+
+    @Test void productionConstructorExpandsToEightWithTwentyFourSegments() throws Exception {
+        var config = new SegmentAnalysisProperties();
+        try (var executor = new SegmentAnalysisExecutor(config)) {
+            var release = new CountDownLatch(1);
+            List<SegmentAnalysisExecutor.Work<Integer>> work = new ArrayList<>();
+            for (int i = 0; i < 24; i++) {
+                final int id = i;
+                work.add(scope -> { release.await(); return id; });
+            }
+            var run = parents.submit(() -> executor.execute(work, deadline(), () -> false, v -> {}));
+            try {
+                await(() -> executor.stats().active() == 8 && executor.stats().queued() == 16);
+                assertEquals(8, executor.largestPoolSizeForTest());
+            } finally { release.countDown(); }
+            assertEquals(24, run.get(2, TimeUnit.SECONDS).size());
+        }
     }
 
     @Test void elasticPoolExpandsWhenQueueIsFullAndRetiresOnlyExtraThreads() throws Exception {

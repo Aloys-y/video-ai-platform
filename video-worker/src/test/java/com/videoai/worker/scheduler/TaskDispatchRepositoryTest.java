@@ -13,18 +13,45 @@ import static org.junit.jupiter.api.Assertions.*;
 class TaskDispatchRepositoryTest {
     JdbcTemplate jdbc;
     TaskDispatchRepository repository;
+    final List<com.videoai.common.domain.AnalysisFinishedEvent> events=new ArrayList<>();
+    DataSourceTransactionManager transactions;
 
     @BeforeEach void setup() {
         var source = new JdbcDataSource();
         source.setURL("jdbc:h2:mem:" + UUID.randomUUID() + ";MODE=MySQL;DB_CLOSE_DELAY=-1");
         jdbc = new JdbcTemplate(source);
-        repository = new TaskDispatchRepository(source, new DataSourceTransactionManager(source), 90);
+        transactions=new DataSourceTransactionManager(source);
+        repository = new TaskDispatchRepository(source, transactions, 90,events::add);
         jdbc.execute("CREATE TABLE analysis_task(task_id VARCHAR(64) PRIMARY KEY,attempt_no INT NOT NULL DEFAULT 0,"
                 + "status VARCHAR(16),owner_token VARCHAR(64),lease_until TIMESTAMP(3),created_at TIMESTAMP(3) "
                 + "DEFAULT CURRENT_TIMESTAMP,started_at TIMESTAMP(3),finished_at TIMESTAMP(3),error_code VARCHAR(64))");
         jdbc.update("INSERT INTO analysis_task(task_id,status) VALUES ('task','PENDING')");
     }
     @AfterEach void close() { jdbc.execute("DROP ALL OBJECTS"); }
+    @Test void publishesOnlyAfterCommitAndOncePerTransition() {
+        var lease=repository.claim(candidate());
+        new org.springframework.transaction.support.TransactionTemplate(transactions).execute(tx->{
+            assertTrue(repository.finish(lease,"PARTIAL",null));assertTrue(events.isEmpty());return null;
+        });
+        assertEquals(1,events.size());assertEquals("PARTIAL",events.get(0).status());
+        assertFalse(repository.finish(lease,"SUCCEEDED",null));assertEquals(1,events.size());
+    }
+    @Test void rollbackDoesNotPublishAndExpiryPublishesFailure() {
+        var lease=repository.claim(candidate());
+        new org.springframework.transaction.support.TransactionTemplate(transactions).execute(tx->{
+            repository.finish(lease,"SUCCEEDED",null);tx.setRollbackOnly();return null;
+        });
+        assertTrue(events.isEmpty());
+        jdbc.update("UPDATE analysis_task SET lease_until=TIMESTAMPADD(SECOND,-1,CURRENT_TIMESTAMP)");
+        assertEquals(1,repository.failExpired(2));assertEquals("FAILED",events.get(0).status());
+        assertEquals(0,repository.failExpired(2));assertEquals(1,events.size());
+    }
+    @Test void brokenNotificationCannotUndoCompletedVideo() {
+        repository=new TaskDispatchRepository(jdbc.getDataSource(),transactions,90,event->{throw new IllegalStateException("broker unavailable");});
+        var lease=repository.claim(candidate());
+        assertTrue(repository.finish(lease,"SUCCEEDED",null));
+        assertEquals("SUCCEEDED",jdbc.queryForObject("SELECT status FROM analysis_task",String.class));
+    }
     TaskDispatchRepository.Candidate candidate() { return new TaskDispatchRepository.Candidate("task", 0); }
 
     @Test void competingConnectionsHaveOneWinner() throws Exception {

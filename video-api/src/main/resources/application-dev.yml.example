@@ -6,7 +6,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/video_ai?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+    url: jdbc:mysql://localhost:13306/video_ai?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
     username: YOUR_DB_USERNAME
     password: YOUR_DB_PASSWORD
     # Druid连接池配置
@@ -38,7 +38,7 @@ spring:
   data:
     redis:
       host: localhost
-      port: 6379
+      port: 16379
       password: YOUR_REDIS_PASSWORD
       database: 0
       timeout: 10000ms
@@ -55,7 +55,7 @@ minio:
   access-key: YOUR_MINIO_ACCESS_KEY
   secret-key: YOUR_MINIO_SECRET_KEY
   bucket-name: video-ai
-  region:
+  region: us-east-1
 
 # GitHub OAuth 配置
 oauth:
@@ -63,14 +63,6 @@ oauth:
     client-id: YOUR_GITHUB_OAUTH_CLIENT_ID
     client-secret: YOUR_GITHUB_OAUTH_CLIENT_SECRET
     redirect-uri: http://localhost:8080/api/auth/oauth/github/callback
-
-# AI服务配置
-ai:
-  claude:
-    api-key: YOUR_CLAUDE_API_KEY
-    base-url: https://api.anthropic.com
-    model: claude-3-opus-20240229
-    max-tokens: 4096
 
 videoai:
   rag:
@@ -85,3 +77,12 @@ videoai:
       dimension: 1024
       dashscope:
         text-type: document
+
+# 仅模拟通知，不向真实邮箱发送。先执行 V2.2 SQL；API 与 Worker 同时开启。
+notification:
+  mock:
+    enabled: false
+  kafka:
+    bootstrap-servers: localhost:9092
+    topic: video.analysis.finished.v1
+    group: video-mail-mock-v1

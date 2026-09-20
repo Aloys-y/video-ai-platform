@@ -1,6 +1,7 @@
 package com.videoai.rag.service;
 
 import com.videoai.common.domain.KnowledgeBase;
+import com.videoai.common.analysis.AiCallContext;
 import com.videoai.common.rag.RagContext;
 import com.videoai.common.rag.RetrievalHit;
 import com.videoai.infra.rag.config.RagProperties;
@@ -37,14 +38,24 @@ public class KnowledgeRetrievalService {
         return retrieveTrace(query).getContext();
     }
 
+    public RagContext retrieve(AiCallContext callContext,String query) {
+        java.util.Objects.requireNonNull(callContext);
+        if(callContext.stage()!=AiCallContext.Stage.RAG_EMBEDDING) throw new IllegalArgumentException("RAG检索上下文阶段无效");
+        return retrieveTrace(callContext,query).getContext();
+    }
+
     /**
      * 执行一次真实检索并保留每层候选，供离线评测分析阈值和截断损失。
      */
     public RagRetrievalTrace retrieveTrace(String query) {
+        return retrieveTrace(null,query); // 离线评测不归入视频任务费用。
+    }
+
+    private RagRetrievalTrace retrieveTrace(AiCallContext callContext,String query) {
         long start = System.currentTimeMillis();
         KnowledgeBase base = knowledgeBaseService.getRequiredBase();
         String expandedQuery = prepareQuery(query);
-        List<Float> vector = embeddingProvider.embedQuery(expandedQuery);
+        List<Float> vector = callContext==null ? embeddingProvider.embedQuery(expandedQuery) : embeddingProvider.embedQuery(callContext,expandedQuery);
         String filter = buildFilterExpression(base.getBaseCode(), base.getCurrentVersionTag());
         List<VectorSearchResult> searchResults = vectorStoreClient.search(vector, ragProperties.getTopK(), filter);
 
@@ -69,7 +80,9 @@ public class KnowledgeRetrievalService {
                 // HeadingPath 去重，也不先过 dense minScore，避免正确内容在重排前被截断。
                 String rerankQuery = rerankQuery(query);
                 rerankedCandidates = applyRerank(
-                        rawCandidates, rerankService.rerank(rerankQuery, rawCandidates));
+                        rawCandidates, callContext==null ? rerankService.rerank(rerankQuery, rawCandidates)
+                                : rerankService.rerank(new AiCallContext(callContext.taskId(),callContext.executionNo(),
+                                        AiCallContext.Stage.RAG_RERANK,callContext.subtaskNo()),rerankQuery,rawCandidates));
                 rerankApplied = true;
                 scorePassedCandidates = rerankedCandidates.stream()
                         .filter(hit -> hit.getRerankScore() != null
