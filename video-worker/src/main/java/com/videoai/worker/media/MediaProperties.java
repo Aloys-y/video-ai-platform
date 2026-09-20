@@ -20,6 +20,5 @@ public class MediaProperties {
     private long audioPartMs = 30L * 60 * 1000;
     private int maxAudioParts = 64;
     private int maxSegments = 8;
-    private long maxSegmentMs = 180_000;
     private long maxSelectedMs = 1_800_000;
 }

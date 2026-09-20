@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "analysis.segments")
 public class SegmentAnalysisProperties {
     private int threads = 4;
+    private int maxThreads = 8;
+    private long keepAliveMs = 60000;
     // 容量是待压测起点：4 并发、单段约 30 秒、目标排队约 120 秒，估算为 16。
     private int queueCapacity = 16;
     private long requestIntervalMs = 1000;
@@ -17,7 +19,8 @@ public class SegmentAnalysisProperties {
     private int modelMaxAttempts = 3;
     private long modelRetryInitialDelayMs = 10000;
     public void validate() {
-        if (threads < 1 || threads > 64 || queueCapacity < 1 || queueCapacity > 1024
+        if (maxThreads < threads || maxThreads > 64 || keepAliveMs < 0
+                || threads < 1 || threads > 64 || queueCapacity < 1 || queueCapacity > 1024
                 || requestIntervalMs < 1 || requestIntervalMs > 60000
                 || cancellationGraceMs < 0 || cancellationGraceMs > 10000
                 || maxResponseBytes < 1024 || maxResponseBytes > 16 * 1024 * 1024

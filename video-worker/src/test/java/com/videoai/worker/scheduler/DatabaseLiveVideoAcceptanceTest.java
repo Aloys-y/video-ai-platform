@@ -53,6 +53,40 @@ class DatabaseLiveVideoAcceptanceTest {
     static synchronized void write(String file,Object value) throws Exception {
         Files.writeString(output.resolve(file),JSON.writeValueAsString(value)+"\n",StandardCharsets.UTF_8,StandardOpenOption.CREATE,StandardOpenOption.APPEND);
     }
+    @Test
+    @EnabledIfSystemProperty(named="comparison.diagnostic", matches="true")
+    void diagnoseVideoInput() throws Exception {
+        var env=credentials();
+        output=Path.of(System.getProperty("comparison.directory"));
+        var config=org.springframework.boot.context.properties.bind.Binder.get(env)
+                .bind("minio",com.videoai.infra.minio.config.MinioConfig.class).get();
+        try(var s3=config.s3Client();var signer=config.s3Presigner()) {
+            var storage=new StorageService(s3,signer,config);
+            var segment=JSON.readTree(output.resolve("analysis_segment.jsonl").toFile()).get(0);
+            String objectKey=segment.path("object_key").asText();
+            boolean baseline=Boolean.getBoolean("comparison.baseline");
+            if(baseline) for(String line:Files.readAllLines(output.resolve("run.jsonl"))) {
+                var item=JSON.readTree(line);if(item.has("sourceObjectKey"))objectKey=item.path("sourceObjectKey").asText();
+            }
+            String videoUrl=storage.getPresignedUrl(objectKey,24);
+            var body=JSON.createObjectNode();body.put("model","qwen3.7-plus");body.put("enable_thinking",false);body.put("max_tokens",4096);body.put("temperature",0);
+            var message=body.putArray("messages").addObject();message.put("role","user");
+            var content=message.putArray("content");var video=content.addObject();video.put("type","video_url");video.putObject("video_url").put("url",videoUrl);video.put("fps",2);
+            content.addObject().put("type","text").put("text",com.videoai.worker.screening.SegmentReviewParser.VIDEO_PROMPT);
+            var request=java.net.http.HttpRequest.newBuilder(java.net.URI.create("https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"))
+                    .timeout(Duration.ofSeconds(300)).header("Authorization","Bearer "+env.getRequiredProperty("ai.dashscope.api-key"))
+                    .header("Content-Type","application/json").POST(java.net.http.HttpRequest.BodyPublishers.ofString(JSON.writeValueAsString(body))).build();
+            var event=new LinkedHashMap<String,Object>();event.put("callId",UUID.randomUUID().toString());event.put("model","qwen3.7-plus");event.put("service","DashScopeVideoProvider");event.put("operation",baseline?"baselineCompatible":"diagnosticCompatible");event.put("status","STARTED");event.put("startedAt",Instant.now().toString());write("external-calls.jsonl",event);
+            long start=System.nanoTime();
+            var response=java.net.http.HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(30)).build().send(request,java.net.http.HttpResponse.BodyHandlers.ofString());
+            var result=JSON.readTree(response.body());
+            event.put("status",response.statusCode()==200?"RETURNED":"FAILED_USAGE_UNKNOWN");event.put("httpStatus",response.statusCode());event.put("elapsedMs",TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start));event.put("usage",result.get("usage"));event.put("requestId",result.path("id").asText());
+            event.put("error",result.path("error").toString().replaceAll("https?://[^\\s\"<>]+","[REDACTED_URL]"));
+            write("external-calls.jsonl",event);write(baseline?"baseline-compatible-result.jsonl":"diagnostic-result.jsonl",event);
+            if(response.statusCode()==200)write(baseline?"baseline-compatible-content.jsonl":"diagnostic-content.jsonl",result.path("choices"));
+            System.out.println("DIAGNOSTIC_HTTP="+response.statusCode());
+        }
+    }
     @Test void realVideoThenKilledWorker() throws Exception {
         var env=credentials();
         database="videoai_live_it_"+UUID.randomUUID().toString().replace("-","");
@@ -79,6 +113,9 @@ class DatabaseLiveVideoAcceptanceTest {
                         "--analysis.media.ffmpeg=D:/software/tools/oopz/ffmpeg.exe",
                         "--analysis.media.ffprobe=D:/software/dev/Trae/Trae CN/resources/app/bin/ffprobe.exe",
                         "--analysis.media.temp-root="+output.resolve("media"),
+                        "--analysis.asr.model="+System.getProperty("comparison.asr",env.getProperty("analysis.asr.model","qwen-audio-3.0-asr-flash-filetrans")),
+                        "--analysis.text.model="+System.getProperty("comparison.text",env.getProperty("analysis.text.model","qwen3.8-flash")),
+                        "--ai.dashscope.model="+System.getProperty("comparison.video",env.getProperty("ai.dashscope.model","qwen3.7-plus")),
                         "--spring.main.banner-mode=off","--logging.level.root=WARN")) {
             var effective=app.getEnvironment();
             var models=new LinkedHashMap<String,Object>();
@@ -98,12 +135,30 @@ class DatabaseLiveVideoAcceptanceTest {
             }
             for(String table:List.of("analysis_task","analysis_execution","analysis_asr_part","analysis_text_call","analysis_segment"))
                 write(table+".jsonl",jdbc.queryForList("SELECT * FROM "+table+" WHERE task_id='live-video-3'"));
+            if (Boolean.getBoolean("comparison.enabled")) {
+                var storage=app.getBean(StorageService.class);
+                var execution=jdbc.queryForMap("SELECT * FROM analysis_execution WHERE task_id='live-video-3'");
+                for(String artifact:List.of("transcript","candidates","segments")) {
+                    Object objectKey=execution.get(artifact+"_object_key");
+                    if(objectKey!=null) storage.downloadToFile(objectKey.toString(),output.resolve(artifact+".json"),16*1024*1024,Duration.ofSeconds(60),0);
+                }
+                // 相同模型、采样率、输出上限与知识参考；整片直接输入，不经过语音筛选。
+                if(Files.exists(output.resolve("segments.json"))) {
+                    var manifest=JSON.readTree(output.resolve("segments.json").toFile());
+                    String prompt=com.videoai.worker.screening.SegmentReviewParser.VIDEO_PROMPT
+                            +"\n以下 JSON 为用户关注点与知识参考：\n"+manifest.path("guidance")
+                            +"\n本次输入为完整视频，请覆盖其中实际发生的交战；所有时间均相对于视频起点。";
+                    Files.writeString(output.resolve("baseline-prompt.txt"),prompt);
+                    var baseline=app.getBean(AiVideoProvider.class).callDetailed(new AiCallContext("live-video-3-baseline",0,AiCallContext.Stage.VIDEO_ANALYSIS,0),storage.getPresignedUrl(key,24),prompt);
+                    write("baseline-result.jsonl",baseline);
+                }
+            }
             assertEquals("SUCCEEDED",jdbc.queryForObject("SELECT status FROM analysis_task WHERE task_id='live-video-3'",String.class),"真实视频链路未成功，保留数据排查，不自动重跑付费任务");
             assertTrue(jdbc.queryForObject("SELECT COUNT(*) FROM analysis_segment WHERE task_id='live-video-3' AND status='SUCCEEDED'",Integer.class)>0,"必须实际分析至少一个片段");
         } finally {
             write("run.jsonl",Map.of("liveEndedAt",Instant.now().toString()));
         }
-        verifyProcessCrash(env,jdbc);
+        if(!Boolean.getBoolean("comparison.enabled")) verifyProcessCrash(env,jdbc);
         System.out.println("LIVE_AND_CRASH_ACCEPTANCE_OK output="+output);
     }
 
@@ -191,7 +246,7 @@ class DatabaseLiveVideoAcceptanceTest {
             try(var receipt=ExternalUsageReceipt.listen((usage,id)->{try{event.put("usage",JSON.readTree(usage));event.put("requestId",id);}catch(Exception e){event.put("usageParseError",true);}})) {
                 Object result=point.proceed();
                 if(result instanceof AiVideoProvider.DetailedResult video){event.put("usage",video.usageJson()==null?null:JSON.readTree(video.usageJson()));event.put("requestId",video.requestId());}
-                else if(result instanceof CloudAsrClient.Query query){event.put("usage",query.usage());event.put("remoteStatus",query.status());event.put("remoteTaskId",point.getArgs()[0]);}
+                else if(result instanceof CloudAsrClient.Query query){event.put("usage",query.usage());event.put("remoteStatus",query.status());event.put("remoteTaskId",point.getArgs()[1]);}
                 else if(method.equals("complete") && result instanceof String body){var response=JSON.readTree(body);event.put("usage",response.get("usage"));event.put("requestId",response.path("id").asText());}
                 else if(method.equals("submit")){event.put("remoteTaskId",result);}
                 event.put("status","RETURNED");return result;

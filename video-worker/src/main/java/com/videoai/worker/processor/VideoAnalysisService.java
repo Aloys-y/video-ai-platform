@@ -85,7 +85,7 @@ public class VideoAnalysisService implements com.videoai.worker.scheduler.Databa
                 progress(id, no, "PREPARING_SEGMENTS", 35);
                 manifest = preparation.prepareSegments(id, no, sourceKey, screening.ranges(), () -> {
                     // 每个视频 rag 检索一次，实际参考冻结在 OSS 清单，重试不重新检索。
-                    var envelope = rag.buildPrompt(task);
+                    var envelope = rag.buildPrompt(task,no);
                     ExecutionBudget.check();
                     String context = envelope.getRetrievalContext() == null ? "" : envelope.getRetrievalContext();
                     return new SegmentGuidance(task.getPrompt(), context.substring(0, Math.min(context.length(), 12000)));

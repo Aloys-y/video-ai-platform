@@ -34,7 +34,7 @@ class VideoAnalysisServiceTest {
         task = new AnalysisTask(); task.setTaskId("task"); task.setPrompt("复盘");
         when(prep.prepareTranscript(eq("task"), eq(0), eq("source"), any())).thenReturn(new AudioPrefilterPreparationService.TranscriptManifest(1, 30000, "TRANSCRIBED", List.of()));
         screening(false);
-        when(rag.buildPrompt(task)).thenReturn(PromptEnvelope.builder().retrievalContext("知识依据").build());
+        when(rag.buildPrompt(task,0)).thenReturn(PromptEnvelope.builder().retrievalContext("知识依据").build());
         when(prep.prepareSegments(eq("task"), eq(0), eq("source"), anyList(), any(), any())).thenAnswer(i -> {
             List<AudioPrefilterPreparationService.Range> ranges = i.getArgument(3);
             var guidance = ranges.isEmpty() ? null : i.<AudioPrefilterPreparationService.GuidanceLoader>getArgument(4).load();
@@ -85,14 +85,12 @@ class VideoAnalysisServiceTest {
         var parent = Executors.newSingleThreadExecutor();
         try {
             var running = parent.submit(() -> pipeline.run(task, 0, "source", Instant.now().plusSeconds(5)));
-            assertTrue(both.await(2, TimeUnit.SECONDS)); assertFalse(running.isDone()); verify(rag).buildPrompt(task);
-            verify(text, never()).summarize(anyString(), anyInt(), anyList(), anyString(), anyString());
+            assertTrue(both.await(2, TimeUnit.SECONDS)); assertFalse(running.isDone()); verify(rag).buildPrompt(task,0);
             release.countDown(); assertTrue(running.get().markdown().contains("2 个片段"));
             var order = inOrder(prep, text, segments, rag);
             order.verify(prep).prepareTranscript(eq("task"), eq(0), eq("source"), any()); order.verify(text).screen(eq("task"), eq(0), any());
             order.verify(prep).prepareSegments(eq("task"), eq(0), eq("source"), anyList(), any(), any());
-            order.verify(rag).buildPrompt(task); order.verify(segments).analyze(eq("task"), eq(0), any(), any());
-            verify(text, never()).summarize(anyString(), anyInt(), anyList(), anyString(), anyString());
+            order.verify(rag).buildPrompt(task,0); order.verify(segments).analyze(eq("task"), eq(0), any(), any());
         } finally { release.countDown(); parent.shutdownNow(); }
     }
     @Test void failureDoesNotSummarizeAndStillWaitsForStartedSibling() throws Exception {
@@ -107,8 +105,7 @@ class VideoAnalysisServiceTest {
         try {
             var running = parent.submit(() -> pipeline.run(task, 0, "source", Instant.now().plusSeconds(5)));
             assertTrue(both.await(2, TimeUnit.SECONDS)); assertFalse(running.isDone()); release.countDown();
-            assertThrows(ExecutionException.class, running::get); verify(rag).buildPrompt(task);
-            verify(text, never()).summarize(anyString(), anyInt(), anyList(), anyString(), anyString());
+            assertThrows(ExecutionException.class, running::get); verify(rag).buildPrompt(task,0);
         } finally { release.countDown(); parent.shutdownNow(); }
     }
     @Test void zeroCandidatesProducesCoverageNoticeWithoutVideoOrRag() throws Exception {

@@ -11,7 +11,7 @@ public interface AiVideoProvider {
     /** 片段路径必须显式支持可审计响应；旧整片接口保持兼容。 */
     record DetailedResult(String text, String usageJson, String requestId, String finishReason) {}
 
-    default DetailedResult callDetailed(String videoUrl, String prompt) throws AiProviderException {
+    default DetailedResult callDetailed(com.videoai.common.analysis.AiCallContext context, String videoUrl, String prompt) throws AiProviderException {
         throw new AiProviderException("该 Provider 尚未验证片段并发与用量接口", false);
     }
 

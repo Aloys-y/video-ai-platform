@@ -122,23 +122,33 @@ CREATE TABLE IF NOT EXISTS user_quota (
 
 -- AI调用日志表（成本审计）
 CREATE TABLE IF NOT EXISTS ai_call_log (
-    id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
-    task_id         VARCHAR(64) NOT NULL COMMENT '任务ID',
-    user_id         BIGINT NOT NULL COMMENT '用户ID',
-    model           VARCHAR(50) NOT NULL COMMENT 'AI模型',
-    input_tokens    INT COMMENT '输入Token数',
-    output_tokens   INT COMMENT '输出Token数',
-    total_tokens    BIGINT COMMENT '总Token数',
-    cost_amount     DECIMAL(10,6) COMMENT '费用(美元)',
-    latency_ms      INT COMMENT '响应延迟(毫秒)',
-    status          TINYINT COMMENT '1:成功 2:失败',
-    error_message   TEXT COMMENT '错误信息',
-    created_at      DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-
-    INDEX idx_task_id (task_id),
-    INDEX idx_user_id (user_id),
-    INDEX idx_created_at (created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='AI调用日志表';
+    call_id CHAR(36) COLLATE utf8mb4_bin PRIMARY KEY,
+    task_id VARCHAR(64) NOT NULL,
+    execution_no INT NOT NULL,
+    stage VARCHAR(32) NOT NULL,
+    subtask_no INT NOT NULL,
+    model VARCHAR(128) NOT NULL,
+    request_id VARCHAR(128) NULL,
+    remote_task_id VARCHAR(128) NULL,
+    status VARCHAR(20) NOT NULL,
+    input_tokens BIGINT NULL,
+    output_tokens BIGINT NULL,
+    audio_seconds DECIMAL(18,3) NULL,
+    usage_json JSON NULL,
+    price_snapshot JSON NULL,
+    estimated_cost_cny DECIMAL(20,10) NULL,
+    cost_unknown_reason VARCHAR(32) NULL,
+    error_code VARCHAR(128) NULL,
+    started_at DATETIME(3) NOT NULL,
+    finished_at DATETIME(3) NULL,
+    INDEX idx_ai_call_task (task_id,execution_no,stage,subtask_no),
+    CONSTRAINT ck_ai_call_owner CHECK (execution_no >= 0 AND subtask_no >= 0),
+    CONSTRAINT ck_ai_call_stage CHECK (stage IN ('ASR','TEXT_SCREEN','VIDEO_ANALYSIS','RAG_EMBEDDING','RAG_RERANK')),
+    CONSTRAINT ck_ai_call_status CHECK (status IN ('RUNNING','SUCCEEDED','FAILED','UNKNOWN','NOT_SENT')),
+    CONSTRAINT ck_ai_call_usage CHECK ((input_tokens IS NULL OR input_tokens >= 0)
+        AND (output_tokens IS NULL OR output_tokens >= 0) AND (audio_seconds IS NULL OR audio_seconds >= 0)),
+    CONSTRAINT ck_ai_call_amount CHECK (estimated_cost_cny IS NULL OR estimated_cost_cny >= 0)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ==================== RAG 知识库 ====================
 
@@ -340,3 +350,21 @@ CREATE TABLE IF NOT EXISTS analysis_text_call (
     CONSTRAINT fk_text_call_execution FOREIGN KEY (task_id,execution_no) REFERENCES analysis_execution(task_id,execution_no),
     CONSTRAINT ck_text_call_key CHECK (batch_no >= 0 AND purpose IN ('SCREEN','SUMMARY'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文本模型调用留痕，不用于调度';
+-- 仅新增 Mock 通知表；执行前按项目要求备份并确认无在途任务。
+CREATE TABLE IF NOT EXISTS mock_mail_notification (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  event_id VARCHAR(128) NOT NULL UNIQUE,
+  task_id VARCHAR(64) NOT NULL,
+  execution_no INT NOT NULL,
+  subject VARCHAR(255) NOT NULL,
+  body TEXT NOT NULL,
+  status VARCHAR(24) NOT NULL,
+  attempt_count INT NOT NULL DEFAULT 0,
+  next_attempt_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  claim_token VARCHAR(64),
+  claim_until TIMESTAMP(3) NULL,
+  error_code VARCHAR(64),
+  created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  INDEX idx_mock_mail_due (status,next_attempt_at),
+  INDEX idx_mock_mail_task (task_id,created_at)
+);

@@ -12,7 +12,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /** 显式启用：复用P0转写，仅首轮调用文本模型；响应持久化后重跑不再计费。 */
 @EnabledIfEnvironmentVariable(named="P3_LIVE_SMOKE",matches="true")
+@org.springframework.boot.test.context.SpringBootTest(classes = P3LiveSmokeTest.LedgerConfiguration.class)
 class P3LiveSmokeTest {
+    /** 只启动账本所需设施，不启动视频调度器；显式实测需配置已迁移的测试数据库。 */
+    @org.springframework.boot.test.context.TestConfiguration
+    @org.springframework.boot.autoconfigure.EnableAutoConfiguration
+    @org.springframework.context.annotation.Import({com.videoai.infra.cost.AiCallRecorder.class,
+            com.videoai.infra.cost.AiCostCalculator.class, com.videoai.infra.cost.AiPricingProperties.class})
+    @org.springframework.boot.context.properties.EnableConfigurationProperties
+    @org.mybatis.spring.annotation.MapperScan("com.videoai.infra.mysql.mapper")
+    static class LedgerConfiguration {}
+
+    @org.springframework.beans.factory.annotation.Autowired com.videoai.infra.cost.AiCallRecorder recorder;
     @Test void screensRealTranscriptAndSavesOriginalResponse() throws Exception {
         Path repo=Files.isDirectory(Path.of("sql"))?Path.of("."):Path.of(".."), logs=repo.resolve("logs");Files.createDirectories(logs);
         ObjectMapper json=new ObjectMapper();TextAnalysisProperties config=new TextAnalysisProperties();
@@ -25,7 +36,7 @@ class P3LiveSmokeTest {
             rows.add(new TranscriptUtterance(row.path("id").asText(),row.path("start_ms").asLong(),row.path("end_ms").asLong(),row.path("text").asText(),0));
         long duration=json.readTree(sample.resolve("media.json").toFile()).path("duration_ms").asLong();
         var windows=planner.windows(new AudioPrefilterPreparationService.TranscriptManifest(1,duration,"TRANSCRIBED",rows));
-        var client=new DashScopeTextClient(config,new DashScopeConfig(),json);List<CandidateRange> candidates=new ArrayList<>();
+        var client=new DashScopeTextClient(config,new DashScopeConfig(),json,recorder);List<CandidateRange> candidates=new ArrayList<>();
         List<JsonNode> usages=new ArrayList<>();int newCalls=0;
         planner.estimate(duration,windows,0);
         for(int i=0;i<windows.size();i++) {
@@ -37,7 +48,7 @@ class P3LiveSmokeTest {
                 assertTrue(Files.exists(rawFile),"上次调用状态不明，禁止自动重提");raw=Files.readString(rawFile);
             } else {
                 json.writeValue(state.toFile(),Map.of("requestHash",hash,"status","STARTED"));
-                raw=client.complete(TextPrompts.SCREEN,windows.get(i).input());Files.writeString(rawFile,raw);newCalls++;
+                raw=client.complete(new AiCallContext("p3-live-"+sampleId,0,AiCallContext.Stage.TEXT_SCREEN,i),TextPrompts.SCREEN,windows.get(i).input());Files.writeString(rawFile,raw);newCalls++;
             }
             JsonNode response=json.readTree(raw);var choice=response.path("choices").path(0);
             assertEquals("stop",choice.path("finish_reason").asText());

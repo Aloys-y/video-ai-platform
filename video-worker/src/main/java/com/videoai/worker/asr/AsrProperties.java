@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @org.springframework.validation.annotation.Validated
 public class AsrProperties {
     private String baseUrl = "https://dashscope.aliyuncs.com/api/v1";
-    private String model = "fun-asr-2025-11-07";
+    private String model = "qwen-audio-3.0-asr-flash-filetrans";
     @lombok.ToString.Exclude
     private String apiKey;
     @jakarta.validation.constraints.Min(1)

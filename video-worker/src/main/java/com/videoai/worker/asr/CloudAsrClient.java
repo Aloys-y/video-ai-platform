@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.util.List;
 
 public interface CloudAsrClient {
-    String submit(String audioUrl) throws IOException;
-    Query query(String taskId) throws IOException;
+    String submit(com.videoai.common.analysis.AiCallContext context, String audioUrl) throws IOException;
+    Query query(com.videoai.common.analysis.AiCallContext context, String taskId) throws IOException;
     Transcript downloadResult(String resultUrl, int partNo, long startMs, long endMs) throws IOException;
     record Query(String status, String resultUrl, JsonNode usage) {}
     record Transcript(List<TranscriptUtterance> utterances, JsonNode sanitizedResponse) {

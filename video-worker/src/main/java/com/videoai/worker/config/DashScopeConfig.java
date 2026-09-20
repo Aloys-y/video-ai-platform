@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * 阿里云DashScope配置
- * 支持 Qwen-VL 系列视频理解模型
+ * 当前使用 Qwen3.7-Plus 兼容接口进行片段视频理解
  */
 @Data
 @Configuration
@@ -14,10 +14,10 @@ import org.springframework.context.annotation.Configuration;
 public class DashScopeConfig {
 
     private String apiKey;
-    private String model = "qwen3-vl-flash";
+    private String model = "qwen3.7-plus";
     private int maxTokens = 4096;
     private int timeout = 300;
-    /** SDK连接超时（秒） */
+    /** HTTP连接超时（秒） */
     private int connectTimeout = 30;
     /** MinIO预签名URL过期时间（小时） */
     private int presignedUrlExpireHours = 2;

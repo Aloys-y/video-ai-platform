@@ -16,6 +16,8 @@
     <description>API服务 - 用户交互入口</description>
 
     <dependencies>
+        <dependency><groupId>org.springframework.kafka</groupId><artifactId>spring-kafka-test</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>com.h2database</groupId><artifactId>h2</artifactId><scope>test</scope></dependency>
         <!-- 依赖infrastructure模块（自动传递common） -->
         <dependency>
             <groupId>com.videoai</groupId>

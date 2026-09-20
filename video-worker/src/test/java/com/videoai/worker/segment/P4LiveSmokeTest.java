@@ -17,16 +17,25 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.*;
 
-/** 明确启用的真实片段冒烟；提交前落本地记录，未知请求不自动重发，不写业务数据库。 */
+/** 明确启用的真实片段冒烟；提交前落本地记录，未知请求不自动重发，使用已迁移的测试账本，不启动视频调度器。 */
 @EnabledIfEnvironmentVariable(named = "P4_LIVE_SMOKE", matches = "true")
+@org.springframework.boot.test.context.SpringBootTest(classes=P4LiveSmokeTest.LedgerConfiguration.class)
 class P4LiveSmokeTest {
+    @org.springframework.boot.test.context.TestConfiguration
+    @org.springframework.boot.autoconfigure.EnableAutoConfiguration
+    @org.springframework.context.annotation.Import({com.videoai.infra.cost.AiCallRecorder.class,
+            com.videoai.infra.cost.AiCostCalculator.class,com.videoai.infra.cost.AiPricingProperties.class})
+    @org.springframework.boot.context.properties.EnableConfigurationProperties
+    @org.mybatis.spring.annotation.MapperScan("com.videoai.infra.mysql.mapper")
+    static class LedgerConfiguration {}
+    @org.springframework.beans.factory.annotation.Autowired com.videoai.infra.cost.AiCallRecorder recorder;
     @TempDir Path root;
     @Test void realClipsRunThroughSharedPoolAndStructuredProvider() throws Exception {
         var json = new ObjectMapper();
         Path repo = Files.isDirectory(Path.of("sql")) ? Path.of(".") : Path.of("..");
         Path logs = repo.resolve("logs"); Files.createDirectories(logs);
         var model = new DashScopeConfig(); model.setApiKey(System.getenv("ASR_API_KEY"));
-        var provider = new DashScopeVideoProvider(model);
+        var provider = new DashScopeVideoProvider(model,recorder,json);
         var modelSettings = new SegmentModelSettings(provider);
         var props = new MediaProperties(); props.setTempRoot(root.toString()); props.setMinFreeBytes(0);
         props.setFfmpeg(System.getenv("FFMPEG_PATH")); props.setFfprobe(System.getenv("FFPROBE_PATH"));
@@ -68,7 +77,7 @@ class P4LiveSmokeTest {
                             pool.awaitRequestPermit(scope);
                             Files.write(requestFile, json.writeValueAsBytes(request), StandardOpenOption.CREATE_NEW);
                             long begin = System.currentTimeMillis(); calls.incrementAndGet();
-                            response = provider.callDetailed(storage.getPresignedUrl(key, 2), SegmentReviewParser.VIDEO_PROMPT);
+                            response = provider.callDetailed(new com.videoai.common.analysis.AiCallContext("p4-live",0,com.videoai.common.analysis.AiCallContext.Stage.VIDEO_ANALYSIS,no),storage.getPresignedUrl(key, 2), SegmentReviewParser.VIDEO_PROMPT);
                             Files.write(rawFile, json.writeValueAsBytes(response), StandardOpenOption.CREATE_NEW);
                             timings.add(Map.of("segmentNo", no, "startEpochMs", begin, "endEpochMs", System.currentTimeMillis()));
                         } finally { storage.removeObject(key); }

@@ -1,106 +1,85 @@
 package com.videoai.infra.rag.vector;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
+import com.videoai.common.analysis.*;
+import com.videoai.infra.cost.AiCallRecorder;
+import com.videoai.infra.cost.AiCallRecorder.Outcome;
+import com.videoai.infra.http.OneShotJsonBody;
 import com.videoai.infra.rag.config.OpenAiEmbeddingProperties;
-import lombok.extern.slf4j.Slf4j;
+import okhttp3.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-@Slf4j
 @Component
-@ConditionalOnProperty(name = "videoai.rag.embedding.provider", havingValue = "dashscope", matchIfMissing = true)
+@ConditionalOnProperty(name="videoai.rag.embedding.provider",havingValue="dashscope",matchIfMissing=true)
 public class DashScopeEmbeddingProvider implements EmbeddingProvider {
-
-    private static final String EMBEDDING_PATH = "/services/embeddings/text-embedding/text-embedding";
-
     private final OpenAiEmbeddingProperties properties;
     private final ObjectMapper objectMapper;
-    private final HttpClient httpClient;
+    private final AiCallRecorder recorder;
+    private final OkHttpClient httpClient;
 
-    public DashScopeEmbeddingProvider(OpenAiEmbeddingProperties properties, ObjectMapper objectMapper) {
-        this.properties = properties;
-        this.objectMapper = objectMapper;
-        this.httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(properties.getConnectTimeoutSeconds()))
-                .build();
+    @org.springframework.beans.factory.annotation.Autowired
+    public DashScopeEmbeddingProvider(OpenAiEmbeddingProperties properties,ObjectMapper objectMapper,AiCallRecorder recorder) {
+        this(properties,objectMapper,recorder,new OkHttpClient.Builder()
+                .connectTimeout(Duration.ofSeconds(properties.getConnectTimeoutSeconds())).build());
     }
-
-    @Override
-    public List<Float> embed(String text) {
-        return embedDocument(text);
+    DashScopeEmbeddingProvider(OpenAiEmbeddingProperties properties,ObjectMapper objectMapper,AiCallRecorder recorder,OkHttpClient httpClient) {
+        this.properties=properties;this.objectMapper=objectMapper;this.recorder=Objects.requireNonNull(recorder);this.httpClient=httpClient;
     }
-
-    @Override
-    public List<Float> embedDocument(String text) {
-        return requestEmbedding(text, properties.getDashscope().getTextType());
+    @Override public List<Float> embed(String text) { return embedDocument(text); }
+    @Override public List<Float> embedDocument(String text) { return requestEmbedding(null,text,properties.getDashscope().getTextType()); }
+    @Override public List<Float> embedQuery(String text) { return requestEmbedding(null,text,"query"); }
+    @Override public List<Float> embedQuery(AiCallContext context,String text) {
+        Objects.requireNonNull(context);
+        if(context.stage()!=AiCallContext.Stage.RAG_EMBEDDING) throw new IllegalArgumentException("Embedding调用阶段不匹配");
+        return requestEmbedding(context,text,"query");
     }
-
-    @Override
-    public List<Float> embedQuery(String text) {
-        return requestEmbedding(text, "query");
-    }
-
-    private List<Float> requestEmbedding(String text, String textType) {
+    private List<Float> requestEmbedding(AiCallContext context,String text,String textType) {
         try {
-            String requestJson = objectMapper.writeValueAsString(Map.of(
-                    "model", properties.getModel(),
-                    "input", Map.of("texts", List.of(text)),
-                    "parameters", Map.of(
-                            "text_type", textType,
-                            "dimension", properties.getDimension()
-                    )
-            ));
-
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(trimTrailingSlash(properties.getBaseUrl()) + EMBEDDING_PATH))
-                    .timeout(Duration.ofSeconds(properties.getTimeoutSeconds()))
-                    .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + properties.getApiKey())
-                    .POST(HttpRequest.BodyPublishers.ofString(requestJson))
-                    .build();
-
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() >= 300) {
-                throw new IllegalStateException("DashScope embedding request failed, status="
-                        + response.statusCode() + ", body=" + response.body());
-            }
-
-            JsonNode root = objectMapper.readTree(response.body());
-            com.videoai.common.analysis.ExternalUsageReceipt.report(root.path("usage").toString(), root.path("request_id").asText(root.path("id").asText()));
-            JsonNode vectorNode = root.path("output").path("embeddings").path(0).path("embedding");
-            if (!vectorNode.isArray() || vectorNode.isEmpty()) {
-                throw new IllegalStateException("DashScope embedding response missing vector data");
-            }
-
-            List<Float> vector = new ArrayList<>(vectorNode.size());
-            for (JsonNode node : vectorNode) {
+            if(properties.getApiKey()==null || properties.getApiKey().isBlank()) throw new IllegalStateException("缺少Embedding凭据");
+            byte[] bytes=objectMapper.writeValueAsBytes(Map.of("model",properties.getModel(),"input",Map.of("texts",List.of(text)),
+                    "parameters",Map.of("text_type",textType,"dimension",properties.getDimension())));
+            String base=properties.getBaseUrl();
+            if(base==null || base.isBlank()) base="https://dashscope.aliyuncs.com/api/v1";
+            base=base.replaceAll("/+$", "");
+            var request=new Request.Builder().url(base + "/services/embeddings/text-embedding/text-embedding").post(new OneShotJsonBody(bytes));
+            if(properties.getApiKey()!=null && !properties.getApiKey().isBlank()) request.header("Authorization","Bearer "+properties.getApiKey());
+            Duration timeout=ExecutionBudget.limit(Duration.ofSeconds(properties.getTimeoutSeconds()));
+            var call=httpClient.newBuilder().retryOnConnectionFailure(false).followRedirects(false).followSslRedirects(false)
+                    .readTimeout(timeout).writeTimeout(timeout).callTimeout(timeout).build().newCall(request.build());
+            String callId=context==null ? null : UUID.randomUUID().toString();
+            if(callId!=null) recorder.begin(callId,context,properties.getModel());
+            Outcome outcome=Outcome.UNKNOWN; AiUsage usage=AiUsage.unknown();
+            String requestId=null;String errorCode="TRANSPORT_OR_RECEIPT_UNKNOWN";JsonNode root=null;
+            try {
+                try {ExecutionBudget.check();} catch(IOException cancelled) {outcome=Outcome.NOT_SENT;errorCode="CANCELLED_BEFORE_SEND";throw cancelled;}
+                try(var response=call.execute()) {
+                    if(response.body()==null) throw new IOException("Embedding响应为空");
+                    byte[] body=response.body().byteStream().readNBytes(1024*1024+1);
+                    if(body.length>1024*1024) throw new IOException("Embedding响应过大");
+                    outcome=response.isSuccessful()?Outcome.SUCCEEDED:Outcome.FAILED;
+                    errorCode="HTTP_"+response.code();
+                    try {
+                        root=objectMapper.readTree(body);
+                        if(root!=null) {usage=AiCallRecorder.inputUsage(root.get("usage"));requestId=root.path("request_id").asText(root.path("id").asText(null));}
+                    } catch(com.fasterxml.jackson.core.JsonProcessingException malformed) { /* 缺失用量保持未知。 */ }
+                    if(!response.isSuccessful()) throw new IOException("Embedding HTTP请求失败");
+                    errorCode=null;
+                }
+            } finally {if(callId!=null) recorder.finish(callId,outcome,usage,requestId,errorCode);}
+            if(root==null) throw new IOException("Embedding响应无效");
+            ExternalUsageReceipt.report(root.path("usage").toString(),requestId);
+            var vectorNode=root.path("output").path("embeddings").path(0).path("embedding");
+            if(!vectorNode.isArray() || vectorNode.isEmpty()) throw new IllegalStateException("Embedding response missing vector data");
+            List<Float> vector=new ArrayList<>(vectorNode.size());
+            for(JsonNode node:vectorNode) {
+                if(!node.isNumber() || !Float.isFinite(node.floatValue())) throw new IllegalStateException("Embedding response contains invalid vector");
                 vector.add(node.floatValue());
             }
             return vector;
-        } catch (IOException | InterruptedException e) {
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
-            log.error("DashScope embedding request failed", e);
-            throw new IllegalStateException("DashScope embedding request failed: " + e.getMessage(), e);
-        }
-    }
-
-    private String trimTrailingSlash(String baseUrl) {
-        if (baseUrl == null || baseUrl.isBlank()) {
-            return "https://dashscope.aliyuncs.com/api/v1";
-        }
-        return baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
+        } catch(IOException e) {throw new IllegalStateException("Embedding请求失败或响应无效，费用以账本回执为准");}
     }
 }

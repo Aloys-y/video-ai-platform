@@ -18,16 +18,22 @@ public final class TaskDispatchRepository {
     private final JdbcTemplate jdbc;
     private final TransactionTemplate transaction;
     private final int leaseSeconds;
+    private final java.util.function.Consumer<com.videoai.common.domain.AnalysisFinishedEvent> events;
 
     public int leaseSeconds() { return leaseSeconds; }
 
     public TaskDispatchRepository(DataSource source, PlatformTransactionManager manager, int leaseSeconds) {
+        this(source, manager, leaseSeconds, event -> {});
+    }
+    public TaskDispatchRepository(DataSource source, PlatformTransactionManager manager, int leaseSeconds,
+            java.util.function.Consumer<com.videoai.common.domain.AnalysisFinishedEvent> events) {
         if (leaseSeconds < 1 || leaseSeconds > 3600) throw new IllegalArgumentException("租约秒数无效");
         this.jdbc = new JdbcTemplate(source);
         this.jdbc.setQueryTimeout(5);
         this.transaction = new TransactionTemplate(manager);
         this.transaction.setTimeout(10);
         this.leaseSeconds = leaseSeconds;
+        this.events = events;
     }
 
     public List<Candidate> candidates(int limit) {
@@ -75,10 +81,14 @@ public final class TaskDispatchRepository {
 
     public boolean finish(Lease lease, String terminal, String errorCode) {
         if (!TERMINAL.contains(terminal)) throw new IllegalArgumentException("不支持的执行终态");
-        return jdbc.update("UPDATE analysis_task SET status=?,error_code=?,finished_at=CURRENT_TIMESTAMP(3),"
+        return transaction.execute(tx -> {
+        int changed = jdbc.update("UPDATE analysis_task SET status=?,error_code=?,finished_at=CURRENT_TIMESTAMP(3),"
                         + "owner_token=NULL,lease_until=NULL WHERE task_id=? AND attempt_no=? AND owner_token=? "
                         + "AND status='RUNNING' AND lease_until>CURRENT_TIMESTAMP(3)",
-                terminal, errorCode, lease.taskId(), lease.attemptNo(), lease.owner()) == 1;
+                terminal, errorCode, lease.taskId(), lease.attemptNo(), lease.owner());
+        if (changed == 1) emit(lease, terminal);
+        return changed == 1;
+        });
     }
 
     /** 只标记中断，不重新领取。成功片段记录不删除，后续可查询或用户主动重试。 */
@@ -90,12 +100,27 @@ public final class TaskDispatchRepository {
                 (rs, index) -> new Lease(rs.getString(1), rs.getInt(2), rs.getString(3)), limit);
         int changed = 0;
         for (var lease : expired) {
-            changed += jdbc.update("UPDATE analysis_task SET status='FAILED',error_code='EXECUTION_INTERRUPTED',"
+            changed += transaction.execute(tx -> {
+            int count = jdbc.update("UPDATE analysis_task SET status='FAILED',error_code='EXECUTION_INTERRUPTED',"
                             + "finished_at=CURRENT_TIMESTAMP(3),owner_token=NULL,lease_until=NULL "
                             + "WHERE task_id=? AND attempt_no=? AND owner_token=? AND status='RUNNING' "
                             + "AND lease_until<=CURRENT_TIMESTAMP(3)",
                     lease.taskId(), lease.attemptNo(), lease.owner());
+            if (count == 1) emit(lease, "FAILED");
+            return count;
+            });
         }
         return changed;
+    }
+    private void emit(Lease lease, String status) {
+        // 注册提交后回调；通知失败不得使已经完成的任务表现为业务失败。
+        org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
+            new org.springframework.transaction.support.TransactionSynchronization() {
+                @Override public void afterCommit() {
+                    try { events.accept(com.videoai.common.domain.AnalysisFinishedEvent.of(lease.taskId(),lease.attemptNo(),status)); }
+                    catch (RuntimeException e) { org.slf4j.LoggerFactory.getLogger(TaskDispatchRepository.class)
+                        .warn("通知事件交接失败 taskId={} type={}",lease.taskId(),e.getClass().getSimpleName()); }
+                }
+            });
     }
 }

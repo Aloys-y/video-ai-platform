@@ -19,10 +19,10 @@ public class SegmentAnalysisExecutor implements AutoCloseable {
 
     @org.springframework.beans.factory.annotation.Autowired
     public SegmentAnalysisExecutor(SegmentAnalysisProperties config) {
-        this(config, config.getThreads(), 0);
+        this(config, config.getMaxThreads(), config.getKeepAliveMs());
     }
 
-    /** 包内对照实验入口；生产默认仍保持固定线程数。 */
+    /** 包内对照实验入口；生产通过配置指定扩容上限与空闲回收时间。 */
     SegmentAnalysisExecutor(SegmentAnalysisProperties config, int maximumThreads, long keepAliveMs) {
         config.validate(); this.config = config;
         if (maximumThreads < config.getThreads() || maximumThreads > 64 || keepAliveMs < 0)

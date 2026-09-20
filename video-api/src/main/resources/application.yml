@@ -78,6 +78,7 @@ videoai:
 
   # 限流配置
   rate-limit:
+    enabled: false
     # 全局QPS限制
     global-qps: 1000
     # 单用户上传QPS限制

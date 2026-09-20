@@ -29,15 +29,13 @@ class CandidatePlannerTest {
         assertEquals("u140",windows.get(2).utterances().get(0).id());
         assertEquals(161,windows.stream().flatMap(w->w.utterances().stream()).map(TranscriptUtterance::id).distinct().count());
     }
-    @Test void idsMapToOriginalTimesThenExpandMergeAndSplit() throws Exception {
+    @Test void idsMapToOriginalTimesThenExpandAndMerge() throws Exception {
         var window=new CandidatePlanner.Window(List.of(new TranscriptUtterance("a",1000,2000,"接敌",0),
                 new TranscriptUtterance("b",10000,12000,"打他",0)),"[]");
         var mapped=planner.parse("{\"candidates\":[{\"utterance_ids\":[\"a\",\"b\"],\"type\":\"engagement\",\"reason\":\"实时交战\"}]}",window);
-        assertEquals(2,mapped.size());assertEquals(1000,mapped.get(0).startMs());
-        media.setMaxSegmentMs(10000);
+        assertEquals(1,mapped.size());assertEquals(1000,mapped.get(0).startMs());
         var plan=planner.plan(mapped,100000,List.of(window));
-        assertEquals(List.of(new AudioPrefilterPreparationService.Range(0,10000),new AudioPrefilterPreparationService.Range(10000,20000),
-                new AudioPrefilterPreparationService.Range(20000,27000)),plan.ranges());
+        assertEquals(List.of(new AudioPrefilterPreparationService.Range(0,27000)),plan.ranges());
     }
     @Test void inventedIdsTimesMalformedAndDuplicateTranscriptIdsFail() throws Exception {
         var row=new TranscriptUtterance("a",0,1000,"x",0);var window=new CandidatePlanner.Window(List.of(row),"[]");
@@ -58,17 +56,24 @@ class CandidatePlannerTest {
         var giant=new TranscriptUtterance("long",0,1000,"大".repeat(20000),0);
         assertThrows(IOException.class,()->planner.windows(transcript(List.of(giant),2000)));
     }
-    @Test void selectsFirstEightAfterSplittingAndBudgetsOnlySelectedDuration() throws Exception {
-        config.setBeforeMs(0);config.setAfterMs(0);config.setMergeGapMs(0);
-        media.setMaxSegmentMs(1000);media.setMaxSelectedMs(8000);
-        var candidate=new CandidateRange(0,9000,List.of("a"),CandidateRange.Type.ENGAGEMENT,"x");
-        var result=planner.plan(List.of(candidate),10000,List.of());
-        assertEquals(8,result.ranges().size());assertEquals(0,result.ranges().get(0).startMs());
-        assertEquals(8000,result.ranges().get(7).endMs());assertEquals(List.of(candidate),result.candidates());
-        assertEquals(planner.estimate(10000,List.of(),8000),result.estimatedTaskCny());
+    @Test void longIntervalIsNotSplitAtThreeMinutes() throws Exception {
+        var candidate=new CandidateRange(10000,300000,List.of("a"),CandidateRange.Type.ENGAGEMENT,"x");
+        var result=planner.plan(List.of(candidate),400000,List.of());
+        assertEquals(List.of(new AudioPrefilterPreparationService.Range(0,315000)),result.ranges());
+    }
+    @Test void rawGapFifteenSecondsAndExpandedGapFiveSecondsAreInclusive() throws Exception {
+        config.setBeforeMs(0);config.setAfterMs(0);
+        var a=new CandidateRange(10000,20000,List.of("a"),CandidateRange.Type.ENGAGEMENT,"x");
+        var b=new CandidateRange(35000,40000,List.of("b"),CandidateRange.Type.ENGAGEMENT,"x");
+        assertEquals(1,planner.plan(List.of(a,b),100000,List.of()).ranges().size());
+        config.setBeforeMs(10000);config.setAfterMs(15000);
+        var c=new CandidateRange(50000,60000,List.of("c"),CandidateRange.Type.ENGAGEMENT,"x");
+        assertEquals(List.of(new AudioPrefilterPreparationService.Range(0,75000)),planner.plan(List.of(a,c),100000,List.of()).ranges());
+        var d=new CandidateRange(50001,60000,List.of("d"),CandidateRange.Type.ENGAGEMENT,"x");
+        assertEquals(2,planner.plan(List.of(a,d),100000,List.of()).ranges().size());
     }
     @Test void selectionIsChronologicalAndDoesNotPadShortVideos() throws Exception {
-        config.setBeforeMs(0);config.setAfterMs(0);config.setMergeGapMs(0);
+        config.setBeforeMs(0);config.setAfterMs(0);config.setMergeGapMs(0);config.setExpandedMergeGapMs(0);
         List<CandidateRange> candidates=new ArrayList<>();
         for(int i=9;i>=0;i--) candidates.add(new CandidateRange(i*2000,i*2000+1000,List.of("u"+i),CandidateRange.Type.ENGAGEMENT,"x"));
         var result=planner.plan(candidates,20000,List.of());

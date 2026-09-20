@@ -29,6 +29,10 @@ public interface AnalysisExecutionMapper {
             """)
     AnalysisExecution selectReusable(@Param("taskId") String taskId, @Param("executionNo") int executionNo);
 
+    @Select("SELECT * FROM analysis_execution WHERE task_id=#{taskId} AND execution_no<#{executionNo} "
+            + "AND transcript_object_key IS NOT NULL ORDER BY execution_no DESC LIMIT 1")
+    AnalysisExecution selectPreviousPrepared(@Param("taskId") String taskId, @Param("executionNo") int executionNo);
+
     /** 字段名由枚举白名单选出，不接受外部 SQL 标识符。产物必须使用不可覆盖的对象键。 */
     @UpdateProvider(type = CheckpointSql.class, method = "bind")
     int bindOnce(@Param("taskId") String taskId, @Param("executionNo") int executionNo,

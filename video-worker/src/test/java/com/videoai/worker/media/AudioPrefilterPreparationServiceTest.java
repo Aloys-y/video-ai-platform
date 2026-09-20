@@ -66,11 +66,12 @@ class AudioPrefilterPreparationServiceTest {
     }
 
     @Test void persistsTranscriptAndResumesWithoutAnotherPaidCall() throws Exception {
-        when(asr.submit(anyString())).thenReturn("remote-id");
-        when(asr.query("remote-id")).thenReturn(new CloudAsrClient.Query("SUCCEEDED", "https://result.example/test", null));
+        when(asr.submit(any(),anyString())).thenReturn("remote-id");
+        when(asr.query(any(),eq("remote-id"))).thenReturn(new CloudAsrClient.Query("SUCCEEDED", "https://result.example/test", null));
         when(asr.downloadResult(anyString(), anyInt(), anyLong(), anyLong())).thenReturn(new CloudAsrClient.Transcript(
                 List.of(new TranscriptUtterance("p0-u0", 100, 1000, "前面有人", 0)), new ObjectMapper().createObjectNode()));
         var first = service.prepareTranscript("task", 0, "original.mp4");
+        assertEquals(1, new ObjectMapper().readTree(execution.get().getConfigSnapshot()).path("costLedgerVersion").asInt());
         assertEquals("TRANSCRIBED", first.outcome()); assertNotNull(execution.get().getTranscriptObjectKey());
         assertThrows(IOException.class, () -> service.prepareSegments("task",0,"original.mp4",List.of()));
         execution.get().setCandidatesObjectKey("candidates");
@@ -81,23 +82,50 @@ class AudioPrefilterPreparationServiceTest {
                 List.of(new AudioPrefilterPreparationService.Range(0,1500))));
         assertTrue(mismatch.getMessage().contains("冻结"));
         var second = service.prepareTranscript("task", 0, "original.mp4");
-        assertEquals(first, second); verify(asr, times(1)).submit(anyString());
+        assertEquals(first, second); verify(asr, times(1)).submit(any(),anyString());
         assertEquals("remote-id", plan.get(0).getAsrTaskId());
         try (var paths = Files.list(root.resolve("work"))) { assertEquals(0, paths.count()); }
     }
 
+    @Test void retryReusesTranscriptWithoutDownloadingSourceOrExtractingAudio() throws Exception {
+        doReturn(new MediaPreparationService.VideoInfo(2000, 0, false)).when(media).probe(any(), any());
+        var first = service.prepareTranscript("task", 0, "original.mp4");
+        var previous = execution.get(); execution.set(null);
+        when(executions.selectPreviousPrepared("task", 1)).thenReturn(previous);
+        clearInvocations(storage, media, asr);
+        assertEquals(first, service.prepareTranscript("task", 1, "original.mp4"));
+        verify(storage, never()).downloadToFile(eq("original.mp4"), any(), anyLong(), any(), anyLong());
+        verify(media, never()).probe(any(), any());
+        verify(media, never()).extractAudio(any(), any(), any());
+        verifyNoInteractions(asr);
+        assertEquals(previous.getInputHash(), execution.get().getInputHash());
+        assertEquals(1, execution.get().getExecutionNo());
+    }
+
+    @Test void changedSourceDoesNotReusePreviousSnapshot() throws Exception {
+        doReturn(new MediaPreparationService.VideoInfo(2000, 0, false)).when(media).probe(any(), any());
+        service.prepareTranscript("task", 0, "original.mp4");
+        var previous = execution.get(); execution.set(null);
+        when(executions.selectPreviousPrepared("task", 1)).thenReturn(previous);
+        clearInvocations(storage, media);
+        objects.put("changed.mp4", "changed-source".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        service.prepareTranscript("task", 1, "changed.mp4");
+        verify(storage).downloadToFile(eq("changed.mp4"), any(), anyLong(), any(), anyLong());
+        verify(media).probe(any(), any());
+    }
+
     @Test void uncertainSubmissionIsNotAutomaticallyRepeated() throws Exception {
-        when(asr.submit(anyString())).thenThrow(new IOException("request timed out"));
+        when(asr.submit(any(),anyString())).thenThrow(new IOException("request timed out"));
         assertThrows(IOException.class, () -> service.prepareTranscript("task", 0, "original.mp4"));
         assertEquals("SUBMITTING", plan.get(0).getAsrTaskId());
         var error = assertThrows(IOException.class, () -> service.prepareTranscript("task", 0, "original.mp4"));
         assertTrue(error.getMessage().contains("提交结果未知"));
-        verify(asr, times(1)).submit(anyString()); verify(asr, never()).query(anyString());
+        verify(asr, times(1)).submit(any(),anyString()); verify(asr, never()).query(any(),anyString());
     }
 
     @Test void guidanceIsFrozenOnceAndReusedWithoutRetrieval() throws Exception {
-        when(asr.submit(anyString())).thenReturn("remote-id");
-        when(asr.query("remote-id")).thenReturn(new CloudAsrClient.Query("SUCCEEDED", "https://result.example/test", null));
+        when(asr.submit(any(),anyString())).thenReturn("remote-id");
+        when(asr.query(any(),eq("remote-id"))).thenReturn(new CloudAsrClient.Query("SUCCEEDED", "https://result.example/test", null));
         when(asr.downloadResult(anyString(), anyInt(), anyLong(), anyLong())).thenReturn(new CloudAsrClient.Transcript(
                 List.of(new TranscriptUtterance("u",0,1000,"接敌",0)),new ObjectMapper().createObjectNode()));
         Path source;

@@ -77,7 +77,7 @@ mvn -pl video-worker -am spring-boot:run `
 ## 运行基线
 
 ```powershell
-python scripts/outbox_load_test.py `
+python scripts/archive/outbox_load_test.py `
   --tasks 100 `
   --concurrency 20 `
   --submit-rate 10 `

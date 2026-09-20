@@ -19,4 +19,8 @@ public interface EmbeddingProvider {
     default List<Float> embedQuery(String text) {
         return embed(text);
     }
+    /** 视频任务必须显式携带费用归属，不允许默默退回不记账的离线接口。 */
+    default List<Float> embedQuery(com.videoai.common.analysis.AiCallContext context,String text) {
+        throw new UnsupportedOperationException("Embedding provider 尚未接入视频任务费用账本");
+    }
 }

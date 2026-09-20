@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class TaskController {
 
     private final TaskService taskService;
+    private final com.videoai.api.service.TaskCostService taskCosts;
     private final com.videoai.api.service.TaskSegmentService taskSegments;
 
     /**
@@ -29,6 +30,11 @@ public class TaskController {
     public ApiResponse<AnalysisTask> getTask(@PathVariable("taskId") String taskId) {
         AnalysisTask task = taskSegments.ownedTask(taskId, UserContext.getUserId());
         return ApiResponse.success(task);
+    }
+
+    @GetMapping(value="/{taskId}/costs",produces="application/json")
+    public ApiResponse<com.videoai.api.service.TaskCostService.Result> costs(@PathVariable("taskId") String taskId) {
+        return ApiResponse.success(taskCosts.get(taskId,UserContext.getUserId()));
     }
 
     @GetMapping("/{taskId}/segments")

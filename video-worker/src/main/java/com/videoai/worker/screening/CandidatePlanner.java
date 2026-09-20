@@ -109,15 +109,11 @@ public class CandidatePlanner {
         for (var r:merge(raw,config.getMergeGapMs())) expanded.add(new AudioPrefilterPreparationService.Range(
                 Math.max(0,r.startMs()-config.getBeforeMs()),Math.min(duration,r.endMs()+config.getAfterMs())));
         List<AudioPrefilterPreparationService.Range> ranges=new ArrayList<>();long total=0;
-        if (media.getMaxSegmentMs()<=0 || media.getMaxSegments()<=0) throw new IOException("单片段预算无效");
-        // 先合并/扩展，再按时间拆分并保留前N段；完整候选仍写入清单，便于审计覆盖范围。
-        selected:
-        for (var r:merge(expanded,0)) {
-            for (long s=r.startMs();s<r.endMs();) {
-                if (ranges.size()>=media.getMaxSegments()) break selected;
-                long e=Math.min(r.endMs(),s+media.getMaxSegmentMs());
-                ranges.add(new AudioPrefilterPreparationService.Range(s,e));total+=e-s;s=e;
-            }
+        if (media.getMaxSegments()<=0) throw new IOException("片段数量预算无效");
+        // 补齐上下文后再次合并邻近区间，不再按单段时长拆分；保留前N段。
+        for (var r:merge(expanded,config.getExpandedMergeGapMs())) {
+            if (ranges.size()>=media.getMaxSegments()) break;
+            ranges.add(r); total+=r.endMs()-r.startMs();
         }
         if (total>media.getMaxSelectedMs()) throw new IOException("筛中时长超过预算");
         return new Plan(unique,ranges,estimate(duration,windows,total));
