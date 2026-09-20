@@ -23,17 +23,17 @@ public final class MockMailService {
     }
     public void tick() {
         // Mock 不存在外部副作用；过期发送仍标 UNKNOWN，演练未来真实发送的不确定边界。
-        jdbc.update("UPDATE mock_mail_notification SET status='UNKNOWN',error_code='CLAIM_EXPIRED',claim_token=NULL,claim_until=NULL WHERE status='SENDING' AND claim_until<CURRENT_TIMESTAMP");
-        var rows=jdbc.queryForList("SELECT event_id,subject,body FROM mock_mail_notification WHERE status='PENDING' AND next_attempt_at<=CURRENT_TIMESTAMP ORDER BY created_at LIMIT 2");
+        jdbc.update("UPDATE mock_mail_notification SET status='UNKNOWN',error_code='CLAIM_EXPIRED',claim_token=NULL,claim_until=NULL WHERE status='SENDING' AND claim_until<CURRENT_TIMESTAMP(3)");
+        var rows=jdbc.queryForList("SELECT event_id,subject,body FROM mock_mail_notification WHERE status='PENDING' AND next_attempt_at<=CURRENT_TIMESTAMP(3) ORDER BY created_at LIMIT 2");
         for(var row:rows) {
             String id=(String)row.get("event_id"), token=UUID.randomUUID().toString();
-            int claimed=jdbc.update("UPDATE mock_mail_notification SET status='SENDING',attempt_count=attempt_count+1,claim_token=?,claim_until=TIMESTAMPADD(SECOND,120,CURRENT_TIMESTAMP) WHERE event_id=? AND status='PENDING' AND next_attempt_at<=CURRENT_TIMESTAMP",token,id);
+            int claimed=jdbc.update("UPDATE mock_mail_notification SET status='SENDING',attempt_count=attempt_count+1,claim_token=?,claim_until=TIMESTAMPADD(SECOND,120,CURRENT_TIMESTAMP(3)) WHERE event_id=? AND status='PENDING' AND next_attempt_at<=CURRENT_TIMESTAMP(3)",token,id);
             if(claimed!=1) continue;
             Outcome result;
             try {result=Objects.requireNonNull(provider.send(id,(String)row.get("subject"),(String)row.get("body")));}
             catch(RuntimeException e) {result=Outcome.UNKNOWN;}
             if(result==Outcome.TRANSIENT_FAILURE) {
-                jdbc.update("UPDATE mock_mail_notification SET status=CASE WHEN attempt_count>=3 THEN 'FAILED' ELSE 'PENDING' END,next_attempt_at=TIMESTAMPADD(SECOND,CASE WHEN attempt_count=1 THEN 60 ELSE 300 END,CURRENT_TIMESTAMP),error_code='TRANSIENT_FAILURE',claim_token=NULL,claim_until=NULL WHERE event_id=? AND claim_token=? AND status='SENDING'",id,token);
+                jdbc.update("UPDATE mock_mail_notification SET status=CASE WHEN attempt_count>=3 THEN 'FAILED' ELSE 'PENDING' END,next_attempt_at=TIMESTAMPADD(SECOND,CASE WHEN attempt_count=1 THEN 60 ELSE 300 END,CURRENT_TIMESTAMP(3)),error_code='TRANSIENT_FAILURE',claim_token=NULL,claim_until=NULL WHERE event_id=? AND claim_token=? AND status='SENDING'",id,token);
             } else {
                 String status=switch(result) {case SUCCESS -> "MOCK_SENT";case PERMANENT_FAILURE -> "FAILED";default -> "UNKNOWN";};
                 jdbc.update("UPDATE mock_mail_notification SET status=?,error_code=?,claim_token=NULL,claim_until=NULL WHERE event_id=? AND claim_token=? AND status='SENDING'",status,result==Outcome.SUCCESS?null:result.name(),id,token);
