@@ -5,7 +5,7 @@ const TaskStage = {
     if (terminal[task.status]) return terminal[task.status];
     if (task.status !== 'RUNNING') return '等待处理';
     return ({
-      PREPARING_AUDIO: '准备视频与音轨中', TRANSCRIBING: '语音转写中',
+      PREPARING_AUDIO: '准备视频与音轨中', REUSING_ARTIFACTS: '复用已有分析产物中', TRANSCRIBING: '语音转写中',
       SCREENING: '筛选交战片段中', PREPARING_SEGMENTS: '裁剪片段与准备分析参考中',
       ANALYZING_SEGMENTS: '分析片段中', SUMMARIZING: '整理分析结果中'
     })[task.currentStep] || '视频分析中';

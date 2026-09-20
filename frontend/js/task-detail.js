@@ -8,8 +8,14 @@ const TaskDetail = {
   pollTimer: null,
   segmentData: null,
   segmentError: null,
+  costData: null,
+  costError: null,
+  costExpanded: false,
+  infoExpanded: false,
+  detailTab: 'analysis',
   loadVersion: 0,
   activeSegmentNo: null,
+  selectedSegmentNo: null,
   playRequest: 0,
 
   /**
@@ -20,7 +26,13 @@ const TaskDetail = {
     this.task = null;
     this.segmentData = null;
     this.segmentError = null;
+    this.costData = null;
+    this.costError = null;
+    this.costExpanded = false;
+    this.infoExpanded = false;
+    this.detailTab = 'analysis';
     this.activeSegmentNo = null;
+    this.selectedSegmentNo = null;
     this.playRequest++;
     this.loadVersion++;
     this.stopPolling();
@@ -46,6 +58,8 @@ const TaskDetail = {
     const version = ++this.loadVersion;
     try {
       const task = await Api.get(`/task/${encodeURIComponent(id)}`);
+      const costRequest = Api.get(`/task/${encodeURIComponent(id)}/costs`)
+        .then(data => ({data, error: null}), () => ({data: null, error: '费用暂时无法加载，请稍后刷新。'}));
       let segmentData = null, segmentError = null;
       if (task.analysisMode === 'AUDIO_PREFILTER') {
         try {
@@ -55,15 +69,23 @@ const TaskDetail = {
           task.currentStep = segmentData.currentStep;
         } catch (err) { segmentData = null; segmentError = err.message; }
       }
+      const cost = await costRequest;
+      if (cost.data && cost.data.executionNo !== (task.attemptNo || 0)) {
+        cost.data = null; cost.error = '任务已重试，请刷新查看本次费用。';
+      }
       if (version !== this.loadVersion || id !== this.taskId) return;
       if (this.task && (this.task.attemptNo || 0) !== (task.attemptNo || 0)) {
         this.activeSegmentNo = null;
+        this.selectedSegmentNo = null;
         this.playRequest++;
         document.getElementById('segment-player')?.pause();
+    document.getElementById('segment-play-dialog')?.remove();
       }
       this.task = task;
       this.segmentData = segmentData;
       this.segmentError = segmentError;
+      this.costData = cost.data;
+      this.costError = cost.error;
       this.render();
 
       // 非终态 → 自动轮询（用递归 setTimeout 替代 setInterval，避免并发）
@@ -147,7 +169,7 @@ const TaskDetail = {
     const isStuck = !isFinal && this._isStuck(task);
     const canDelete = isFinal || isStuck;
     const deleteLabel = isFinal ? '删除' : '强制取消';
-    const previousPlayer = document.getElementById('segment-player');
+
 
     let resultHtml = '';
     if (task.status === 'SUCCEEDED' && task.result) {
@@ -194,9 +216,10 @@ const TaskDetail = {
 
     container.innerHTML = `
       <div class="task-detail">
-        <div class="task-sidebar">
-          <!-- 任务概览卡片 -->
-          <div class="card task-sidebar__overview">
+        <section class="task-context" aria-label="视频任务信息">
+        <div class="task-sidebar card">
+          <div class="review-kicker" translate="no">TACECHO / MATCH REVIEW</div>
+          <div class="task-sidebar__overview">
             <div class="task-sidebar__overview-name">${this.escapeHtml(displayName)}</div>
             <div class="task-sidebar__overview-status">
               <span class="badge badge--${statusClass}">${statusText}</span>
@@ -209,10 +232,12 @@ const TaskDetail = {
           </div>
 
           <!-- 详细信息 -->
-          <div class="card task-sidebar__info">
+          <details class="task-metadata" ${this.infoExpanded ? 'open' : ''} ontoggle="TaskDetail.infoExpanded = this.open">
+            <summary>任务信息 <span>时间记录与任务编号</span></summary>
+          <div class="task-sidebar__info">
             <div class="task-sidebar__row">
               <span class="task-sidebar__label">任务 ID</span>
-              <span class="task-sidebar__value task-sidebar__value--mono">${task.taskId}</span>
+              <span class="task-sidebar__value task-sidebar__value--mono">${this.escapeHtml(task.taskId)}</span>
             </div>
             <div class="task-sidebar__row">
               <span class="task-sidebar__label">创建时间</span>
@@ -234,6 +259,7 @@ const TaskDetail = {
               <span class="task-sidebar__value">${task.attemptNo}</span>
             </div>` : ''}
           </div>
+          </details>
 
           <!-- 操作按钮 -->
           <div class="task-sidebar__actions-wrap">
@@ -254,14 +280,36 @@ const TaskDetail = {
           </div>
         </div>
 
-        <div class="task-result">
+          <div class="task-cost-shortcuts">
+            <button onclick="TaskDetail.switchDetailTab('cost')"><span>本次已知费用</span><strong>${TaskCost.amount(this.costData?.current)}</strong><small>查看费用明细 ↗</small></button>
+            <button onclick="TaskDetail.switchDetailTab('cost')"><span>历次累计已知费用</span><strong>${TaskCost.amount(this.costData?.lifetime)}</strong><small>${this.costError ? '费用暂时无法加载' : this.costData?.lifetime?.incompleteCount ? '含待核对调用，金额尚不完整' : '查看历史与复用费用 ↗'}</small></button>
+          </div>
+        </section>
+        <div class="task-view-tabs" role="tablist" aria-label="任务详情视图">
+          <button id="task-tab-analysis" role="tab" aria-controls="task-panel-analysis" aria-selected="${this.detailTab === 'analysis'}" onclick="TaskDetail.switchDetailTab('analysis')">片段分析</button>
+          <button id="task-tab-cost" role="tab" aria-controls="task-panel-cost" aria-selected="${this.detailTab === 'cost'}" onclick="TaskDetail.switchDetailTab('cost')">费用明细</button>
+        </div>
+        <div class="task-result" id="task-panel-analysis" role="tabpanel" aria-labelledby="task-tab-analysis" ${this.detailTab !== 'analysis' ? 'hidden' : ''}>
           ${resultHtml}
+        </div>
+        <div id="task-panel-cost" role="tabpanel" aria-labelledby="task-tab-cost" ${this.detailTab !== 'cost' ? 'hidden' : ''}>
+          ${TaskCost.render(this.costData, this.costError, this.costExpanded)}
         </div>
       </div>
     `;
-    const playerSlot = document.getElementById(`segment-player-slot-${this.activeSegmentNo}`);
-    if (playerSlot && previousPlayer && previousPlayer.dataset.taskId === this.taskId
-        && previousPlayer.dataset.executionNo === String(task.attemptNo || 0)) playerSlot.appendChild(previousPlayer);
+  },
+
+  switchDetailTab(tab) {
+    if (!['analysis', 'cost'].includes(tab)) return;
+    this.detailTab = tab;
+    if (tab === 'cost') {
+      this.playRequest++;
+      document.getElementById('segment-player')?.pause();
+    document.getElementById('segment-play-dialog')?.remove();
+      this.costExpanded = true;
+    }
+    this.render();
+    document.getElementById(`task-tab-${tab}`)?.focus({preventScroll: true});
   },
 
   renderSegments() {
@@ -275,9 +323,21 @@ const TaskDetail = {
       PREPARED: isFinal ? '未执行' : '等待分析', PROCESSING: isFinal ? '未完成' : '分析中'}[status] || status);
     const playIcon = '<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3.5v9l7-4.5z"/></svg>';
     const timeButton = (item, ms) => `<button class="segment-time" title="定位原视频 ${this.segmentTime(ms)}" aria-label="播放片段 ${Number(item.segmentNo) + 1}，原视频 ${this.segmentTime(ms)}" onclick="TaskDetail.playSegment(${Number(item.segmentNo)},${Number(ms)})">${playIcon}<span>${this.segmentTime(ms)}</span></button>`;
+    const items = data.segments || [];
+    if (!items.some(item => item.segmentNo === this.selectedSegmentNo)) this.selectedSegmentNo = items[0]?.segmentNo ?? null;
+    const selectedIndex = items.findIndex(item => item.segmentNo === this.selectedSegmentNo);
+    const navigation = items.length ? `<nav class="segment-picker" aria-label="选择分析片段">${items.map(item => `
+      <button type="button" class="segment-picker__item${item.segmentNo === this.selectedSegmentNo ? ' is-selected' : ''}" aria-pressed="${item.segmentNo === this.selectedSegmentNo}" onclick="TaskDetail.selectSegment(${Number(item.segmentNo)})">
+        <span><strong>片段 ${Number(item.segmentNo) + 1}</strong><span class="segment-picker__status${item.status === 'FAILED' ? ' is-error' : ''}">${this.escapeHtml(label(item.status))}</span></span>
+        <small>${this.segmentTime(item.startMs)} — ${this.segmentTime(item.endMs)}</small>
+      </button>`).join('')}</nav>
+      <div class="segment-pagination"><span>正在查看 ${selectedIndex + 1} / ${items.length}</span><div>
+        <button class="btn btn--ghost btn--small" ${selectedIndex <= 0 ? 'disabled' : ''} onclick="TaskDetail.selectSegment(${Number(items[selectedIndex - 1]?.segmentNo)})">上一段</button>
+        <button class="btn btn--ghost btn--small" ${selectedIndex >= items.length - 1 ? 'disabled' : ''} onclick="TaskDetail.selectSegment(${Number(items[selectedIndex + 1]?.segmentNo)})">下一段</button>
+      </div></div>` : '';
     return `<div class="segment-overview"><div><h3>片段分析</h3><p>${isFinal ? '仅展示选中片段的分析结果，不代表覆盖整段视频' : this.escapeHtml(step)}</p></div>
       <span class="segment-count"><strong>${data.succeeded}</strong> / ${data.total} 已完成</span></div>
-      ${data.total === 0 ? '<div class="card result-section">暂无可展示的片段。</div>' : ''}` + data.segments.map(item => {
+      ${items.length === 0 ? '<div class="card result-section">暂无可展示的片段。</div>' : navigation}` + items.filter(item => item.segmentNo === this.selectedSegmentNo).map(item => {
         const r = item.review, active = this.activeSegmentNo === item.segmentNo;
         const tone = item.status === 'SUCCEEDED' ? 'success' : item.status === 'FAILED' ? 'error' : 'pending';
         return `<article class="card segment-card${active ? ' is-playing' : ''}" id="segment-card-${Number(item.segmentNo)}">
@@ -288,7 +348,7 @@ const TaskDetail = {
               <button class="segment-play" aria-expanded="${active}" onclick="TaskDetail.${active ? 'closeSegment()' : `playSegment(${Number(item.segmentNo)},${Number(item.startMs)})`}">${active ? '收起视频' : playIcon + '播放片段'}</button></div>
           </header>
           <div class="segment-card__body">
-            ${active ? `<div class="segment-media"><div class="segment-media__slot" id="segment-player-slot-${Number(item.segmentNo)}"></div><p>片段播放 · 时间标记对应原视频</p></div>` : ''}
+            ${this.renderSegmentCost(item.segmentNo)}
             <div class="segment-analysis">
               ${item.reused ? '<span class="segment-reused">复用已保存结果</span>' : ''}
               ${item.errorMessage ? `<p class="segment-error">${this.escapeHtml(item.errorMessage)}</p>` : ''}
@@ -311,9 +371,28 @@ const TaskDetail = {
     return `${String(Math.floor(seconds / 3600)).padStart(2, '0')}:${String(Math.floor(seconds / 60) % 60).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
   },
 
+  renderSegmentCost(segmentNo) {
+    const cost = this.costData?.segments?.find(row => row.segmentNo === segmentNo);
+    return `<div class="segment-cost-summary"><span>本段新增 <strong>${TaskCost.amount(cost?.current)}</strong></span>
+      ${cost?.reused ? `<span>复用来源费用 <strong>${TaskCost.amount(cost.reusedSource)}</strong></span>` : ''}
+      <button onclick="TaskDetail.switchDetailTab('cost')">查看费用明细 →</button></div>`;
+  },
+
+  selectSegment(segmentNo) {
+    if (segmentNo === this.selectedSegmentNo || !this.segmentData?.segments.some(item => item.segmentNo === segmentNo)) return;
+    this.playRequest++; // 丢弃切换前尚未返回的播放地址。
+    document.getElementById('segment-player')?.pause();
+    document.getElementById('segment-play-dialog')?.remove();
+    this.activeSegmentNo = null;
+    this.selectedSegmentNo = segmentNo;
+    this.render();
+    document.querySelector('.segment-picker__item.is-selected')?.focus({preventScroll: true});
+  },
+
   closeSegment() {
     this.playRequest++;
     document.getElementById('segment-player')?.pause();
+    document.getElementById('segment-play-dialog')?.remove();
     this.activeSegmentNo = null;
     this.render();
   },
@@ -336,9 +415,17 @@ const TaskDetail = {
       if (!['https:', 'http:'].includes(url.protocol)) throw new Error('播放地址无效');
       existing?.pause();
       this.activeSegmentNo = segmentNo;
-      this.render();
-      const slot = document.getElementById(`segment-player-slot-${segmentNo}`);
-      if (!slot) return;
+      document.getElementById('segment-play-dialog')?.remove();
+      const dialog = document.createElement('dialog');
+      dialog.id = 'segment-play-dialog';
+      dialog.className = 'segment-dialog';
+      dialog.setAttribute('aria-label', I18n.t(`片段 ${segmentNo + 1} 播放器`));
+      dialog.innerHTML = `<header class="segment-dialog__header"><strong>${I18n.t(`片段 ${segmentNo + 1}`)}</strong><button aria-label="${I18n.t('关闭')}" onclick="TaskDetail.closeSegment()">×</button></header><div class="segment-dialog__video"></div><div class="segment-dialog__caption">片段播放 · 时间标记对应原视频</div>`;
+      dialog.addEventListener('cancel', event => { event.preventDefault(); this.closeSegment(); });
+      dialog.addEventListener('click', event => { if (event.target === dialog) { const r=dialog.getBoundingClientRect(); if(event.clientX<r.left || event.clientX>r.right || event.clientY<r.top || event.clientY>r.bottom) this.closeSegment(); } });
+      document.body.append(dialog);
+      dialog.showModal();
+      const slot = dialog.querySelector('.segment-dialog__video');
       const player = document.createElement('video');
       player.id = 'segment-player'; player.controls = true; player.preload = 'metadata'; player.playsInline = true;
       player.className = 'segment-video';
@@ -352,7 +439,7 @@ const TaskDetail = {
         player.play().catch(() => {});
       }, {once: true});
       player.addEventListener('error', () => App.toast('片段播放失败，请重新点击时间获取播放地址', 'error'));
-      slot.replaceChildren(player); slot.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+      slot.replaceChildren(player);
     } catch (err) { if (request === this.playRequest) App.toast(err.message || '播放失败', 'error'); }
   },
 
@@ -361,7 +448,7 @@ const TaskDetail = {
    */
   async promptRename() {
     const currentName = this.task.taskName || this.extractFileName(this.task.videoUrl);
-    const newName = prompt('请输入新的任务名称：', currentName);
+    const newName = prompt(I18n.t('请输入新的任务名称：'), currentName);
     if (!newName || newName.trim() === '' || newName === currentName) return;
     try {
       this.task = await Api.put(`/task/${this.taskId}/rename`, { taskName: newName.trim() });
@@ -376,7 +463,7 @@ const TaskDetail = {
    * 用户手动重新分析失败任务
    */
   async confirmRetry() {
-    if (!confirm('确定要重新分析此任务吗？')) return;
+    if (!confirm(I18n.t('确定要重新分析此任务吗？'))) return;
     try {
       this.task = await Api.post(`/task/${this.taskId}/retry`);
       App.toast('任务已重新提交', 'success');
@@ -392,7 +479,7 @@ const TaskDetail = {
    */
   async confirmDelete() {
     const name = this.task.taskName || this.extractFileName(this.task.videoUrl);
-    if (!confirm(`确定要删除任务「${name}」吗？此操作不可恢复。`)) return;
+    if (!confirm(I18n.t(`确定要删除任务「${name}」吗？此操作不可恢复。`))) return;
     try {
       await Api.del(`/task/${this.taskId}`);
       App.toast('任务已删除', 'success');
@@ -619,6 +706,7 @@ const TaskDetail = {
     this.loadVersion++;
     this.playRequest++;
     document.getElementById('segment-player')?.pause();
+    document.getElementById('segment-play-dialog')?.remove();
     this.stopPolling();
   },
 };

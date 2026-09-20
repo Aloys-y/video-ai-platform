@@ -1,9 +1,11 @@
 <div align="center">
 
-# VideoAIPlatform - 智能视频内容理解平台
+# TacEcho · 战术回声
+
+看懂每一次交战，让下一局更有依据。
 
 <p>
-  <strong>分片断点续传 / 数据库异步调度 / RAG知识增强 / AI视频分析</strong>
+  <strong>Apex AI 战术复盘 / 交战片段定位 / 领域知识增强 / 调用成本可追溯</strong>
 </p>
 
 <p>
@@ -11,7 +13,7 @@
   <img src="https://img.shields.io/badge/MySQL-8.0-blue" alt="MySQL">
   <img src="https://img.shields.io/badge/Redis-Redisson-red" alt="Redisson">
   <img src="https://img.shields.io/badge/AWS%20S3-Backblaze%20B2-blue" alt="S3">
-  <img src="https://img.shields.io/badge/AI-Qwen--VL%20%2F%20GLM-blueviolet" alt="AI">
+  <img src="https://img.shields.io/badge/AI-Qwen%20Audio%20%2F%20Flash%20%2F%20Plus-blueviolet" alt="AI">
   <img src="https://img.shields.io/badge/License-MIT-yellow" alt="License">
 </p>
 
@@ -19,56 +21,38 @@
 
 <br>
 
-**VideoAIPlatform** 是一个面向视频内容理解的 AI 分析平台。用户上传视频后，系统自动调用大模型进行内容分析，返回结构化的场景描述、关键帧、标签等结果。
+**TacEcho（战术回声）** 是面向 Apex 玩家的 AI 视频复盘平台。用户上传录像后，系统通过语音转写和文本筛选定位交战候选，裁剪后并行分析，返回带原视频时间定位的片段观察、建议和不确定项。任务详情同时展示各阶段、片段的 Token 用量与估算费用。
 
 针对视频处理场景中常见的 **"大文件上传不稳定"**、**"长耗时任务阻塞"**、**"执行中断与迟到结果"** 等痛点，本项目采用 **分片续传 + 数据库任务表 + 后台调度器 + 租约保护** 的异步架构，实现上传与分析解耦。
 
 ## 界面预览
 
-<p align="center">
-  <img src="docs/pic/登陆页面.png" alt="登录页面" width="700">
-  <br>
-  <sub>登录 / 注册页面</sub>
-</p>
+新版采用深色工作台、蓝色操作按钮与 Apex 视觉元素，支持简体中文 / English 切换并保存语言偏好。界面切换不翻译用户输入和模型报告原文。
 
-<p align="center">
-  <img src="docs/pic/上传界面.png" alt="上传界面" width="700">
-  <br>
-  <sub>视频上传 — 分片断点续传 + 秒传</sub>
-</p>
+### 登录与注册
 
-<p align="center">
-  <img src="docs/pic/分析提示词页面.png" alt="分析提示词" width="700">
-  <br>
-  <sub>确认分析 — 自定义 Prompt 提交任务</sub>
-</p>
+![TacEcho 登录页：产品介绍与账号登录](docs/pic/tacecho-login.png)
 
-<p align="center">
-  <img src="docs/pic/列表任务.png" alt="任务列表" width="700">
-  <br>
-  <sub>任务列表 — 进度追踪 + 状态管理</sub>
-</p>
+### 视频上传与复盘入口
 
-<p align="center">
-  <img src="docs/pic/分析结果示例.png" alt="分析结果" width="700">
-  <br>
-  <sub>AI 分析结果 — Markdown 渲染</sub>
-</p>
+![TacEcho 上传工作台：交战定位、战术建议与成本追踪](docs/pic/tacecho-upload.png)
 
-<p align="center">
-  <img src="docs/pic/rag.png" alt="RAG 检索评估页面" width="900">
-  <br>
-  <sub>RAG 检索评估 — 查询增强、召回分数、标题路径与注入上下文可视化</sub>
-</p>
-<br>
+> 图片截取自本地运行的当前前端，展示登录页与上传页的静态界面，不包含虚构任务结果或模型指标。
 
-初心是用来解决个人需求：本人和朋友喜欢玩 APEX (一款三人小队 fps 大逃杀游戏)，为了高效复盘（抓战犯），才萌生了做这个项目的想法。后续会开放给社区使用，也算是一位爱玩派派玩家的社区回馈把！
+## 你可以用它做什么
 
-Todo：
+- **少翻录像，定位交战**：语音转写与文本筛选生成候选区间，再裁剪送入视频模型；语音线索可能遗漏无交流交战，并不保证覆盖所有战斗。
+- **带着上下文看决策**：结合 Apex 知识库，按片段展示画面观察、技能与团队决策建议，并标注不确定信息。
+- **从建议回到现场**：切换片段查看结果，点击时间标记打开独立视频弹窗，不挤压复盘正文。
+- **知道分析花在哪**：查看每阶段、每片段的调用用量与已知费用；未知费用明确标记，复用结果不伪装成新的调用。
 
-1. 目前只能上传单人视角，后期想把三人视角对齐一块传给大模型，让他同时接收三个人的视角信息。模型要部署在个人服务器上，基于 GLM-4.6V-Flash 9 B 模型，要做微调。
+项目起于与朋友复盘 Apex 对局的需求，重点在于把大文件上传、长耗时执行、领域知识和成本记录串成可使用的工程链路。
 
-<br>
+### 当前边界与后续计划
+
+- 视频分析主链路由 MySQL 调度，不依赖 Kafka。可选的 [Kafka → Mock 邮件通知](architecture/email-notification-mock-validation.md) 默认关闭，仅模拟结束提醒，不发送真实邮件。
+- [每日两次免费与付费积分](architecture/daily-quota-credit-plan.md) 目前仅为执行方案，尚未实现扣款与真实充值。
+- 后续继续评估交战召回与复盘质量，再探索多视角时间对齐。
 
 ## 核心功能
 
@@ -90,7 +74,7 @@ Todo：
 
 **4. AI 视频分析**
 
-集成多模态视频理解模型，通过 Provider 接口解耦底层大模型厂商，支持 **阿里云 DashScope（Qwen-VL）**、**智谱 GLM** 和 **OpenAI-compatible** 服务按配置切换。用户可自定义 Prompt，例如**游戏复盘分析、课程内容总结等**。音频转写和文本粗筛确定候选区间，再裁剪视频、检索领域知识、并行分析片段。模型调用对明确可重试错误做有限重试，保留各片段结果，不额外调用模型汇总。
+当前主链路使用 **Qwen-Audio 3.0 Filetrans → Qwen3.8-Flash → Qwen3.7-Plus**：音频转写和文本粗筛确定候选区间，再裁剪视频、检索领域知识、并行分析片段。视频调用使用百炼 OpenAI 兼容接口，只分析裁剪后的片段，不在无候选或调用失败时回退到整视频分析。用户可自定义 Prompt；模型调用对明确可重试错误做有限重试，保留各片段结果，不额外调用模型汇总。每次实际调用的用量、价格快照和估算费用记录到统一账本，任务页展示阶段与片段费用。
 
 **5. RAG 知识增强**
 
@@ -100,7 +84,7 @@ Todo：
 
 项目提供独立的 **RAG 检索评估页面**，可以直接观察原始 Query、别名增强后的 Query、召回分数、命中标题路径以及最终注入模型的上下文，便于定位“英雄找错”“章节找错”和“范围外问题误召回”等问题。
 
-当前 `bench` 基线使用 36 条中文问题连续运行 3 轮，结果保持一致：
+历史 `bench` 基线使用 36 条中文问题连续运行 3 轮，结果保持一致：
 
 | 指标 | 结果 |
 | :--- | ---: |
@@ -132,6 +116,9 @@ graph TD
     H --> I[裁剪片段 / RAG 知识增强]
     I --> J[共享片段线程池 / 有限模型重试]
     J --> K[保存片段结果与任务终态]
+    H -. 用量与冻结价格 .-> N[ai_call_log调用账本]
+    J -. 用量与冻结价格 .-> N
+    N --> O[任务费用查询与页面明细]
     F -. 独立续租 .-> L[数据库 owner 与有效期]
     L -. 过期 .-> M[FAILED / 用户手动重试]
 ```
@@ -148,10 +135,10 @@ graph TD
 | 后台调度 | MySQL 任务表 + Java 线程池 | 条件领取、独立续租、条件写入 |
 | 对象存储 | AWS S3 SDK / Backblaze B2 | S3 Multipart Upload + 预签名 URL，兼容 MinIO |
 | 向量数据库 | Milvus 2.4.x | HNSW + COSINE 向量检索 |
-| AI 服务 | 阿里 Qwen-VL / 智谱 GLM / OpenAI-compatible | Provider 接口解耦，配置化切换 |
+| AI 服务 | Qwen-Audio 3.0 / Qwen3.8-Flash / Qwen3.7-Plus | 转写、文本粗筛、片段视频分析；统一用量与费用账本 |
 | RAG | DashScope text-embedding-v3 | 层级感知分块、中文英雄别名增强、可视化评估、fail-open 降级 |
 | 接口文档 | SpringDoc OpenAPI | Swagger UI |
-| 前端 | 纯 HTML/CSS/JS SPA | 无框架依赖 |
+| 前端 | 纯 HTML/CSS/JS SPA | 深色工作台、中英界面、响应式布局、独立片段播放弹窗 |
 | 部署 | Docker Compose | 一键启动所有中间件 |
 
 <br>
@@ -159,16 +146,16 @@ graph TD
 ## 项目结构
 
 ```
-VideoAIPlatform/
+video-ai-platform/
 ├── video-api/              # API 服务（REST 入口，port 8080）
-├── video-worker/           # Worker 服务（异步任务处理，port 8081）
+├── video-worker/           # Worker 后台进程（数据库调度、媒体处理、片段分析）
 ├── video-rag/              # RAG 领域服务（分块、索引、检索与编排）
 ├── video-common/           # 公共模块（领域模型、DTO、枚举、执行上下文）
 ├── video-infrastructure/   # 基础设施（MySQL、Redis、S3、Milvus）
 ├── frontend/               # 前端 SPA（HTML/CSS/JS）
 ├── architecture/           # 架构决策与参数设计文档
 ├── rag-data/               # 结构化领域知识与检索评估数据
-├── scripts/                # RAG 评估与知识审计脚本
+├── scripts/                # 启动、验收、知识维护脚本（archive为历史实验）
 ├── sql/                    # 数据库建表脚本
 └── docker/                 # Docker Compose 配置
 ```
@@ -208,13 +195,14 @@ cp video-worker/src/main/resources/application-dev.yml.example \
 | `videoai.dispatch.video-concurrency` | 单 Worker 同时在途视频数，默认 `3` |
 | `minio.*` | 对象存储配置（MinIO / Backblaze B2 地址和凭证）|
 | `ai.dashscope.api-key` | 阿里云 DashScope API Key，[点这里申请](https://dashscope.console.aliyun.com/) |
-| `ai.zhipu.api-key` | 智谱 AI API Key，[点这里申请](https://open.bigmodel.cn/) |
-| `ai.provider` | 底层大模型选择：`dashscope`（默认）/ `zhipu` / `openai-compatible` |
+| `ai.provider` / `ai.dashscope.model` | 当前主链路为 `dashscope` / `qwen3.7-plus`，通过兼容接口分析片段 |
+| `analysis.asr.model` / `analysis.text.model` | `qwen-audio-3.0-asr-flash-filetrans` / `qwen3.8-flash` |
+| `analysis.media.ffmpeg` / `analysis.media.ffprobe` | 本地 FFmpeg、FFprobe 路径；Worker 需有临时磁盘空间 |
 | `videoai.rag.*` | RAG 开关、Embedding、Milvus 和检索参数 |
 
 后台调度默认每秒扫描，先取得视频容量再领取任务；独立线程每 20 秒续租，租约为 90 秒。任务耗时不受消息消费间隔限制，但各外部请求仍有超时。失效执行者不能覆盖当前结果，过期任务不会自动重放付费调用。
 
-新版本使用 `sql/schema.sql` 的新表结构，不兼容旧任务状态。已有开发数据库应保留，另建隔离库验证，不能直接用旧表启动新版本。设计与阶段验收见 [数据库调度实施方案](architecture/database-task-scheduler-implementation.md)。
+新建空库使用 `sql/schema.sql`；已有库需先备份、确认无在途任务，再按版本核对并执行适用迁移。费用表迁移 `sql/V2.1__ai_call_cost_ledger.sql` 会重建旧费用表，不应重复执行或直接对已有新账本运行。当前设计和阶段记录统一从 [架构文档索引](architecture/README.md) 查阅。
 
 ### 3. 编译项目
 
@@ -228,7 +216,7 @@ mvn clean install -DskipTests
 mvn test
 ```
 
-调度测试覆盖并发领取、容量控制、独立续租、过期失败、迟到写入拦截和片段实际退出。真实 MySQL 验收默认跳过，显式启用后创建并清理专用测试库，要求建库权限。历史 Kafka 实验仅用于记录架构演进，不代表当前运行方式。
+调度测试覆盖并发领取、容量控制、独立续租、过期失败、迟到写入拦截和片段实际退出。真实 MySQL 验收默认跳过，显式启用后创建并清理专用测试库，要求建库权限。费用账本的隔离MySQL测试可用 `mvn test -Dcost.mysql.acceptance=true` 启用；前端费用逻辑用 `node --test scripts/test_task_cost.cjs` 验证。真实模型验收会产生费用，不属于默认测试。历史 Kafka 实验存放在 `architecture/archive/kafka/`，不代表当前运行方式。
 
 ### 4. 启动服务
 
@@ -236,7 +224,7 @@ mvn test
 # API 服务（port 8080）
 cd video-api && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
-# Worker 服务（port 8081）
+# Worker 后台进程（不提供独立HTTP入口）
 cd video-worker && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
@@ -246,20 +234,20 @@ cd video-worker && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 ```bash
 # 方式一（推荐，Node 环境）
-npx --yes serve frontend -l 5173
+npx --yes serve frontend -l 3000
 
 # 方式二（Python 环境）
-python -m http.server 5173 --directory frontend
+python -m http.server 3000 --directory frontend
 ```
 
-启动后访问：`http://localhost:5173`。管理员登录后可直接进入 `http://localhost:5173/#/rag-eval` 测试 RAG 召回效果。
+启动后访问：`http://localhost:3000`。管理员登录后可直接进入 `http://localhost:3000/#/rag-eval` 测试 RAG 召回效果。
 
 ### 6. 访问
 
 | 服务 | 地址 |
 | :--- | :--- |
-| 前端页面 | http://localhost:5173（或直接打开 `frontend/index.html`） |
-| RAG 检索评估 | http://localhost:5173/#/rag-eval |
+| 前端页面 | http://localhost:3000 |
+| RAG 检索评估 | http://localhost:3000/#/rag-eval |
 | Swagger UI | http://localhost:8080/api/swagger-ui.html |
 | MinIO 控制台 | http://localhost:9001（仅本地 MinIO 时可用）|
 
@@ -275,7 +263,8 @@ python -m http.server 5173 --directory frontend
 | 状态机与执行代次 | owner + attempt + 有效租约保护结果写入 | ✅ |
 | 双认证体系 | JWT Bearer + API Key | ✅ |
 | 统一响应 | ApiResponse + ErrorCode 结构化错误码 | ✅ |
-| AI Provider 解耦 | 接口抽象，支持 DashScope、智谱和 OpenAI-compatible 服务 | ✅ |
+| 片段模型调用 | Qwen3.7-Plus兼容接口，明确超时和重试边界 | ✅ |
+| 统一调用费用 | 逐次用量、冻结价格、未知费用提示、本次与累计查询 | ✅ |
 | AI 失败处理 | 片段内部有限重试；整局失败由用户决定重试，隔离旧执行结果 | ✅ |
 | RAG 知识增强 | 28 个 PC 英雄中文知识、层级感知分块、Milvus 检索、别名增强、评估页面与 fail-open | ✅ |
 
@@ -283,17 +272,9 @@ python -m http.server 5173 --directory frontend
 
 ## 贡献与支持
 
-如果这个项目对你有帮助，请给个 Star ⭐️！
+欢迎通过 Issue 反馈复盘体验、上传问题和分析质量，也欢迎提交改进。技术设计与验收记录见 [架构文档索引](architecture/README.md)，运行和维护脚本见 [脚本说明](scripts/README.md)。
 
-(⊙o⊙)
-
-[ 这个项目最初是为了把视频分析这个场景完整做一遍——从上传、存储、消息队列到 AI 调用，把每个环节的坑都踩一遍。过程中确实踩了不少：Kafka 长任务触发 Rebalance 与 offset 提交失败、智谱 SDK 异常处理、S3 预签名签名不匹配……这些问题光看文档是遇不到的。 ]
-
-[ 此项目是 MVP 版本，总的来看只是组合调用第三方大模型 API 的项目。亮点是要挖掘业务需求一点点去增加的，而非看到优点去倒推需求。所以，与其在乎项目是否烂大街，不如提升对项目需求的思考，技术的应用 ]
-
-<font color="red">**[ 技术的掌握和运用，比项目本身是什么来的重要的多。]**</font>
-
-<br>
+模型输出用于辅助复盘，画面判断可能有误；欢迎结合原视频时间点反馈具体问题。
 
 ## License
 
